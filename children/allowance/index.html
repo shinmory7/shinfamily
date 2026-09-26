@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="ko">
-<head>
+<html lang="ko" data-shared="true"><head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#eef7fb">
@@ -30,70 +29,72 @@
     .tab[data-tab="other"].active{background:#f2effb;color:#6653a1;border-color:#dcd3f0}
     .child-metrics{justify-content:space-between}.metric{display:flex;flex-wrap:wrap;gap:4px}
     @media(max-width:650px){.tabbar{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    html[data-shared="true"] .layout{grid-template-columns:1fr}
+    html[data-shared="true"] .layout>section.panel,html[data-shared="true"] .intro>div,html[data-shared="true"] .history-add,html[data-shared="true"] .footer-tools,html[data-shared="true"] .note,html[data-shared="true"] .entry-actions,html[data-shared="true"] .setup-note{display:none!important}
   </style>
-</head>
+<script id="shared-state" type="application/json">{"version":5,"revision":39,"openings":{"juan":{"totalReward":2939200,"totalSpent":3022100},"yuna":{"totalReward":2589200,"totalSpent":1612500},"juha":{"totalReward":1965900,"totalSpent":1948000}},"openingsConfirmed":true,"openingCutoff":"2026-09-26","settings":{"gradeAnchorYear":2026,"grades":{"juan":4,"yuna":2,"juha":1},"baseAmounts":[18000,20000,22000,50000,60000,70000,80000,90000,100000],"weeklyRate":500,"weeklyBonus":1500,"walkRate":100,"repairPct":20,"special":{"childrens":50000,"birthday":100000,"christmas":50000}},"settingsEffectiveFrom":"2026-01-01","settingsHistory":[],"records":[{"id":"f135da85-8640-41c0-9003-31554cc2c1d5","status":"cancelled","history":[{"at":"2026-09-26T13:15:37.640Z","action":"수정","before":{"id":"f135da85-8640-41c0-9003-31554cc2c1d5","status":"active","createdAt":"2026-09-26T13:15:19.647Z","updatedAt":"2026-09-26T13:15:19.647Z","adjustment":0,"includedInOpening":false,"note":"","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-10-07","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},"after":{"id":"f135da85-8640-41c0-9003-31554cc2c1d5","status":"active","createdAt":"2026-09-26T13:15:19.647Z","updatedAt":"2026-09-26T13:15:37.640Z","adjustment":0,"includedInOpening":false,"note":"","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-09-26","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},"changes":["보상·사용일: 2026-10-07 → 2026-09-26"]},{"at":"2026-09-26T13:15:42.576Z","action":"삭제","before":{"id":"f135da85-8640-41c0-9003-31554cc2c1d5","status":"active","createdAt":"2026-09-26T13:15:19.647Z","updatedAt":"2026-09-26T13:15:37.640Z","adjustment":0,"includedInOpening":false,"note":"","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-09-26","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},"after":{"id":"f135da85-8640-41c0-9003-31554cc2c1d5","status":"cancelled","createdAt":"2026-09-26T13:15:19.647Z","updatedAt":"2026-09-26T13:15:42.576Z","adjustment":0,"includedInOpening":false,"note":"","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-09-26","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},"changes":["상태: active → cancelled"]}],"createdAt":"2026-09-26T13:15:19.647Z","updatedAt":"2026-09-26T13:15:42.576Z","adjustment":0,"includedInOpening":false,"note":"","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-09-26","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},{"id":"09c6bd07-9125-49c9-b15d-254f78200757","status":"active","history":[],"createdAt":"2026-09-26T13:41:01.144Z","updatedAt":"2026-09-26T13:41:01.144Z","adjustment":0,"includedInOpening":false,"note":"발로","kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-100000,"effectiveDate":"2026-09-26"}],"spendCategories":["게임·현질","간식","쇼핑","교통","선물","기타"]}</script></head>
 <body>
   <main class="shell">
-    <header class="top"><div class="brand"><div class="mark">₩</div><h1>신씨네가족 용돈규칙</h1></div><span class="status">v5.0</span></header>
+    <header class="top"><div class="brand"><div class="mark">₩</div><h1>신씨네가족 용돈규칙</h1></div><span class="status">공유본 · 2026-09-26</span></header>
     <section class="rules" aria-label="용돈규칙">
       <div class="rules-head"><h2>정산 기준</h2><span>기본 용돈은 매년 1월 1일 갱신</span></div>
       <div class="rule-list">
-        <div class="rule"><b>기본 용돈 · 매월</b><strong id="base-rule">완 6만 · 윤 2.2만 · 하 2만</strong></div>
+        <div class="rule"><b>기본 용돈 · 매월</b><strong id="base-rule">완 60,000원 · 윤 22,000원 · 하 20,000원</strong></div>
         <div class="rule"><b>말해보카 · 월~일</b><strong id="weekly-rule">1회 500원 · 7회면 5,000원</strong></div>
         <div class="rule"><b>슈퍼워크 · 다음 달 1일</b><strong id="walk-rule">워크 × 80% × 100원</strong></div>
-        <div class="rule"><b>특별 용돈</b><strong id="special-rule">어린이날 5만 · 생일 10만 · 크리스마스 5만</strong></div>
+        <div class="rule"><b>특별 용돈</b><strong id="special-rule">어린이날 50,000원 · 생일 100,000원 · 크리스마스 50,000원</strong></div>
       </div>
     </section>
     <div class="intro"><h2>아이별 사용 가능 금액</h2><div><button id="open-opening" class="link-btn">시트 시작값</button><button id="open-settings" class="link-btn">용돈규칙 수정</button></div></div>
-    <div id="setup-note" class="setup-note"></div>
-    <section id="cards" class="cards" aria-label="아이별 잔액"></section>
+    <div id="setup-note" class="setup-note hidden"></div>
+    <section id="cards" class="cards" aria-label="아이별 잔액"><article class="child "><div class="child-top"><span class="monogram">완</span><div><div class="child-name">주완</div><div class="grade">중2 · 월 기본 60,000원</div></div></div><div class="child-body"><div class="balance-label">사용 가능 잔액</div><div class="balance negative">-182,900원</div><div class="child-metrics"><span class="metric">총 보상 <b>2,939,200원</b></span><span class="metric">총 사용 <b>3,122,100원</b></span></div></div></article><article class="child green"><div class="child-top"><span class="monogram">윤</span><div><div class="child-name">윤아</div><div class="grade">초6 · 월 기본 22,000원</div></div></div><div class="child-body"><div class="balance-label">사용 가능 잔액</div><div class="balance">976,700원</div><div class="child-metrics"><span class="metric">총 보상 <b>2,589,200원</b></span><span class="metric">총 사용 <b>1,612,500원</b></span></div></div></article><article class="child pink"><div class="child-top"><span class="monogram">하</span><div><div class="child-name">주하</div><div class="grade">초5 · 월 기본 20,000원</div></div></div><div class="child-body"><div class="balance-label">사용 가능 잔액</div><div class="balance">17,900원</div><div class="child-metrics"><span class="metric">총 보상 <b>1,965,900원</b></span><span class="metric">총 사용 <b>1,948,000원</b></span></div></div></article></section>
     <div class="layout">
       <section class="panel" aria-labelledby="entry-title">
         <div class="panel-head"><h2 id="entry-title">기록 추가</h2></div>
         <div class="tabbar" role="tablist" aria-label="입력 종류">
-          <button class="tab active" data-tab="weekly" role="tab" aria-selected="true">말해보카</button>
+          <button class="tab" data-tab="weekly" role="tab" aria-selected="false">말해보카</button>
           <button class="tab" data-tab="walk" role="tab" aria-selected="false">슈퍼워크</button>
-          <button class="tab" data-tab="spend" role="tab" aria-selected="false">사용·현질</button>
+          <button class="tab active" data-tab="spend" role="tab" aria-selected="true">사용·현질</button>
           <button class="tab" data-tab="other" role="tab" aria-selected="false">기본·특별</button>
         </div>
-        <div id="view-weekly" class="view active" role="tabpanel">
-          <div class="period-row"><div><div id="week-title" class="period-main"></div><div id="week-sub" class="period-sub"></div></div><div class="period-buttons"><button id="week-prev" class="icon-btn" aria-label="이전 주">‹</button><button id="week-next" class="icon-btn" aria-label="다음 주">›</button></div></div>
+        <div id="view-weekly" class="view" role="tabpanel">
+          <div class="period-row"><div><div id="week-title" class="period-main">2026-09-14(월) ~ 2026-09-20(일)</div><div id="week-sub" class="period-sub">규칙상 보상일: 2026-09-20(일)</div></div><div class="period-buttons"><button id="week-prev" class="icon-btn" aria-label="이전 주">‹</button><button id="week-next" class="icon-btn" aria-label="다음 주">›</button></div></div>
           <div class="quick-tools"><label for="week-jump">기간 선택</label><input id="week-jump" type="date" aria-label="입력할 주의 날짜"><button id="week-latest" class="btn mini" type="button">최근 주</button></div>
-          <div id="weekly-rows"></div>
+          <div id="weekly-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">빈칸은 건너뜀</div><label class="checkline"><input type="checkbox" data-included="juan"><span>시트에 이미 포함</span></label></div><div class="stepper"><button type="button" aria-label="주완 횟수 감소">−</button><input type="number" min="0" max="7" step="1" inputmode="numeric" aria-label="주완 성공 횟수" data-child="juan"><button type="button" aria-label="주완 횟수 증가">+</button></div><div class="preview zero">—</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">빈칸은 건너뜀</div><label class="checkline"><input type="checkbox" data-included="yuna"><span>시트에 이미 포함</span></label></div><div class="stepper"><button type="button" aria-label="윤아 횟수 감소">−</button><input type="number" min="0" max="7" step="1" inputmode="numeric" aria-label="윤아 성공 횟수" data-child="yuna"><button type="button" aria-label="윤아 횟수 증가">+</button></div><div class="preview zero">—</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">빈칸은 건너뜀</div><label class="checkline"><input type="checkbox" data-included="juha"><span>시트에 이미 포함</span></label></div><div class="stepper"><button type="button" aria-label="주하 횟수 감소">−</button><input type="number" min="0" max="7" step="1" inputmode="numeric" aria-label="주하 성공 횟수" data-child="juha"><button type="button" aria-label="주하 횟수 증가">+</button></div><div class="preview zero">—</div></div></div>
           <div id="week-legacy-note" class="setup-note hidden">이 기간과 겹치는 예전 일~토 기록이 있습니다. 중복 입력 전 기록 내역을 확인하세요.</div>
-          <details class="more-options"><summary>날짜·메모 조정</summary><div class="field-grid"><div class="field"><label for="week-credit">보상일</label><input id="week-credit" type="date"><small>기본값: 해당 주 일요일</small></div><div class="field"><label for="week-note">메모 (선택)</label><input id="week-note" maxlength="80" placeholder="예: 여행 기간"></div></div></details>
-          <div id="week-opening-note" class="setup-note hidden"></div>
+          <details class="more-options"><summary>날짜·메모 조정</summary><div class="field-grid"><div class="field"><label for="week-credit">보상일</label><input id="week-credit" type="date" data-initial="2026-09-20" data-dirty="0"><small>기본값: 해당 주 일요일</small></div><div class="field"><label for="week-note">메모 (선택)</label><input id="week-note" maxlength="80" placeholder="예: 여행 기간" data-initial="" data-dirty="0"></div></div></details>
+          <div id="week-opening-note" class="setup-note">이 날짜는 시트 시작값 확인일 이전입니다. 각 아이의 ‘시트에 이미 포함’ 표시를 확인하세요.</div>
           <div class="actions"><button id="weekly-save" class="btn primary">입력한 아이 한번에 저장</button></div>
           <p class="explainer">빈칸은 건너뜀 · 0회 입력 가능 · 다시 저장하면 수정</p>
         </div>
         <div id="view-walk" class="view" role="tabpanel">
-          <div class="period-row"><div class="field" style="min-width:170px"><label for="walk-period">실적 월</label><input id="walk-period" type="month"></div><div id="walk-period-hint" class="period-sub"></div></div>
-          <div id="walk-rows"></div>
-          <details class="more-options"><summary>날짜·메모 조정</summary><div class="field-grid"><div class="field"><label for="walk-credit">보상일</label><input id="walk-credit" type="date"><small>기본값: 실적 다음 달 1일</small></div><div class="field"><label for="walk-note">메모 (선택)</label><input id="walk-note" maxlength="80" placeholder="예: 8월 기록"></div></div></details>
-          <div id="walk-opening-note" class="setup-note hidden"></div>
+          <div class="period-row"><div class="field" style="min-width:170px"><label for="walk-period">실적 월</label><input id="walk-period" type="month"></div><div id="walk-period-hint" class="period-sub">규칙상 보상일: 2026-09-01</div></div>
+          <div id="walk-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">빈칸은 건너뜀</div><label class="checkline"><input type="checkbox" data-included="juan"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="1" inputmode="numeric" placeholder="워크" aria-label="주완 워크 수" data-child="juan"><div class="preview zero">—</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">빈칸은 건너뜀</div><label class="checkline"><input type="checkbox" data-included="yuna"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="1" inputmode="numeric" placeholder="워크" aria-label="윤아 워크 수" data-child="yuna"><div class="preview zero">—</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">빈칸은 건너뜀</div><label class="checkline"><input type="checkbox" data-included="juha"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="1" inputmode="numeric" placeholder="워크" aria-label="주하 워크 수" data-child="juha"><div class="preview zero">—</div></div></div>
+          <details class="more-options"><summary>날짜·메모 조정</summary><div class="field-grid"><div class="field"><label for="walk-credit">보상일</label><input id="walk-credit" type="date" data-initial="2026-09-01" data-dirty="0"><small>기본값: 실적 다음 달 1일</small></div><div class="field"><label for="walk-note">메모 (선택)</label><input id="walk-note" maxlength="80" placeholder="예: 8월 기록" data-initial="" data-dirty="0"></div></div></details>
+          <div id="walk-opening-note" class="setup-note">이 날짜는 시트 시작값 확인일 이전입니다. 각 아이의 ‘시트에 이미 포함’ 표시를 확인하세요.</div>
           <div class="actions"><button id="walk-save" class="btn green">입력한 아이 한번에 저장</button></div>
           <p class="explainer">8월 300워크 → 9월 1일 24,000원</p>
         </div>
-        <form id="view-spend" class="view" role="tabpanel">
+        <form id="view-spend" class="view active" role="tabpanel">
           <div class="field-grid">
-            <div class="field"><label for="spend-child">아이</label><select id="spend-child"></select></div>
-            <div class="field"><label for="spend-category">사용 항목</label><div class="inline-control"><select id="spend-category"></select><button id="spend-add-category" class="btn mini" type="button">+ 추가</button><button id="spend-delete-category" class="btn mini danger" type="button">삭제</button></div></div>
+            <div class="field"><label for="spend-child">아이</label><select id="spend-child"><option value="juan">주완 (완)</option><option value="yuna">윤아 (윤)</option><option value="juha">주하 (하)</option></select></div>
+            <div class="field"><label for="spend-category">사용 항목</label><div class="inline-control"><select id="spend-category"><option value="게임·현질">게임·현질</option><option value="간식">간식</option><option value="쇼핑">쇼핑</option><option value="교통">교통</option><option value="선물">선물</option><option value="기타">기타</option></select><button id="spend-add-category" class="btn mini" type="button">+ 추가</button><button id="spend-delete-category" class="btn mini danger" type="button">삭제</button></div></div>
             <div id="spend-category-editor" class="field hidden"><label for="spend-category-new">새 항목 이름</label><div class="new-category"><input id="spend-category-new" maxlength="24" placeholder="예: 학용품"><button id="spend-category-save" class="btn mini green" type="button">항목 저장</button></div></div>
-            <div class="field"><label for="spend-amount">사용 금액</label><input id="spend-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="예: 10000" required></div>
-            <div class="field"><label for="spend-date">실제 사용일</label><input id="spend-date" type="date" required></div>
-            <div class="field full"><label for="spend-note">사용 내역</label><input id="spend-note" maxlength="100" placeholder="예: 게임 현질" required></div>
+            <div class="field"><label for="spend-amount">사용 금액</label><input id="spend-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="예: 10000" required=""></div>
+            <div class="field"><label for="spend-date">실제 사용일</label><input id="spend-date" type="date" required=""></div>
+            <div class="field full"><label for="spend-note">사용 내역</label><input id="spend-note" maxlength="100" placeholder="예: 게임 현질" required=""></div>
           </div>
-          <div id="spend-opening-note" class="setup-note hidden"></div>
+          <div id="spend-opening-note" class="setup-note"><label class="checkline"><input type="checkbox" data-single-included="1"><span>이 기록은 시트 시작값에 이미 포함되어 있습니다</span></label></div>
           <div class="actions"><button type="submit" class="btn pink">사용 내역 저장</button></div>
         </form>
         <div id="view-other" class="view" role="tabpanel">
           <div class="field" style="margin-bottom:12px"><label for="other-kind">항목</label><select id="other-kind"><option value="base">월 기본 용돈</option><option value="childrens">어린이날</option><option value="birthday">생일</option><option value="christmas">크리스마스</option><option value="manual">기타 보상</option></select></div>
-          <div id="base-bulk" class="hidden"><div class="field-grid"><div class="field"><label for="base-period">기준 월</label><input id="base-period" type="month"></div><div class="field"><label for="base-date">실제 보상일</label><input id="base-date" type="date"></div></div><div id="base-rows"></div><div id="base-opening-note" class="setup-note hidden"></div><div class="actions"><button id="base-save" type="button" class="btn primary">세 아이 기본 용돈 한번에 기록</button></div><p class="explainer">이미 기록한 아이는 건너뜁니다. 금액과 날짜는 기록 내역에서 개별 수정할 수 있어요.</p></div>
-          <form id="other-form" class="field-grid">
-            <div class="field"><label for="other-child">아이</label><select id="other-child"></select></div>
+          <div id="base-bulk" class=""><div class="field-grid"><div class="field"><label for="base-period">기준 월</label><input id="base-period" type="month"></div><div class="field"><label for="base-date">실제 보상일</label><input id="base-date" type="date"></div></div><div id="base-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">중2</div><label class="checkline"><input type="checkbox" data-base-included="juan"><span>시트 포함</span></label></div><input type="checkbox" data-base-child="juan" aria-label="주완 기본 용돈 기록"><div class="preview">60,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">초6</div><label class="checkline"><input type="checkbox" data-base-included="yuna"><span>시트 포함</span></label></div><input type="checkbox" data-base-child="yuna" aria-label="윤아 기본 용돈 기록"><div class="preview">22,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">초5</div><label class="checkline"><input type="checkbox" data-base-included="juha"><span>시트 포함</span></label></div><input type="checkbox" data-base-child="juha" aria-label="주하 기본 용돈 기록"><div class="preview">20,000원</div></div></div><div id="base-opening-note" class="setup-note hidden"></div><div class="actions"><button id="base-save" type="button" class="btn primary">세 아이 기본 용돈 한번에 기록</button></div><p class="explainer">이미 기록한 아이는 건너뜁니다. 금액과 날짜는 기록 내역에서 개별 수정할 수 있어요.</p></div>
+          <form id="other-form" class="field-grid hidden">
+            <div class="field"><label for="other-child">아이</label><select id="other-child"><option value="juan">주완 (완)</option><option value="yuna">윤아 (윤)</option><option value="juha">주하 (하)</option></select></div>
             <div class="field"><label for="other-period">행사 연도</label><input id="other-period" type="number" min="2000" max="2100"></div>
-            <div class="field"><label for="other-date">보상 적립일</label><input id="other-date" type="date" required></div>
-            <div class="field"><label for="other-amount">금액</label><input id="other-amount" type="number" min="0" step="1" inputmode="numeric" required></div>
+            <div class="field"><label for="other-date">보상 적립일</label><input id="other-date" type="date" required=""></div>
+            <div class="field"><label for="other-amount">금액</label><input id="other-amount" type="number" min="0" step="1" inputmode="numeric" required=""></div>
             <div class="field"><label for="other-note">메모</label><input id="other-note" maxlength="100" placeholder="선택 입력"></div>
             <div id="other-opening-note" class="setup-note hidden full"></div>
             <div class="actions full"><button type="submit" class="btn primary">보상 기록</button></div>
@@ -102,19 +103,19 @@
         </div>
       </section>
       <aside class="panel" aria-labelledby="history-title">
-        <div class="panel-head"><h2 id="history-title">기록 내역</h2><span id="history-count" class="fine"></span></div>
+        <div class="panel-head"><h2 id="history-title">기록 내역</h2><span id="history-count" class="fine">2건</span></div>
         <div class="history-add" aria-label="기록 추가"><strong>기록 추가</strong><button class="btn mini" type="button" data-add-tab="weekly">+ 말해보카</button><button class="btn mini" type="button" data-add-tab="walk">+ 슈퍼워크</button><button class="btn mini" type="button" data-add-tab="spend">+ 사용·현질</button><button class="btn mini" type="button" data-add-tab="other">+ 용돈</button></div>
-        <div class="history-controls"><select id="history-child" aria-label="아이 필터"><option value="all">전체 아이</option></select><select id="history-kind" aria-label="항목 필터"><option value="all">전체 항목</option><option value="weekly">말해보카</option><option value="walk">슈퍼워크</option><option value="spend">사용·현질</option><option value="other">기타 보상</option></select><input id="history-month" type="month" aria-label="보상일 또는 사용일의 월별 필터"><button id="history-clear" class="btn mini" type="button">기간 전체</button></div>
-        <div id="history-list" class="history-list"></div>
+        <div class="history-controls"><select id="history-child" aria-label="아이 필터"><option value="all">전체 아이</option><option value="juan">주완 (완)</option><option value="yuna">윤아 (윤)</option><option value="juha">주하 (하)</option></select><select id="history-kind" aria-label="항목 필터"><option value="all">전체 항목</option><option value="weekly">말해보카</option><option value="walk">슈퍼워크</option><option value="spend">사용·현질</option><option value="other">기타 보상</option></select><input id="history-month" type="month" aria-label="보상일 또는 사용일의 월별 필터"><button id="history-clear" class="btn mini" type="button">기간 전체</button></div>
+        <div id="history-list" class="history-list"><div class="entry"><div class="entry-top"><div><div class="entry-title">주완 · 사용·현질</div><div class="entry-detail">2026-09-26 사용 · 게임·현질 · 발로</div></div><div class="entry-amount negative">-100,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:41</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry cancelled"><div class="entry-top"><div><div class="entry-title">주하 · 생일</div><div class="entry-detail">2026-09-26 보상 · 삭제됨</div></div><div class="entry-amount positive">+100,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:15 · 수정 2026. 9. 26. 오후 10:15</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn">복구</button><button class="edit-btn delete-btn">완전 삭제</button></span></div></div></div>
         <div class="note">이 브라우저에 저장됩니다. 정기적으로 백업하세요.</div>
-        <div class="footer-tools"><button id="export-json" class="btn mini">백업 저장</button><button id="export-csv" class="btn mini">기록 CSV 저장</button><button id="import-json" class="btn mini">백업 불러오기</button><input id="import-file" class="hidden" type="file" accept=".json,application/json"></div>
+        <div class="footer-tools"><button id="export-share" class="btn mini primary">공유용 HTML 저장</button><button id="export-json" class="btn mini">백업 저장</button><button id="export-csv" class="btn mini">기록 CSV 저장</button><button id="import-json" class="btn mini">백업 불러오기</button><input id="import-file" class="hidden" type="file" accept=".json,application/json"></div>
       </aside>
     </div>
   </main>
   <dialog id="opening-dialog"><div class="dialog-body"><div class="dialog-head"><h2>시트 시작값 확인·수정</h2><button class="close" data-close="opening-dialog" aria-label="닫기">×</button></div><p class="opening-help">처음 값은 보내주신 시트 이미지 기준입니다. 확인 후 저장하세요.</p><div class="field" style="margin-top:12px"><label for="opening-cutoff">시트 시작값 기준일</label><input id="opening-cutoff" type="date"></div><div id="opening-fields"></div><div class="actions"><button id="opening-save" class="btn primary">시작값 저장</button></div></div></dialog>
   <dialog id="settings-dialog"><div class="dialog-body"><div class="dialog-head"><h2>용돈규칙 수정</h2><button class="close" data-close="settings-dialog" aria-label="닫기">×</button></div><p class="opening-help">새 정산부터 바뀐 규칙이 적용됩니다. 이미 저장한 보상액과 계산 규칙은 그대로 남습니다.</p><div id="settings-fields"></div><div class="actions"><button id="settings-save" class="btn primary">규칙 저장</button></div></div></dialog>
   <dialog id="edit-dialog"><div class="dialog-body"><div class="dialog-head"><h2>기록 수정</h2><button class="close" data-close="edit-dialog" aria-label="닫기">×</button></div><div id="edit-fields"></div><div class="actions"><button id="record-cancel" class="btn danger">삭제</button><button id="record-save" class="btn primary">저장</button></div><details class="audit"><summary>변경 이력</summary><div id="audit-list"></div></details></div></dialog>
-  <div id="toast" class="toast hidden" role="status"></div>
+  <div id="toast" class="toast" role="status">사용 내역을 저장했습니다.</div>
   <script>
 (() => {
   "use strict";
@@ -350,7 +351,17 @@
 
   let storageReady = true;
   let state = freshState();
-  try {
+  const sharedElement = typeof document === "undefined" ? null : document.getElementById("shared-state");
+  const sharedMode = Boolean(sharedElement);
+  if (sharedMode) {
+    try {
+      const snapshot = JSON.parse(sharedElement.textContent);
+      if (!validateState(snapshot)) throw new Error("invalid shared snapshot");
+      state = snapshot;
+    } catch {
+      storageReady = false;
+    }
+  } else try {
     const current = JSON.parse(localStorage.getItem(KEY) || "null");
     if (current && validateState(current)) state = current;
     else {
@@ -434,6 +445,7 @@
     return true;
   }
   function commit(change) {
+    if (sharedMode) return toast("공유용 화면에서는 기록을 수정할 수 없습니다."), false;
     if (!storageReady) return toast("이 브라우저에서 저장이 차단되어 있습니다. 다른 브라우저에서 열어주세요."), false;
     try {
       const stored = JSON.parse(localStorage.getItem(KEY) || "null");
@@ -1300,6 +1312,20 @@
       ...state, exportedAt: timestamp(),
     }, null, 2), "application/json");
   }
+  function exportShare() {
+    if (!storageReady || !validateState(state)) return toast("장부를 확인한 뒤 다시 저장해 주세요.");
+    const root = document.documentElement.cloneNode(true);
+    root.dataset.shared = "true";
+    root.querySelector("#shared-state")?.remove();
+    const snapshot = document.createElement("script");
+    snapshot.id = "shared-state";
+    snapshot.type = "application/json";
+    snapshot.textContent = JSON.stringify(state).replaceAll("<", "\\u003c");
+    root.querySelector("head").append(snapshot);
+    root.querySelector(".status").textContent = "공유본 · " + todayKey();
+    download("index.html", "<!doctype html>\n" + root.outerHTML, "text/html;charset=utf-8");
+    toast("공유용 index.html을 저장했습니다. GitHub의 같은 파일에 덮어 올려주세요.");
+  }
   function exportCsv() {
     const rows = [[
       "아이", "구분", "사용 항목", "금액", "기준 기간", "횟수·워크", "조정액",
@@ -1409,6 +1435,7 @@
     $("record-save").onclick = saveEdit;
     $("record-cancel").onclick = cancelEdit;
     $("export-json").onclick = exportJson;
+    $("export-share").onclick = exportShare;
     $("export-csv").onclick = exportCsv;
     $("import-json").onclick = () => $("import-file").click();
     $("import-file").onchange = async event => {
@@ -1437,5 +1464,6 @@
 })();
 
   </script>
-</body>
-</html>
+
+
+</body></html>
