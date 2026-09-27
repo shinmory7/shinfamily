@@ -21,6 +21,9 @@
     @media(max-width:950px){.layout{grid-template-columns:1fr}.history-list{max-height:none}.rule-list{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:650px){.shell{padding:14px 11px 55px}.top{align-items:center}.brand{gap:9px}.mark{width:39px;height:39px}.top p{display:none}.status{font-size:.75rem;padding:6px 8px}.rules{padding:13px}.rules-head{align-items:flex-start}.rules-head span{max-width:120px;text-align:right}.rule-list{gap:6px}.rule{padding:8px 9px}.rule strong{font-size:.8rem}.cards{grid-template-columns:1fr;gap:8px}.child-top{padding:9px 12px}.child-body{padding:10px 12px}.child-metrics{gap:7px}.panel{padding:14px}.bulk-row{grid-template-columns:36px minmax(62px,1fr) auto auto;gap:5px}.bulk-name{font-size:.88rem}.bulk-note{font-size:.75rem}.stepper button{width:29px}.stepper input{width:30px}.walk-input{width:73px}.preview{min-width:66px;font-size:.85rem}.field-grid{grid-template-columns:1fr}.field-grid .full{grid-column:auto}.opening-grid,.settings-grid{grid-template-columns:1fr}}
     .entry-bottom,.entry-actions{flex-wrap:wrap}
+    .entry-bottom{justify-content:flex-end}
+    .history-list{gap:6px}.entry{padding:9px 11px}.entry-top{align-items:center}.entry-top>div:first-child{flex:1;min-width:0}.entry-heading{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.entry-heading .entry-amount{font-size:.9rem}.entry-detail{margin-top:2px}.entry-actions{flex:0 0 auto;align-self:center;flex-wrap:nowrap}.history-icon{width:30px;height:30px;display:grid;place-items:center;position:relative;border:1px solid #d4e4e9;border-radius:8px;background:#fff;color:#3d83a4;padding:5px;cursor:pointer}.history-icon:hover,.history-icon:focus-visible{background:#e9f4fb;border-color:#9fc9e1}.history-icon.danger{color:#bd6869}.history-icon.danger:hover,.history-icon.danger:focus-visible{background:#fff0f0;border-color:#e3b2b4}.history-icon svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+    @media(max-width:480px){.entry-top{align-items:flex-start}.entry-actions{gap:3px}.history-icon{width:29px;height:29px}}
     .tabbar{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:visible}
     .tab{white-space:normal;min-height:48px}
     .tab[data-tab="weekly"].active{background:#e1f4e9;color:#2d7953;border-color:#c4e5d0}
@@ -62,6 +65,12 @@
     .history-summary[data-child="yuna"]{--summary-bg:#f8d8e8;--summary-head:#efbfd7;--summary-border:#e7a8c7}
     .history-summary[data-child="juha"]{--summary-bg:#d8efdd;--summary-head:#bfe3c8;--summary-border:#a3d3b0}
     .history-summary[data-child="juan"]{--summary-bg:#d9edf9;--summary-head:#bedff2;--summary-border:#a3cee9}
+    .history-summary[data-kind="all"][data-child="all"] .history-summary-row.summary-head{background:#c8d7e9;border-color:#9db5d0;color:#1d3f68}
+    .history-summary[data-kind="all"][data-child="all"] .history-summary-row.summary-all{background:#e5edf7;border-color:#9db5d0}
+    .history-summary[data-kind="other"][data-child="all"] .history-summary-row.summary-head{background:#ffe9d9;border-color:#f3d1b3;color:#915019}
+    .history-summary[data-kind="other"][data-child="all"] .history-summary-row.summary-all{background:#fff4eb;border-color:#f3d1b3}
+    .history-summary[data-kind="allowance"][data-child="all"] .history-summary-row.summary-head{background:#ffd8b6;border-color:#efbd94;color:#8c4917}
+    .history-summary[data-kind="allowance"][data-child="all"] .history-summary-row.summary-all{background:#ffe4cd;border-color:#efbd94}
     /* Readable supporting text and a single page scroll for history. */
     .fine,.grade,.metric,.balance-label,.bulk-note,.period-sub,.explainer,.entry-detail,.recorded,.child-foot,.rule b,.rule strong{font-size:.875rem}
     .fine,.grade,.metric,.balance-label,.bulk-note,.period-sub,.explainer,.entry-detail,.recorded,.child-foot{color:#526579}
@@ -100,19 +109,65 @@
     html[data-shared="true"] .rule-list:not(.expanded){display:none}
     html[data-shared="true"] .rules-head{margin-bottom:0}
     html[data-shared="true"] .rule-list.expanded{margin-top:9px}
-    html[data-shared="true"] .layout{grid-template-columns:1fr}
+    #view-spend.transfer-mode .spend-single-field,#view-spend.transfer-mode .spend-single-actions,#view-spend.transfer-mode #spend-opening-note{display:none!important}
+    #view-spend.transfer-mode .spend-category-field{grid-column:1/-1}
+    .month-stepper{display:flex;align-items:center;gap:5px}.month-stepper input{flex:1;min-width:0}.month-stepper .icon-btn{flex:0 0 34px;min-height:42px}
+    .transfer-amount{width:116px;min-height:42px;border:1px solid #cbdde2;border-radius:10px;padding:7px 9px;text-align:right;font-weight:800;color:#1c3944}
+    @media(max-width:650px){.transfer-amount{width:82px}}
+    .entry{position:relative}
+    .entry-top{display:block}
+    .entry-top>div:first-child{width:100%}
+    .entry-heading{display:grid;grid-template-columns:90px 110px;gap:2px;align-items:baseline}.entry-heading .entry-title{min-width:0;white-space:nowrap}
+    .entry-heading .entry-amount{text-align:right;font-variant-numeric:tabular-nums}
+    .entry-detail{padding-right:78px;font-size:calc(.875rem - 2pt)}
+    .entry.cancelled .entry-detail{padding-right:110px}
+    .entry-actions{position:absolute;right:14px;bottom:12px}
+    html[data-shared="true"] .entry-detail{padding-right:0}
+    @media(max-width:480px){.entry-heading{grid-template-columns:90px 110px}.entry-actions{right:11px;bottom:10px}}
+    .layout,.layout>.panel,.history-list,.history-summary,.entry{min-width:0;max-width:100%;box-sizing:border-box}
+    .entry-detail{overflow-wrap:anywhere}
+    @media(max-width:1180px){.layout{grid-template-columns:minmax(0,1fr)}}
+    .entry{padding-top:7px;padding-bottom:7px}
+    .entry-actions{top:50%;bottom:auto;transform:translateY(-50%)}
+    @media(max-width:480px){.entry-actions{top:50%;bottom:auto}}
+    .history-head{display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:5px;overflow-x:auto;padding-bottom:2px}
+    .history-head h2{flex:0 0 auto;white-space:nowrap;font-size:1rem}
+    .history-choices{flex:0 0 auto;flex-wrap:nowrap;gap:3px}
+    .history-choice{padding:4px 6px;min-height:34px;font-size:.7rem;white-space:nowrap}
+    #history-count{flex:0 0 auto;white-space:nowrap;font-size:.72rem}
+    .history-recent{flex:0 0 34px;width:34px;height:34px;min-height:34px;margin-left:auto;padding:6px;display:grid;place-items:center}
+    .history-recent svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;fill:none}
+    .history-controls{display:flex;align-items:center;gap:4px;overflow-x:auto;white-space:nowrap;margin:11px 0 12px;padding-bottom:2px}
+    .history-controls #history-kind{flex:0 0 96px;min-width:96px;width:96px;padding:5px 6px;font-size:.76rem}
+    .history-month-nav{flex:1 1 160px;min-width:130px;gap:3px}
+    .history-month-nav input{flex:1 1 auto;min-width:0;padding:5px 4px;font-size:.76rem}
+    .history-month-nav button{flex:0 0 29px;width:29px;min-height:36px}
+    .history-controls #history-year{flex:0 0 82px;min-width:82px;width:82px;padding:5px 4px;font-size:.74rem}
+    .history-controls #history-clear{flex:0 0 43px;min-width:43px;width:43px;min-height:36px;padding:4px 5px;font-size:.72rem}
+    @media(max-width:650px){.history-controls{display:flex;grid-template-columns:none;overflow-x:auto}.history-controls #history-kind,.history-month-nav,.history-controls #history-year,.history-controls #history-clear{grid-column:auto;justify-self:auto}}
+    .child-body{padding:0 18px 13px}.child-metrics{padding-top:9px}
+    @media(max-width:650px){.child-body{padding:0 13px 12px}}
+    #history-count{display:grid;place-items:center;flex:0 0 50px;width:50px;min-height:34px;margin-left:auto;padding:4px 5px;border:1px solid #d7e3ed;border-radius:9px;background:#f5f8fb;color:#456a87;font-variant-numeric:tabular-nums}
+    .history-recent{margin-left:0}
+    .history-controls #history-kind{flex:1 1 110px;min-width:90px;width:auto}
+    .history-month-nav{flex:1 1 180px;min-width:145px}
+    .history-controls #history-year{flex:.8 1 86px;min-width:75px;width:auto}
+    .history-controls #history-clear{font-weight:400}
+    .entry-heading .entry-amount{font-size:calc(.9rem - 1pt)}
+    .more-options .field-grid{align-items:start}.more-options .field{align-content:start}
+    html[data-shared="true"] .layout{grid-template-columns:minmax(0,1fr)}
     html[data-shared="true"] .layout>section.panel,html[data-shared="true"] .intro>div,html[data-shared="true"] .top-tools>:not(.status),html[data-shared="true"] .entry-actions,html[data-shared="true"] .setup-note,html[data-shared="true"] .history-recent{display:none!important}
   </style>
-<script id="shared-state" type="application/json">{"version":5,"revision":70,"openings":{"juan":{"totalReward":2939200,"totalSpent":2987100},"yuna":{"totalReward":2589200,"totalSpent":1612500},"juha":{"totalReward":1965900,"totalSpent":1948000}},"openingsConfirmed":true,"openingCutoff":"2026-09-26","settings":{"gradeAnchorYear":2026,"grades":{"juan":4,"yuna":2,"juha":1},"baseAmounts":[18000,20000,22000,50000,60000,70000,80000,90000,100000],"weeklyRate":500,"weeklyBonus":1500,"walkRate":100,"repairPct":20,"special":{"childrens":50000,"birthday":100000,"christmas":50000}},"settingsEffectiveFrom":"2026-01-01","settingsHistory":[],"records":[{"id":"f84c5ea3-bce8-431a-b101-893149750229","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-08-31","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-08-31","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-06","note":"2026년 9월 시트","includedInOpening":true},{"id":"6a55f54f-cc5b-444b-a5f9-2be291a427cd","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-08-31","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-08-31","count":3,"amount":1500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-06","note":"2026년 9월 시트","includedInOpening":true},{"id":"d8aa250b-88d2-4e09-a136-9e8255d49d0a","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-08-31","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-08-31","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-06","note":"2026년 9월 시트","includedInOpening":true},{"id":"47b55027-9181-429a-b8be-1cada8d76625","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-09-07","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-07","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-13","note":"2026년 9월 시트","includedInOpening":true},{"id":"ff2aad36-54f6-47e2-b92d-ab2d4d2ade44","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-09-07","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-09-07","count":5,"amount":2500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-13","note":"2026년 9월 시트","includedInOpening":true},{"id":"a3d54e12-1239-44c2-a8bf-44eb185b2e97","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-09-07","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-09-07","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-13","note":"2026년 9월 시트","includedInOpening":true},{"id":"0de606b7-4676-4c89-8ca3-ad2b29ed9bc7","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-09-14","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-14","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-20","note":"2026년 9월 시트","includedInOpening":true},{"id":"3bdd8e41-a782-4f02-8833-00d47cf5cacc","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-09-14","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-09-14","count":3,"amount":1500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-20","note":"2026년 9월 시트","includedInOpening":true},{"id":"f8619e01-52c8-4748-8ef2-0a6fdbc763c7","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-09-14","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-09-14","count":6,"amount":3000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-20","note":"2026년 9월 시트","includedInOpening":true},{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},{"id":"df6dcb64-0e64-4de2-8723-466e82e7257d","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-09-21","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-09-21","count":3,"amount":1500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},{"id":"0247c2f9-e615-4a76-9cb3-318478e49258","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-09-21","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-09-21","count":6,"amount":3000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},{"id":"33eed3c7-9bc1-4334-9b61-9448611db7f6","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"walk|juan|2026-08","kind":"walk","child":"juan","bucket":"general","period":"2026-08","count":313.01,"amount":25100,"rules":{"rate":100,"repair":20},"rounding":"hundredUp","effectiveDate":"2026-09-01","note":"2026년 8월 슈퍼워크 시트","includedInOpening":true},{"id":"afae55e0-2e58-4515-9903-94d87842401f","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"walk|yuna|2026-08","kind":"walk","child":"yuna","bucket":"general","period":"2026-08","count":17.87,"amount":1500,"rules":{"rate":100,"repair":20},"rounding":"hundredUp","effectiveDate":"2026-09-01","note":"2026년 8월 슈퍼워크 시트","includedInOpening":true},{"id":"76e6b4e4-a8fe-4584-9360-a12905c7a280","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"walk|juha|2026-08","kind":"walk","child":"juha","bucket":"general","period":"2026-08","count":105.19,"amount":8500,"rules":{"rate":100,"repair":20},"rounding":"hundredUp","effectiveDate":"2026-09-01","note":"2026년 8월 슈퍼워크 시트","includedInOpening":true},{"id":"130e48c8-8ae1-45c6-a74b-62cdaacf762c","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-137500,"effectiveDate":"2026-09-06","note":"2026년 9월 시트 현질","includedInOpening":true},{"id":"c7da2ebc-820c-4a5d-80c1-577c895ca4c8","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"kind":"spend","child":"juha","bucket":"general","category":"게임","amount":-85000,"effectiveDate":"2026-09-06","note":"2026년 9월 시트 현질","includedInOpening":true},{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","history":[{"at":"2026-09-26T14:15:58.268Z","action":"수정","before":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-120900,"effectiveDate":"2026-09-27","note":"2026년 9월 시트 현질","includedInOpening":true},"after":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:15:58.268Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},"changes":["금액: -120900 → -85900","메모: 2026년 9월 시트 현질 → 발로에서생선 3.5만 차감함"]},{"at":"2026-09-26T14:16:11.992Z","action":"수정","before":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:15:58.268Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},"after":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:11.992Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":false},"changes":["시트 시작값 포함: true → false"]},{"at":"2026-09-26T14:16:21.592Z","action":"수정","before":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:11.992Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":false},"after":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:21.592Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},"changes":["시트 시작값 포함: false → true"]}],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:21.592Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},{"id":"5d772ce8-dbf3-4987-b186-2beb4ff3e863","status":"active","history":[],"createdAt":"2026-09-26T14:05:24.655Z","updatedAt":"2026-09-26T14:05:24.655Z","adjustment":0,"includedInOpening":true,"note":"100000","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-10-07","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},{"id":"0c19661d-cdcf-4821-8c9a-0428a7590681","status":"active","history":[],"createdAt":"2026-09-26T14:12:05.637Z","updatedAt":"2026-09-26T14:12:05.637Z","adjustment":0,"includedInOpening":true,"note":"1,099,000 IDR","kind":"spend","child":"juha","bucket":"general","category":"게임","amount":-83000,"effectiveDate":"2026-09-22"},{"id":"88e3c27c-b776-49c5-a70f-5dd86a80e3e0","status":"active","history":[],"createdAt":"2026-09-26T14:12:16.311Z","updatedAt":"2026-09-26T14:12:16.311Z","adjustment":0,"includedInOpening":true,"note":"599,000 IDR","kind":"spend","child":"juha","bucket":"general","category":"게임","amount":-42000,"effectiveDate":"2026-09-22"},{"id":"f5ff17a8-b853-4200-9048-22b305b16f34","status":"active","history":[],"createdAt":"2026-09-26T14:12:37.589Z","updatedAt":"2026-09-26T14:12:37.589Z","adjustment":0,"includedInOpening":true,"note":"주하 한달 공부보상","kind":"manual","child":"juha","bucket":"general","amount":25000,"effectiveDate":"2026-09-22"},{"id":"8255ef6a-0eb7-4ecb-8648-59c4856a3bb2","status":"active","history":[],"createdAt":"2026-09-26T14:14:49.016Z","updatedAt":"2026-09-26T14:14:49.016Z","adjustment":0,"includedInOpening":true,"note":"생일선물","kind":"birthday","child":"juan","bucket":"general","amount":100000,"effectiveDate":"2026-09-22","period":"2026","key":"birthday|juan|2026","rules":{"amount":100000}},{"id":"8cc2863f-3464-430c-9354-4530be9db7a9","status":"active","history":[],"createdAt":"2026-09-26T14:15:04.905Z","updatedAt":"2026-09-26T14:15:04.905Z","adjustment":0,"includedInOpening":true,"note":"발로현질(생일선물에서 차감)","kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-65000,"effectiveDate":"2026-09-22"}],"spendCategories":["게임","이체","의류","미용"],"sheet2026SepImported":true,"lastSavedAt":"2026-09-27T03:11:09.753Z","exportedAt":"2026-09-27T03:10:49.539Z"}</script></head>
+<script id="shared-state" type="application/json">{"version":5,"revision":89,"openings":{"juan":{"totalReward":2939200,"totalSpent":2987100},"yuna":{"totalReward":2589200,"totalSpent":1612500},"juha":{"totalReward":1965900,"totalSpent":1948000}},"openingsConfirmed":true,"openingCutoff":"2026-09-26","settings":{"gradeAnchorYear":2026,"grades":{"juan":4,"yuna":2,"juha":1},"baseAmounts":[18000,20000,22000,50000,60000,70000,80000,90000,100000],"weeklyRate":500,"weeklyBonus":1500,"walkRate":100,"repairPct":20,"special":{"childrens":50000,"birthday":100000,"christmas":50000}},"settingsEffectiveFrom":"2026-01-01","settingsHistory":[],"records":[{"id":"f84c5ea3-bce8-431a-b101-893149750229","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-08-31","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-08-31","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-06","note":"2026년 9월 시트","includedInOpening":true},{"id":"6a55f54f-cc5b-444b-a5f9-2be291a427cd","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-08-31","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-08-31","count":3,"amount":1500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-06","note":"2026년 9월 시트","includedInOpening":true},{"id":"d8aa250b-88d2-4e09-a136-9e8255d49d0a","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-08-31","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-08-31","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-06","note":"2026년 9월 시트","includedInOpening":true},{"id":"47b55027-9181-429a-b8be-1cada8d76625","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-09-07","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-07","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-13","note":"2026년 9월 시트","includedInOpening":true},{"id":"ff2aad36-54f6-47e2-b92d-ab2d4d2ade44","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-09-07","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-09-07","count":5,"amount":2500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-13","note":"2026년 9월 시트","includedInOpening":true},{"id":"a3d54e12-1239-44c2-a8bf-44eb185b2e97","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-09-07","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-09-07","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-13","note":"2026년 9월 시트","includedInOpening":true},{"id":"0de606b7-4676-4c89-8ca3-ad2b29ed9bc7","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-09-14","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-14","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-20","note":"2026년 9월 시트","includedInOpening":true},{"id":"3bdd8e41-a782-4f02-8833-00d47cf5cacc","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-09-14","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-09-14","count":3,"amount":1500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-20","note":"2026년 9월 시트","includedInOpening":true},{"id":"f8619e01-52c8-4748-8ef2-0a6fdbc763c7","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-09-14","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-09-14","count":6,"amount":3000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-20","note":"2026년 9월 시트","includedInOpening":true},{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"active","history":[{"at":"2026-09-27T06:44:38.014Z","action":"삭제","before":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"after":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"cancelled","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T06:44:38.014Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"changes":["상태: active → cancelled"]},{"at":"2026-09-27T06:44:49.717Z","action":"복구","before":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"cancelled","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T06:44:38.014Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"after":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T06:44:49.717Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"changes":["상태: cancelled → active"]},{"at":"2026-09-27T07:26:29.902Z","action":"삭제","before":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T06:44:49.717Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"after":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"cancelled","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T07:26:29.902Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"changes":["상태: active → cancelled"]},{"at":"2026-09-27T07:28:59.443Z","action":"복구","before":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"cancelled","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T07:26:29.902Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"after":{"id":"1c4de5fe-f893-4df2-a4aa-87ef9de4717a","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T07:28:59.443Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},"changes":["상태: cancelled → active"]}],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-27T07:28:59.443Z","adjustment":0,"key":"weekly|juan|2026-09-21","kind":"weekly","child":"juan","bucket":"malhae","period":"2026-09-21","count":7,"amount":5000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},{"id":"df6dcb64-0e64-4de2-8723-466e82e7257d","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|yuna|2026-09-21","kind":"weekly","child":"yuna","bucket":"malhae","period":"2026-09-21","count":3,"amount":1500,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},{"id":"0247c2f9-e615-4a76-9cb3-318478e49258","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"weekly|juha|2026-09-21","kind":"weekly","child":"juha","bucket":"malhae","period":"2026-09-21","count":6,"amount":3000,"rules":{"rate":500,"bonus":1500},"effectiveDate":"2026-09-27","note":"2026년 9월 시트","includedInOpening":true},{"id":"33eed3c7-9bc1-4334-9b61-9448611db7f6","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"walk|juan|2026-08","kind":"walk","child":"juan","bucket":"general","period":"2026-08","count":313.01,"amount":25100,"rules":{"rate":100,"repair":20},"rounding":"hundredUp","effectiveDate":"2026-09-01","note":"2026년 8월 슈퍼워크 시트","includedInOpening":true},{"id":"afae55e0-2e58-4515-9903-94d87842401f","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"walk|yuna|2026-08","kind":"walk","child":"yuna","bucket":"general","period":"2026-08","count":17.87,"amount":1500,"rules":{"rate":100,"repair":20},"rounding":"hundredUp","effectiveDate":"2026-09-01","note":"2026년 8월 슈퍼워크 시트","includedInOpening":true},{"id":"76e6b4e4-a8fe-4584-9360-a12905c7a280","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"key":"walk|juha|2026-08","kind":"walk","child":"juha","bucket":"general","period":"2026-08","count":105.19,"amount":8500,"rules":{"rate":100,"repair":20},"rounding":"hundredUp","effectiveDate":"2026-09-01","note":"2026년 8월 슈퍼워크 시트","includedInOpening":true},{"id":"130e48c8-8ae1-45c6-a74b-62cdaacf762c","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-137500,"effectiveDate":"2026-09-06","note":"2026년 9월 시트 현질","includedInOpening":true},{"id":"c7da2ebc-820c-4a5d-80c1-577c895ca4c8","status":"active","history":[],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"kind":"spend","child":"juha","bucket":"general","category":"게임","amount":-85000,"effectiveDate":"2026-09-06","note":"2026년 9월 시트 현질","includedInOpening":true},{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","history":[{"at":"2026-09-26T14:15:58.268Z","action":"수정","before":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T13:57:13.339Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-120900,"effectiveDate":"2026-09-27","note":"2026년 9월 시트 현질","includedInOpening":true},"after":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:15:58.268Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},"changes":["금액: -120900 → -85900","메모: 2026년 9월 시트 현질 → 발로에서생선 3.5만 차감함"]},{"at":"2026-09-26T14:16:11.992Z","action":"수정","before":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:15:58.268Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},"after":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:11.992Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":false},"changes":["시트 시작값 포함: true → false"]},{"at":"2026-09-26T14:16:21.592Z","action":"수정","before":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:11.992Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":false},"after":{"id":"5cced27c-f08e-402b-8982-1efed325892f","status":"active","createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:21.592Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임·현질","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},"changes":["시트 시작값 포함: false → true"]}],"createdAt":"2026-09-26T13:57:13.339Z","updatedAt":"2026-09-26T14:16:21.592Z","adjustment":0,"kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-85900,"effectiveDate":"2026-09-27","note":"발로에서생선 3.5만 차감함","includedInOpening":true},{"id":"5d772ce8-dbf3-4987-b186-2beb4ff3e863","status":"active","history":[],"createdAt":"2026-09-26T14:05:24.655Z","updatedAt":"2026-09-26T14:05:24.655Z","adjustment":0,"includedInOpening":true,"note":"100000","kind":"birthday","child":"juha","bucket":"general","amount":100000,"effectiveDate":"2026-10-07","period":"2026","key":"birthday|juha|2026","rules":{"amount":100000}},{"id":"0c19661d-cdcf-4821-8c9a-0428a7590681","status":"active","history":[],"createdAt":"2026-09-26T14:12:05.637Z","updatedAt":"2026-09-26T14:12:05.637Z","adjustment":0,"includedInOpening":true,"note":"1,099,000 IDR","kind":"spend","child":"juha","bucket":"general","category":"게임","amount":-83000,"effectiveDate":"2026-09-22"},{"id":"88e3c27c-b776-49c5-a70f-5dd86a80e3e0","status":"active","history":[],"createdAt":"2026-09-26T14:12:16.311Z","updatedAt":"2026-09-26T14:12:16.311Z","adjustment":0,"includedInOpening":true,"note":"599,000 IDR","kind":"spend","child":"juha","bucket":"general","category":"게임","amount":-42000,"effectiveDate":"2026-09-22"},{"id":"f5ff17a8-b853-4200-9048-22b305b16f34","status":"active","history":[],"createdAt":"2026-09-26T14:12:37.589Z","updatedAt":"2026-09-26T14:12:37.589Z","adjustment":0,"includedInOpening":true,"note":"주하 한달 공부보상","kind":"manual","child":"juha","bucket":"general","amount":25000,"effectiveDate":"2026-09-22"},{"id":"8255ef6a-0eb7-4ecb-8648-59c4856a3bb2","status":"active","history":[],"createdAt":"2026-09-26T14:14:49.016Z","updatedAt":"2026-09-26T14:14:49.016Z","adjustment":0,"includedInOpening":true,"note":"생일선물","kind":"birthday","child":"juan","bucket":"general","amount":100000,"effectiveDate":"2026-09-22","period":"2026","key":"birthday|juan|2026","rules":{"amount":100000}},{"id":"8cc2863f-3464-430c-9354-4530be9db7a9","status":"active","history":[{"at":"2026-09-27T07:35:32.068Z","action":"수정","before":{"id":"8cc2863f-3464-430c-9354-4530be9db7a9","status":"active","createdAt":"2026-09-26T14:15:04.905Z","updatedAt":"2026-09-26T14:15:04.905Z","adjustment":0,"includedInOpening":true,"note":"발로현질(생일선물에서 차감)","kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-65000,"effectiveDate":"2026-09-22"},"after":{"id":"8cc2863f-3464-430c-9354-4530be9db7a9","status":"active","createdAt":"2026-09-26T14:15:04.905Z","updatedAt":"2026-09-27T07:35:32.068Z","adjustment":0,"includedInOpening":true,"note":"발로(생선에서 차감)","kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-65000,"effectiveDate":"2026-09-22"},"changes":["메모: 발로현질(생일선물에서 차감) → 발로(생선에서 차감)"]}],"createdAt":"2026-09-26T14:15:04.905Z","updatedAt":"2026-09-27T07:35:32.068Z","adjustment":0,"includedInOpening":true,"note":"발로(생선에서 차감)","kind":"spend","child":"juan","bucket":"general","category":"게임","amount":-65000,"effectiveDate":"2026-09-22"}],"spendCategories":["게임","이체","의류","미용"],"sheet2026SepImported":true,"lastSavedAt":"2026-09-27T07:35:32.068Z","exportedAt":"2026-09-27T03:10:49.539Z"}</script></head>
 <body>
   <main class="shell">
     <header class="top"><div class="brand"><div class="mark">₩</div><h1>신씨네가족 용돈규칙<sup class="status">공유본 · 2026-09-27</sup></h1></div>
       <div class="top-tools" aria-label="정산 상태와 파일 작업">
         <details id="due-popover" class="top-popover"><summary id="due-indicator" class="top-icon" aria-label="확인할 정산" title="정산 모두 기록됨"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 9h18m-12 6 2 2 4-4"></path></svg><span id="due-count" class="icon-count complete">✓</span><span class="top-label" aria-hidden="true">정산</span></summary><div class="popover-card"><h2>확인할 정산</h2><div id="due-list" class="due-list"><p class="due-empty">현재까지 지급일이 지난 정산은 모두 입력되어 있습니다.</p></div></div></details>
-        <details id="status-popover" class="top-popover"><summary id="status-indicator" class="top-icon" aria-label="장부 상태" title="장부 상태 · 파일 생성 완료"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="top-label" aria-hidden="true">장부</span></summary><div class="popover-card status-card"><h2>장부 상태</h2><p id="ledger-updated">장부 수정 2026. 9. 27. 오후 12:11</p><p id="backup-status">백업 생성 2026. 9. 27. 오후 12:11 · 최신 장부</p><p id="share-status">공유 파일 생성 2026. 9. 27. 오후 12:31 · 최신 장부</p><small>파일 생성 시각입니다. GitHub 게시 여부는 별도로 확인하세요.</small></div></details>
+        <details id="status-popover" class="top-popover"><summary id="status-indicator" class="top-icon attention" aria-label="장부 상태" title="장부 상태 · 저장할 파일이 있습니다"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="top-label" aria-hidden="true">장부</span></summary><div class="popover-card status-card"><h2>장부 상태</h2><p id="ledger-updated">장부 수정 2026. 9. 27. 오후 04:35</p><p id="backup-status" class="stale">백업 생성 2026. 9. 27. 오후 12:11 · 다시 저장 필요</p><p id="share-status" class="stale">공유 파일 생성 2026. 9. 27. 오후 04:22 · 다시 저장 필요</p><small>파일 생성 시각입니다. GitHub 게시 여부는 별도로 확인하세요.</small></div></details>
         <span class="top-divider" aria-hidden="true"></span>
         <button id="export-csv" class="top-icon" type="button" title="기록 CSV 저장" aria-label="기록 CSV 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M3 14h18M10 9v11"></path></svg><span class="top-label" aria-hidden="true">CSV</span></button>
-        <button id="export-json" class="top-icon" type="button" title="장부 백업 저장" aria-label="장부 백업 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"></path></svg><span class="top-label" aria-hidden="true">백업</span></button>
+        <button id="export-json" class="top-icon attention" type="button" title="장부 백업 저장" aria-label="장부 백업 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"></path></svg><span class="top-label" aria-hidden="true">백업</span></button>
         <button id="import-json" class="top-icon" type="button" title="백업 불러오기" aria-label="백업 불러오기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 16v4h16v-4"></path></svg><span class="top-label" aria-hidden="true">불러오기</span></button>
         <button id="export-share" class="top-icon primary" type="button" title="공유용 HTML 저장 · GitHub에 직접 올리기" aria-label="공유용 HTML 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7M21 3l-11 11"></path><path d="M20 13v5a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h5"></path></svg><span class="top-label" aria-hidden="true">공유</span></button>
         <input id="import-file" class="hidden" type="file" accept=".json,application/json">
@@ -134,45 +189,45 @@
       <section class="panel" aria-labelledby="entry-title">
         <div class="panel-head"><h2 id="entry-title">기록 추가</h2></div>
         <div class="tabbar" role="tablist" aria-label="입력 종류">
-          <button class="tab active" data-tab="weekly" role="tab" aria-selected="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 9h18m-12 6 2 2 4-4"></path></svg>말해보카</button>
+          <button class="tab" data-tab="weekly" role="tab" aria-selected="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 9h18m-12 6 2 2 4-4"></path></svg>말해보카</button>
           <button class="tab" data-tab="walk" role="tab" aria-selected="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M5 16l4-5 4 2 4-7 3 2"></path><circle cx="5" cy="16" r="1"></circle><circle cx="17" cy="6" r="1"></circle></svg>슈퍼워크</button>
-          <button class="tab" data-tab="other" role="tab" aria-selected="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="9" width="16" height="12" rx="2"></rect><path d="M3 9h18M12 9v12M12 9c-4 0-6-1-6-4 0-2 3-3 6 4Zm0 0c4 0 6-1 6-4 0-2-3-3-6 4Z"></path></svg>용돈내역</button>
+          <button class="tab active" data-tab="other" role="tab" aria-selected="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="9" width="16" height="12" rx="2"></rect><path d="M3 9h18M12 9v12M12 9c-4 0-6-1-6-4 0-2 3-3 6 4Zm0 0c4 0 6-1 6-4 0-2-3-3-6 4Z"></path></svg>용돈내역</button>
           <button class="tab" data-tab="spend" role="tab" aria-selected="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 10h18M7 15h4"></path></svg>사용내역</button>
         </div>
-        <div id="view-weekly" class="view active" role="tabpanel">
+        <div id="view-weekly" class="view" role="tabpanel">
           <div class="period-row"><div><div id="week-title" class="period-main">2026-09-21(월) ~ 2026-09-27(일)</div><div id="week-sub" class="period-sub">규칙상 지급일: 2026-09-27(일)</div></div><div class="period-buttons"><button id="week-prev" class="icon-btn" aria-label="이전 주">‹</button><button id="week-next" class="icon-btn" aria-label="다음 주">›</button></div></div>
           <div class="quick-tools"><label for="week-jump">기간 선택</label><input id="week-jump" type="date" aria-label="입력할 주의 날짜"><button id="week-latest" class="btn mini" type="button">최근 주</button></div>
           <div id="weekly-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="juan"><span>시트에 이미 포함</span></label></div><div class="stepper"><button type="button" aria-label="주완 횟수 감소">−</button><input type="number" min="0" max="7" step="1" inputmode="numeric" aria-label="주완 성공 횟수" data-child="juan"><button type="button" aria-label="주완 횟수 증가">+</button></div><div class="preview">5,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="yuna"><span>시트에 이미 포함</span></label></div><div class="stepper"><button type="button" aria-label="윤아 횟수 감소">−</button><input type="number" min="0" max="7" step="1" inputmode="numeric" aria-label="윤아 성공 횟수" data-child="yuna"><button type="button" aria-label="윤아 횟수 증가">+</button></div><div class="preview">1,500원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="juha"><span>시트에 이미 포함</span></label></div><div class="stepper"><button type="button" aria-label="주하 횟수 감소">−</button><input type="number" min="0" max="7" step="1" inputmode="numeric" aria-label="주하 성공 횟수" data-child="juha"><button type="button" aria-label="주하 횟수 증가">+</button></div><div class="preview">3,000원</div></div></div>
           <div id="week-legacy-note" class="setup-note hidden">이 기간과 겹치는 예전 일~토 기록이 있습니다. 중복 입력 전 기록 내역을 확인하세요.</div>
-          <details class="more-options"><summary>날짜·메모 조정</summary><div class="field-grid"><div class="field"><label for="week-credit">용돈 지급일</label><input id="week-credit" type="date" data-initial="2026-09-27" data-dirty="0"><small>기본값: 해당 주 일요일</small></div><div class="field"><label for="week-note">메모 (선택)</label><input id="week-note" maxlength="80" placeholder="예: 여행 기간" data-initial="2026년 9월 시트" data-dirty="0"></div></div></details>
+          <details class="more-options" open=""><summary>날짜·메모</summary><div class="field-grid"><div class="field"><label for="week-credit">용돈 지급일</label><input id="week-credit" type="date" data-initial="2026-09-27" data-dirty="0"><small>기본값: 해당 주 일요일</small></div><div class="field"><label for="week-note">메모 (선택)</label><input id="week-note" maxlength="80" placeholder="예: 여행 기간" data-initial="2026년 9월 시트" data-dirty="0"></div></div></details>
           <div id="week-opening-note" class="setup-note hidden"></div>
-          <div class="actions"><button id="weekly-save" class="btn primary">입력한 아이 한번에 저장</button></div>
-          <p class="explainer">빈칸은 건너뜀 · 0회 입력 가능 · 다시 저장하면 수정</p>
+          <div class="actions"><button id="weekly-save" class="btn primary">저장</button></div>
         </div>
         <div id="view-walk" class="view" role="tabpanel">
-          <div class="period-row"><div class="field" style="min-width:170px"><label for="walk-period">실적 월</label><input id="walk-period" type="month"></div><div id="walk-period-hint" class="period-sub">규칙상 지급일: 2026-09-01</div></div>
-          <div id="walk-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="juan"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="워크 (소수 둘째 자리까지)" aria-label="주완 워크 수" data-child="juan"><div class="preview">25,100원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="yuna"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="워크 (소수 둘째 자리까지)" aria-label="윤아 워크 수" data-child="yuna"><div class="preview">1,500원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="juha"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="워크 (소수 둘째 자리까지)" aria-label="주하 워크 수" data-child="juha"><div class="preview">8,500원</div></div></div>
-          <details class="more-options"><summary>날짜·메모 조정</summary><div class="field-grid"><div class="field"><label for="walk-credit">용돈 지급일</label><input id="walk-credit" type="date" data-initial="2026-09-01" data-dirty="0"><small>기본값: 실적 다음 달 1일</small></div><div class="field"><label for="walk-note">메모 (선택)</label><input id="walk-note" maxlength="80" placeholder="예: 8월 기록" data-initial="2026년 8월 슈퍼워크 시트" data-dirty="0"></div></div></details>
-          <div id="walk-opening-note" class="setup-note">이 날짜는 시트 시작값 확인일 이전입니다. 각 아이의 ‘시트에 이미 포함’ 표시를 확인하세요.</div>
-          <div class="actions"><button id="walk-save" class="btn green">입력한 아이 한번에 저장</button></div>
-          <p class="explainer">8월 300워크 → 9월 1일 24,000원</p>
+          <div class="period-row"><div class="field" style="min-width:250px"><label for="walk-period">실적 월</label><div class="month-stepper"><button id="walk-prev-month" class="icon-btn" type="button" aria-label="이전 실적 월">−</button><input id="walk-period" type="month"><button id="walk-next-month" class="icon-btn" type="button" aria-label="다음 실적 월">+</button></div></div><div id="walk-period-hint" class="period-sub">규칙상 지급일: 2026-09-01</div></div>
+          <div id="walk-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="juan"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="WALK" aria-label="주완 워크 수" data-child="juan"><div class="preview">25,100원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="yuna"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="WALK" aria-label="윤아 워크 수" data-child="yuna"><div class="preview">1,500원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">기록 있음 · 다시 저장하면 수정</div><label class="checkline"><input type="checkbox" data-included="juha"><span>시트에 이미 포함</span></label></div><input class="walk-input" type="number" min="0" step="0.01" inputmode="decimal" placeholder="WALK" aria-label="주하 워크 수" data-child="juha"><div class="preview">8,500원</div></div></div>
+          <details class="more-options" open=""><summary>날짜·메모</summary><div class="field-grid"><div class="field"><label for="walk-credit">용돈 지급일</label><input id="walk-credit" type="date" data-initial="2026-09-01" data-dirty="0"><small>기본값: 실적 다음 달 1일</small></div><div class="field"><label for="walk-note">메모 (선택)</label><input id="walk-note" maxlength="80" placeholder="예: 8월 기록" data-initial="2026년 8월 슈퍼워크 시트" data-dirty="0"></div></div></details>
+          <div id="walk-opening-note" class="setup-note">시트에 이미 포함된 날짜입니다. 표시를 확인하세요.</div>
+          <div class="actions"><button id="walk-save" class="btn green">저장</button></div>
+          
         </div>
         <form id="view-spend" class="view" role="tabpanel">
           <div class="field-grid">
-            <div class="field"><label for="spend-child">아이</label><select id="spend-child"><option value="juan">주완</option><option value="yuna">윤아</option><option value="juha">주하</option></select></div>
-            <div class="field"><label for="spend-category">사용 항목</label><div class="inline-control"><select id="spend-category"><option value="게임">게임</option><option value="이체">이체</option><option value="의류">의류</option><option value="미용">미용</option></select><button id="spend-add-category" class="btn mini" type="button">+ 추가</button><button id="spend-delete-category" class="btn mini danger" type="button">삭제</button></div></div>
+            <div class="field spend-single-field"><label for="spend-child">아이</label><select id="spend-child"><option value="juan">주완</option><option value="yuna">윤아</option><option value="juha">주하</option></select></div>
+            <div class="field spend-category-field"><label for="spend-category">사용 항목</label><div class="inline-control"><select id="spend-category"><option value="게임">게임</option><option value="이체">이체</option><option value="의류">의류</option><option value="미용">미용</option></select><button id="spend-add-category" class="btn mini" type="button">+ 추가</button><button id="spend-delete-category" class="btn mini danger" type="button">삭제</button></div></div>
             <div id="spend-category-editor" class="field hidden"><label for="spend-category-new">새 항목 이름</label><div class="new-category"><input id="spend-category-new" maxlength="24" placeholder="예: 학용품"><button id="spend-category-save" class="btn mini green" type="button">항목 저장</button></div></div>
-            <div class="field"><label for="spend-amount">사용 금액</label><input id="spend-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="예: 10000" required=""></div>
-            <div class="field"><label for="spend-date">실제 사용일</label><input id="spend-date" type="date" required=""></div>
-            <div class="field full"><label for="spend-note">사용 내역</label><input id="spend-note" maxlength="100" placeholder="예: 게임" required=""></div>
+            <div class="field spend-single-field"><label for="spend-amount">사용 금액</label><input id="spend-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="예: 10000" required=""></div>
+            <div class="field spend-single-field"><label for="spend-date">실제 사용일</label><input id="spend-date" type="date" required=""></div>
+            <div class="field full spend-single-field"><label for="spend-note">사용 내역</label><input id="spend-note" maxlength="100" placeholder="예: 게임" required=""></div>
           </div>
-          <div id="spend-opening-note" class="setup-note"><label class="checkline"><input type="checkbox" data-single-included="1"><span>이 기록은 시트 시작값에 이미 포함되어 있습니다</span></label></div>
-          <div class="actions"><button type="submit" class="btn pink">사용 내역 저장</button></div>
+          <div id="spend-opening-note" class="setup-note"><label class="checkline"><input type="checkbox" data-single-included="1"><span>시트에 이미 포함</span></label></div>
+          <div class="actions spend-single-actions"><button type="submit" class="btn pink">저장</button></div>
+          <div id="transfer-bulk" class="hidden"><div class="field-grid"><div class="field"><label for="transfer-date">실제 이체일</label><input id="transfer-date" type="date"></div><div class="field"><label for="transfer-note">공통 메모 (선택)</label><input id="transfer-note" maxlength="100" placeholder="예: 각자 통장으로 이체"></div></div><div id="transfer-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">중2</div><label class="checkline"><input type="checkbox" data-transfer-included="juan"><span>시트에 이미 포함</span></label></div><input type="checkbox" data-transfer-child="juan" aria-label="주완 이체 기록 선택"><input class="transfer-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="금액" data-transfer-amount="juan" aria-label="주완 이체 금액"></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">초6</div><label class="checkline"><input type="checkbox" data-transfer-included="yuna"><span>시트에 이미 포함</span></label></div><input type="checkbox" data-transfer-child="yuna" aria-label="윤아 이체 기록 선택"><input class="transfer-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="금액" data-transfer-amount="yuna" aria-label="윤아 이체 금액"></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">초5</div><label class="checkline"><input type="checkbox" data-transfer-included="juha"><span>시트에 이미 포함</span></label></div><input type="checkbox" data-transfer-child="juha" aria-label="주하 이체 기록 선택"><input class="transfer-amount" type="number" min="1" step="1" inputmode="numeric" placeholder="금액" data-transfer-amount="juha" aria-label="주하 이체 금액"></div></div><div id="transfer-opening-note" class="setup-note hidden"></div><div class="actions"><button id="transfer-save" type="button" class="btn pink">저장</button></div></div>
         </form>
-        <div id="view-other" class="view" role="tabpanel">
-          <div class="field" style="margin-bottom:12px"><label for="other-kind">항목</label><select id="other-kind"><option value="base">월 기본 용돈</option><option value="childrens">어린이날</option><option value="birthday">생일</option><option value="christmas">크리스마스</option><option value="seollal">설날</option><option value="chuseok">추석</option><option value="manual">기타 용돈</option></select></div>
-          <div id="base-bulk" class=""><div class="field-grid"><div class="field"><label for="base-period">기준 월</label><input id="base-period" type="month"></div><div class="field"><label for="base-date">실제 용돈 지급일</label><input id="base-date" type="date"></div></div><div id="base-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">중2</div><label class="checkline"><input type="checkbox" data-base-included="juan"><span>시트 포함</span></label></div><input type="checkbox" data-base-child="juan" aria-label="주완 기본 용돈 기록"><div class="preview">60,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">초6</div><label class="checkline"><input type="checkbox" data-base-included="yuna"><span>시트 포함</span></label></div><input type="checkbox" data-base-child="yuna" aria-label="윤아 기본 용돈 기록"><div class="preview">22,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">초5</div><label class="checkline"><input type="checkbox" data-base-included="juha"><span>시트 포함</span></label></div><input type="checkbox" data-base-child="juha" aria-label="주하 기본 용돈 기록"><div class="preview">20,000원</div></div></div><div id="base-opening-note" class="setup-note hidden"></div><div class="actions"><button id="base-save" type="button" class="btn primary">세 아이 기본 용돈 한번에 기록</button></div><p class="explainer">이미 기록한 아이는 건너뜁니다. 금액과 날짜는 기록 내역에서 개별 수정할 수 있어요.</p></div>
-          <div id="event-bulk" class="hidden"><div class="field-grid"><div class="field"><label for="event-year">행사 연도</label><input id="event-year" type="number" min="2000" max="2100"></div><div class="field"><label for="event-date">실제 용돈 지급일</label><input id="event-date" type="date"></div></div><div id="event-rows"></div><div id="event-opening-note" class="setup-note hidden"></div><div class="actions"><button id="event-save" type="button" class="btn primary">세 아이 특별 용돈 한번에 기록</button></div><p class="explainer">이미 기록한 아이는 건너뜁니다. 금액과 실제 지급일은 기록 내역에서 개별 수정할 수 있어요.</p></div>
+        <div id="view-other" class="view active" role="tabpanel">
+          <div class="field" style="margin-bottom:12px"><label for="other-kind">항목</label><select id="other-kind"><option value="base">월 기본 용돈</option><option value="birthday">생일</option><option value="childrens">어린이날</option><option value="christmas">크리스마스</option><option value="seollal">설날</option><option value="chuseok">추석</option><option value="manual">기타 용돈</option></select></div>
+          <div id="base-bulk" class=""><div class="field-grid"><div class="field"><label for="base-period">기준 월</label><div class="month-stepper"><button id="base-prev-month" class="icon-btn" type="button" aria-label="이전 기준 월">−</button><input id="base-period" type="month"><button id="base-next-month" class="icon-btn" type="button" aria-label="다음 기준 월">+</button></div></div><div class="field"><label for="base-date">실제 용돈 지급일</label><input id="base-date" type="date"></div></div><div id="base-rows"><div class="bulk-row"><span class="monogram" style="background: rgb(100, 174, 226);">완</span><div><div class="bulk-name">주완</div><div class="bulk-note">중2</div><label class="checkline"><input type="checkbox" data-base-included="juan"><span>시트에 이미 포함</span></label></div><input type="checkbox" data-base-child="juan" aria-label="주완 기본 용돈 기록"><div class="preview">60,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(231, 123, 177);">윤</span><div><div class="bulk-name">윤아</div><div class="bulk-note">초6</div><label class="checkline"><input type="checkbox" data-base-included="yuna"><span>시트에 이미 포함</span></label></div><input type="checkbox" data-base-child="yuna" aria-label="윤아 기본 용돈 기록"><div class="preview">22,000원</div></div><div class="bulk-row"><span class="monogram" style="background: rgb(85, 174, 131);">하</span><div><div class="bulk-name">주하</div><div class="bulk-note">초5</div><label class="checkline"><input type="checkbox" data-base-included="juha"><span>시트에 이미 포함</span></label></div><input type="checkbox" data-base-child="juha" aria-label="주하 기본 용돈 기록"><div class="preview">20,000원</div></div></div><div id="base-opening-note" class="setup-note hidden"></div><div class="actions"><button id="base-save" type="button" class="btn primary">저장</button></div></div>
+          <div id="event-bulk" class="hidden"><div class="field-grid"><div class="field"><label for="event-year">행사 연도</label><input id="event-year" type="number" min="2000" max="2100"></div><div class="field"><label for="event-date">실제 용돈 지급일</label><input id="event-date" type="date"></div></div><div id="event-rows"></div><div id="event-opening-note" class="setup-note hidden"></div><div class="actions"><button id="event-save" type="button" class="btn primary">저장</button></div></div>
           <form id="other-form" class="field-grid hidden">
             <div class="field"><label for="other-child">아이</label><select id="other-child"><option value="juan">주완</option><option value="yuna">윤아</option><option value="juha">주하</option></select></div>
             <div class="field"><label for="other-period">행사 연도</label><input id="other-period" type="number" min="2000" max="2100"></div>
@@ -180,23 +235,23 @@
             <div class="field"><label for="other-amount">금액</label><input id="other-amount" type="number" min="0" step="1" inputmode="numeric" required=""></div>
             <div class="field"><label for="other-note">메모</label><input id="other-note" maxlength="100" placeholder="선택 입력"></div>
             <div id="other-opening-note" class="setup-note hidden full"></div>
-            <div class="actions full"><button type="submit" class="btn primary">용돈 기록</button></div>
+            <div class="actions full"><button type="submit" class="btn primary">저장</button></div>
           </form>
-          <p class="explainer">기본 날짜를 넣어두었습니다. 실제 지급일은 수정할 수 있습니다.</p>
+          
         </div>
       </section>
       <aside class="panel" aria-labelledby="history-title">
-        <div class="panel-head history-head"><h2 id="history-title">기록 내역</h2><div class="history-choices" role="group" aria-label="아이별 기록"><button class="history-choice" type="button" data-history-child="juan" aria-pressed="false">주완</button><button class="history-choice" type="button" data-history-child="yuna" aria-pressed="false">윤아</button><button class="history-choice" type="button" data-history-child="juha" aria-pressed="false">주하</button><button class="history-choice active" type="button" data-history-child="all" aria-pressed="true">3명 전체</button></div><button id="history-recent" class="history-recent" type="button" aria-pressed="false">최근 입력·수정</button><span id="history-count" class="fine">23건</span></div>
-        <div class="history-controls"><select id="history-kind" aria-label="항목 필터"><option value="all">전체 항목</option><option value="weekly">말해보카</option><option value="walk">슈퍼워크</option><option value="other">용돈내역</option><option value="spend">사용내역</option><option value="allowance">용돈전체</option></select><div class="history-month-nav"><button id="history-prev-month" type="button" aria-label="이전 달">−</button><input id="history-month" type="month" aria-label="용돈 지급일 또는 사용일의 월별 필터"><button id="history-next-month" type="button" aria-label="다음 달">+</button></div><select id="history-year" aria-label="연도별 필터"><option value="">연도 선택</option><option value="2026">2026년</option></select><button id="history-clear" class="btn mini" type="button">기간 전체</button></div>
-        <div id="history-summary" class="history-summary" aria-label="조회된 유효 기록의 합계" title="현재 조회 조건의 유효 기록 합계입니다. 삭제된 기록은 제외하고, 시트 포함·예정 기록은 포함합니다." data-kind="all" data-child="all"><div class="history-summary-row summary-head"><span>조회 합계</span><span>총 용돈내역</span><span>총 사용내역</span></div><div class="history-summary-row summary-all"><span class="summary-name">전체</span><strong class="summary-reward">203,100원</strong><strong class="summary-spent">498,400원</strong></div><div class="history-summary-row" data-child="juan"><span class="summary-name">주완</span><strong class="summary-reward">145,100원</strong><strong class="summary-spent">288,400원</strong></div><div class="history-summary-row" data-child="yuna"><span class="summary-name">윤아</span><strong class="summary-reward">8,500원</strong><strong class="summary-spent zero">0원</strong></div><div class="history-summary-row" data-child="juha"><span class="summary-name">주하</span><strong class="summary-reward">49,500원</strong><strong class="summary-spent">210,000원</strong></div></div>
-        <div id="history-list" class="history-list"><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 말해보카</div><div class="entry-detail">2026-09-27 용돈 · 2026-09-21(월~일) · 7회</div></div><div class="entry-amount positive">+5,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-title">윤아 · 말해보카</div><div class="entry-detail">2026-09-27 용돈 · 2026-09-21(월~일) · 3회</div></div><div class="entry-amount positive">+1,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 말해보카</div><div class="entry-detail">2026-09-27 용돈 · 2026-09-21(월~일) · 6회</div></div><div class="entry-amount positive">+3,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 사용내역</div><div class="entry-detail">2026-09-27 사용 · 게임 · 발로에서생선 3.5만 차감함</div></div><div class="entry-amount negative">-85,900원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57 · 수정 2026. 9. 26. 오후 11:16</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 사용내역</div><div class="entry-detail">2026-09-22 사용 · 게임 · 발로현질(생일선물에서 차감)</div></div><div class="entry-amount negative">-65,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 11:15</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 생일</div><div class="entry-detail">2026-09-22 용돈 · 생일선물</div></div><div class="entry-amount positive">+100,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 11:14</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 기타 용돈</div><div class="entry-detail">2026-09-22 용돈 · 주하 한달 공부용돈</div></div><div class="entry-amount positive">+25,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 11:12</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 사용내역</div><div class="entry-detail">2026-09-22 사용 · 게임 · 599,000 IDR</div></div><div class="entry-amount negative">-42,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 11:12</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 사용내역</div><div class="entry-detail">2026-09-22 사용 · 게임 · 1,099,000 IDR</div></div><div class="entry-amount negative">-83,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 11:12</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 말해보카</div><div class="entry-detail">2026-09-20 용돈 · 2026-09-14(월~일) · 7회</div></div><div class="entry-amount positive">+5,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-title">윤아 · 말해보카</div><div class="entry-detail">2026-09-20 용돈 · 2026-09-14(월~일) · 3회</div></div><div class="entry-amount positive">+1,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 말해보카</div><div class="entry-detail">2026-09-20 용돈 · 2026-09-14(월~일) · 6회</div></div><div class="entry-amount positive">+3,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 말해보카</div><div class="entry-detail">2026-09-13 용돈 · 2026-09-07(월~일) · 7회</div></div><div class="entry-amount positive">+5,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-title">윤아 · 말해보카</div><div class="entry-detail">2026-09-13 용돈 · 2026-09-07(월~일) · 5회</div></div><div class="entry-amount positive">+2,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 말해보카</div><div class="entry-detail">2026-09-13 용돈 · 2026-09-07(월~일) · 7회</div></div><div class="entry-amount positive">+5,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 말해보카</div><div class="entry-detail">2026-09-06 용돈 · 2026-08-31(월~일) · 7회</div></div><div class="entry-amount positive">+5,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-title">윤아 · 말해보카</div><div class="entry-detail">2026-09-06 용돈 · 2026-08-31(월~일) · 3회</div></div><div class="entry-amount positive">+1,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 말해보카</div><div class="entry-detail">2026-09-06 용돈 · 2026-08-31(월~일) · 7회</div></div><div class="entry-amount positive">+5,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 사용내역</div><div class="entry-detail">2026-09-06 사용 · 게임</div></div><div class="entry-amount negative">-137,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 사용내역</div><div class="entry-detail">2026-09-06 사용 · 게임</div></div><div class="entry-amount negative">-85,000원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-title">주완 · 슈퍼워크</div><div class="entry-detail">2026-09-01 용돈 · 2026-08 · 313.01워크</div></div><div class="entry-amount positive">+25,100원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-title">윤아 · 슈퍼워크</div><div class="entry-detail">2026-09-01 용돈 · 2026-08 · 17.87워크</div></div><div class="entry-amount positive">+1,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-title">주하 · 슈퍼워크</div><div class="entry-detail">2026-09-01 용돈 · 2026-08 · 105.19워크</div></div><div class="entry-amount positive">+8,500원</div></div><div class="entry-bottom"><span class="recorded">입력 2026. 9. 26. 오후 10:57</span><span class="entry-actions"><button class="edit-btn">수정</button><button class="edit-btn delete-btn">삭제</button></span></div></div></div>
+        <div class="panel-head history-head"><h2 id="history-title">기록 내역</h2><div class="history-choices" role="group" aria-label="아이별 기록"><button class="history-choice" type="button" data-history-child="juan" aria-pressed="false">주완</button><button class="history-choice" type="button" data-history-child="yuna" aria-pressed="false">윤아</button><button class="history-choice" type="button" data-history-child="juha" aria-pressed="false">주하</button><button class="history-choice active" type="button" data-history-child="all" aria-pressed="true">3명 전체</button></div><span id="history-count" class="fine">23건</span><button id="history-recent" class="history-recent" type="button" aria-pressed="false" aria-label="최근 입력·수정순" title="최근 입력·수정순"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="12" r="8"></circle><path d="M11 8v5l3 2M17 4l2-2m0 0v4m0-4h-4"></path></svg></button></div>
+        <div class="history-controls"><select id="history-kind" aria-label="항목 필터"><option value="all">전체항목</option><option value="weekly">말해보카</option><option value="walk">슈퍼워크</option><option value="other">용돈내역</option><option value="allowance">용돈전체</option><option value="spend">사용내역</option></select><div class="history-month-nav"><button id="history-prev-month" type="button" aria-label="이전 달">−</button><input id="history-month" type="month" aria-label="용돈 지급일 또는 사용일의 월별 필터"><button id="history-next-month" type="button" aria-label="다음 달">+</button></div><select id="history-year" aria-label="연도별 필터"><option value="">연도</option><option value="2026">2026년</option></select><button id="history-clear" class="btn mini" type="button" title="기간 전체" aria-label="기간 전체">ALL</button></div>
+        <div id="history-summary" class="history-summary" aria-label="조회된 유효 기록의 합계" title="현재 조회 조건의 유효 기록 합계입니다. 삭제된 기록은 제외하고, 시트에 이미 포함된 기록과 예정 기록은 포함합니다." data-kind="all" data-child="all"><div class="history-summary-row summary-head"><span>조회 합계</span><span>총 용돈내역</span><span>총 사용내역</span></div><div class="history-summary-row summary-all"><span class="summary-name">전체</span><strong class="summary-reward">203,100원</strong><strong class="summary-spent">498,400원</strong></div><div class="history-summary-row" data-child="juan"><span class="summary-name">주완</span><strong class="summary-reward">145,100원</strong><strong class="summary-spent">288,400원</strong></div><div class="history-summary-row" data-child="yuna"><span class="summary-name">윤아</span><strong class="summary-reward">8,500원</strong><strong class="summary-spent zero">0원</strong></div><div class="history-summary-row" data-child="juha"><span class="summary-name">주하</span><strong class="summary-reward">49,500원</strong><strong class="summary-spent">210,000원</strong></div></div>
+        <div id="history-list" class="history-list"><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 말해보카</div><div class="entry-amount positive">+5,000원</div></div><div class="entry-detail">2026-09-27 용돈 · 2026-09-21(월~일) · 7회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">윤아 · 말해보카</div><div class="entry-amount positive">+1,500원</div></div><div class="entry-detail">2026-09-27 용돈 · 2026-09-21(월~일) · 3회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 말해보카</div><div class="entry-amount positive">+3,000원</div></div><div class="entry-detail">2026-09-27 용돈 · 2026-09-21(월~일) · 6회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 사용내역</div><div class="entry-amount negative">-85,900원</div></div><div class="entry-detail">2026-09-27 사용 · 게임 · 발로에서생선 3.5만 차감함</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 사용내역</div><div class="entry-amount negative">-65,000원</div></div><div class="entry-detail">2026-09-22 사용 · 게임 · 발로(생선에서 차감)</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 생일</div><div class="entry-amount positive">+100,000원</div></div><div class="entry-detail">2026-09-22 용돈 · 생일선물</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 기타 용돈</div><div class="entry-amount positive">+25,000원</div></div><div class="entry-detail">2026-09-22 용돈 · 주하 한달 공부용돈</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 사용내역</div><div class="entry-amount negative">-42,000원</div></div><div class="entry-detail">2026-09-22 사용 · 게임 · 599,000 IDR</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 사용내역</div><div class="entry-amount negative">-83,000원</div></div><div class="entry-detail">2026-09-22 사용 · 게임 · 1,099,000 IDR</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 말해보카</div><div class="entry-amount positive">+5,000원</div></div><div class="entry-detail">2026-09-20 용돈 · 2026-09-14(월~일) · 7회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">윤아 · 말해보카</div><div class="entry-amount positive">+1,500원</div></div><div class="entry-detail">2026-09-20 용돈 · 2026-09-14(월~일) · 3회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 말해보카</div><div class="entry-amount positive">+3,000원</div></div><div class="entry-detail">2026-09-20 용돈 · 2026-09-14(월~일) · 6회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 말해보카</div><div class="entry-amount positive">+5,000원</div></div><div class="entry-detail">2026-09-13 용돈 · 2026-09-07(월~일) · 7회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">윤아 · 말해보카</div><div class="entry-amount positive">+2,500원</div></div><div class="entry-detail">2026-09-13 용돈 · 2026-09-07(월~일) · 5회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 말해보카</div><div class="entry-amount positive">+5,000원</div></div><div class="entry-detail">2026-09-13 용돈 · 2026-09-07(월~일) · 7회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 말해보카</div><div class="entry-amount positive">+5,000원</div></div><div class="entry-detail">2026-09-06 용돈 · 2026-08-31(월~일) · 7회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">윤아 · 말해보카</div><div class="entry-amount positive">+1,500원</div></div><div class="entry-detail">2026-09-06 용돈 · 2026-08-31(월~일) · 3회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 말해보카</div><div class="entry-amount positive">+5,000원</div></div><div class="entry-detail">2026-09-06 용돈 · 2026-08-31(월~일) · 7회</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 사용내역</div><div class="entry-amount negative">-137,500원</div></div><div class="entry-detail">2026-09-06 사용 · 게임</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 사용내역</div><div class="entry-amount negative">-85,000원</div></div><div class="entry-detail">2026-09-06 사용 · 게임</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juan"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주완 · 슈퍼워크</div><div class="entry-amount positive">+25,100원</div></div><div class="entry-detail">2026-09-01 용돈 · 2026-08 · 313.01워크</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="yuna"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">윤아 · 슈퍼워크</div><div class="entry-amount positive">+1,500원</div></div><div class="entry-detail">2026-09-01 용돈 · 2026-08 · 17.87워크</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div><div class="entry" data-child="juha"><div class="entry-top"><div><div class="entry-heading"><div class="entry-title">주하 · 슈퍼워크</div><div class="entry-amount positive">+8,500원</div></div><div class="entry-detail">2026-09-01 용돈 · 2026-08 · 105.19워크</div></div><span class="entry-actions"><button class="history-icon" type="button" title="수정" aria-label="수정"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4l11-11-4-4L4 16v4Z"></path><path d="m13 7 4 4"></path></svg></button><button class="history-icon danger" type="button" title="삭제" aria-label="삭제"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"></path></svg></button></span></div></div></div>
       </aside>
     </div>
   </main>
   <dialog id="opening-dialog"><div class="dialog-body"><div class="dialog-head"><h2>시트 시작값 확인·수정</h2><button class="close" data-close="opening-dialog" aria-label="닫기">×</button></div><p class="opening-help">처음 값은 보내주신 시트 이미지 기준입니다. 확인 후 저장하세요.</p><div class="field" style="margin-top:12px"><label for="opening-cutoff">시트 시작값 기준일</label><input id="opening-cutoff" type="date"></div><div id="opening-fields"></div><div class="actions"><button id="opening-save" class="btn primary">시작값 저장</button></div></div></dialog>
   <dialog id="settings-dialog"><div class="dialog-body"><div class="dialog-head"><h2>용돈규칙 수정</h2><button class="close" data-close="settings-dialog" aria-label="닫기">×</button></div><p class="opening-help">새 정산부터 바뀐 규칙이 적용됩니다. 이미 저장한 용돈액과 계산 규칙은 그대로 남습니다.</p><div id="settings-fields"></div><div class="actions"><button id="settings-save" class="btn primary">규칙 저장</button></div></div></dialog>
   <dialog id="edit-dialog"><div class="dialog-body"><div class="dialog-head"><h2>기록 수정</h2><button class="close" data-close="edit-dialog" aria-label="닫기">×</button></div><div id="edit-fields"></div><div class="actions"><button id="record-cancel" class="btn danger">삭제</button><button id="record-save" class="btn primary">저장</button></div><details class="audit"><summary>변경 이력</summary><div id="audit-list"></div></details></div></dialog>
-  <div id="toast" class="toast hidden" role="status">공유용 index.html을 저장했습니다. GitHub의 같은 파일에 덮어 올려주세요.</div>
+  <div id="toast" class="toast hidden" role="status"></div>
   <script>
 (() => {
   "use strict";
@@ -247,7 +302,7 @@
     }
     return changed;
   }
-  const defaultSpendCategories = ["게임", "간식", "쇼핑", "교통", "선물", "기타"];
+  const defaultSpendCategories = ["게임", "간식", "쇼핑", "교통", "선물", "이체", "기타"];
   const birthdays = { juan: "07-20", yuna: "02-12", juha: "10-07" };
   const defaultSettings = {
     gradeAnchorYear: 2026,
@@ -561,7 +616,7 @@
     const labels = {
       child: "아이", bucket: "사용 잔액", period: "활동 기간", count: "횟수·워크 수",
       effectiveDate: "용돈·사용일", amount: "금액", adjustment: "조정액", category: "항목",
-      note: "메모", includedInOpening: "시트 시작값 포함", status: "상태",
+      note: "메모", includedInOpening: "시트에 이미 포함", status: "상태",
     };
     return Object.entries(labels)
       .filter(([field]) => JSON.stringify(before[field]) !== JSON.stringify(after[field]))
@@ -621,6 +676,9 @@
   }
   function openingDefault(date) {
     return Boolean(state.openingsConfirmed && state.openingCutoff && date < state.openingCutoff);
+  }
+  function needsSheetInclusion(date) {
+    return Boolean(state.openingsConfirmed && validDate(date) && date < "2026-10-01");
   }
   function rulesAt(date, data = state) {
     const versions = [
@@ -908,9 +966,9 @@
   }
   function showDateNote(id, date) {
     const box = $(id);
-    if (!state.openingsConfirmed) return box.classList.add("hidden");
+    if (!needsSheetInclusion(date)) return box.classList.add("hidden");
     if (openingDefault(date)) {
-      box.textContent = "이 날짜는 시트 시작값 확인일 이전입니다. 각 아이의 ‘시트에 이미 포함’ 표시를 확인하세요.";
+      box.textContent = "시트에 이미 포함된 날짜입니다. 표시를 확인하세요.";
       box.classList.remove("hidden");
     } else if (date > todayKey()) {
       box.textContent = "미래 용돈 지급일입니다. 기록은 저장되지만 그 날짜가 되기 전에는 사용 가능 금액에 더하지 않습니다.";
@@ -925,10 +983,11 @@
     const text = node("div");
     text.append(
       node("div", "bulk-name", child.name),
-      node("div", "bulk-note", existing ? "기록 있음 · 다시 저장하면 수정" : kind === "weekly" ? "기본 7회 · 빈칸은 건너뜀" : "빈칸은 건너뜀")
+      node("div", "bulk-note", existing ? "기록 있음 · 다시 저장하면 수정" : kind === "weekly" ? "기본 7회" : "")
     );
     if (state.openingsConfirmed) {
       const line = node("label", "checkline");
+      line.classList.toggle("hidden", !needsSheetInclusion(credit));
       const checked = node("input");
       checked.type = "checkbox";
       checked.dataset.included = child.id;
@@ -955,7 +1014,7 @@
     } else {
       input = node("input", "walk-input");
       input.type = "number"; input.min = "0"; input.step = "0.01";
-      input.inputMode = "decimal"; input.placeholder = "워크 (소수 둘째 자리까지)";
+      input.inputMode = "decimal"; input.placeholder = "WALK";
       input.value = existing ? String(existing.count) : "";
       input.setAttribute("aria-label", child.name + " 워크 수");
       row.append(input);
@@ -1044,12 +1103,12 @@
       select.setAttribute("aria-label", child.name + " 기본 용돈 기록");
       row.append(select);
       row.append(node("div", "preview", existing ? "기록됨" : grade ? won(grade.amount) : "미정"));
-      if (state.openingsConfirmed && !existing) {
+      if (needsSheetInclusion(date) && !existing) {
         const line = node("label", "checkline");
         const included = node("input");
         included.type = "checkbox"; included.dataset.baseIncluded = child.id;
         included.checked = openingDefault(date);
-        line.append(included, node("span", "", "시트 포함"));
+        line.append(included, node("span", "", "시트에 이미 포함"));
         text.append(line);
       }
       root.append(row);
@@ -1077,12 +1136,12 @@
       select.checked = !existing; select.disabled = Boolean(existing);
       select.setAttribute("aria-label", child.name + " " + recordNames[kind] + " 기록");
       row.append(select, node("div", "preview", existing ? "기록됨" : won(amount)));
-      if (state.openingsConfirmed && !existing) {
+      if (needsSheetInclusion(date) && !existing) {
         const line = node("label", "checkline");
         const included = node("input");
         included.type = "checkbox"; included.dataset.eventIncluded = child.id;
         included.checked = openingDefault(date);
-        line.append(included, node("span", "", "시트 포함"));
+        line.append(included, node("span", "", "시트에 이미 포함"));
         detail.append(line);
       }
       root.append(row);
@@ -1108,13 +1167,13 @@
   function renderSingleInclusion(id, date) {
     const box = $(id);
     box.replaceChildren();
-    if (!state.openingsConfirmed) return box.classList.add("hidden");
+    if (!needsSheetInclusion(date)) return box.classList.add("hidden");
     const line = node("label", "checkline");
     const input = node("input");
     input.type = "checkbox";
     input.checked = openingDefault(date);
     input.dataset.singleIncluded = "1";
-    line.append(input, node("span", "", "이 기록은 시트 시작값에 이미 포함되어 있습니다"));
+    line.append(input, node("span", "", "시트에 이미 포함"));
     box.append(line);
     if (date > todayKey()) box.append(node("div", "fine", "미래 날짜는 용돈 지급일·사용일 전까지 현재 잔액에 반영하지 않습니다."));
     box.classList.remove("hidden");
@@ -1168,8 +1227,8 @@
       const existing = findRecord(kind, child, period);
       const date = existing && dateInput.dataset.dirty !== "1" ? existing.effectiveDate : enteredDate;
       const note = existing && noteInput.dataset.dirty !== "1" ? existing.note : noteInput.value.trim();
-      const included = root.querySelector('input[data-included="' + child + '"]')?.checked ??
-        (existing?.includedInOpening ?? openingDefault(date));
+      const included = needsSheetInclusion(date) ? (root.querySelector('input[data-included="' + child + '"]')?.checked ??
+        (existing?.includedInOpening ?? openingDefault(date))) : false;
       const activeRules = rulesAt(date);
       const rules = existing && date === existing.effectiveDate ? existing.rules : (isWeek
         ? { rate: activeRules.weeklyRate, bonus: activeRules.weeklyBonus }
@@ -1212,16 +1271,81 @@
       }
     }
   }
+  function renderSpendMode() {
+    const transfer = $("spend-category").value === "이체";
+    $("view-spend").classList.toggle("transfer-mode", transfer);
+    $("transfer-bulk").classList.toggle("hidden", !transfer);
+  }
+  function renderTransferRows(preset = true) {
+    const root = $("transfer-rows");
+    root.replaceChildren();
+    for (const child of children) {
+      const row = node("div", "bulk-row");
+      const mono = node("span", "monogram", child.short);
+      mono.style.background = child.color === "green" ? "#55ae83" : child.color === "pink" ? "#e77bb1" : "#64aee2";
+      const info = node("div");
+      const transferDate = $("transfer-date").value;
+      const grade = validDate(transferDate) ? gradeFor(rulesAt(transferDate), child.id, Number(transferDate.slice(0, 4))) : null;
+      info.append(node("div", "bulk-name", child.name), node("div", "bulk-note", grade?.name || "통장 이체"));
+      const selected = node("input");
+      selected.type = "checkbox";
+      selected.dataset.transferChild = child.id;
+      selected.checked = preset && Boolean(grade);
+      selected.setAttribute("aria-label", child.name + " 이체 기록 선택");
+      const amount = node("input", "transfer-amount");
+      amount.type = "number";
+      amount.min = "1";
+      amount.step = "1";
+      amount.inputMode = "numeric";
+      amount.placeholder = "금액";
+      amount.value = preset && grade ? String(grade.amount) : "";
+      amount.dataset.transferAmount = child.id;
+      amount.setAttribute("aria-label", child.name + " 이체 금액");
+      amount.oninput = () => { amount.dataset.dirty = "1"; selected.checked = Number(amount.value) > 0; };
+      row.append(mono, info, selected, amount);
+      if (state.openingsConfirmed) {
+        const line = node("label", "checkline");
+        line.classList.toggle("hidden", !needsSheetInclusion($("transfer-date").value));
+        const included = node("input");
+        included.type = "checkbox";
+        included.dataset.transferIncluded = child.id;
+        included.checked = openingDefault($("transfer-date").value);
+        line.append(included, node("span", "", "시트에 이미 포함"));
+        info.append(line);
+      }
+      root.append(row);
+    }
+    showDateNote("transfer-opening-note", $("transfer-date").value);
+  }
+  function saveTransfer() {
+    const effectiveDate = $("transfer-date").value;
+    if (!validDate(effectiveDate)) return toast("실제 이체일을 확인해주세요.");
+    const note = $("transfer-note").value.trim() || "통장 이체";
+    const entries = [];
+    for (const input of $("transfer-rows").querySelectorAll("input[data-transfer-child]:checked")) {
+      const child = input.dataset.transferChild;
+      const amount = formWhole($("transfer-rows").querySelector('input[data-transfer-amount="' + child + '"]').value, 1);
+      if (!Number.isSafeInteger(amount)) return toast(childName(child) + "의 이체 금액을 확인해주세요.");
+      entries.push({kind: "spend", child, bucket: "general", category: "이체", amount: -amount,
+        effectiveDate, note, includedInOpening: needsSheetInclusion(effectiveDate) && ($("transfer-rows").querySelector('input[data-transfer-included="' + child + '"]')?.checked || false)});
+    }
+    if (!entries.length) return toast("이체할 아이와 금액을 입력해주세요.");
+    if (!commit(draft => entries.forEach(entry => upsertOn(draft, entry)))) return;
+    renderTransferRows(false);
+    toast(entries.length + "명의 이체 내역을 기록했습니다.");
+  }
   function renderSpendCategories(selected) {
     const input = $("spend-category");
     const previous = selected || input.value || state.spendCategories[0];
-    input.replaceChildren(...state.spendCategories.map(name => option(name, displayTerms(name))));
-    input.value = state.spendCategories.includes(previous) ? previous : state.spendCategories[0];
+    const categories = state.spendCategories.includes("이체") ? state.spendCategories : [...state.spendCategories, "이체"];
+    input.replaceChildren(...categories.map(name => option(name, displayTerms(name))));
+    input.value = categories.includes(previous) ? previous : categories[0];
+    renderSpendMode();
   }
   function saveSpendCategory() {
     const category = $("spend-category-new").value.trim();
     if (!category || category.length > 24 || category === "__new") return toast("항목 이름을 확인해주세요 (24자 이내).");
-    if (state.spendCategories.includes(category)) return toast("이미 있는 항목입니다.");
+    if (category === "이체" || state.spendCategories.includes(category)) return toast("이미 있는 항목입니다.");
     if (!commit(draft => draft.spendCategories.push(category))) return;
     renderSpendCategories(category);
     $("spend-category-new").value = "";
@@ -1230,6 +1354,7 @@
   }
   function deleteSpendCategory() {
     const category = $("spend-category").value;
+    if (category === "이체") return toast("이체 항목은 삭제할 수 없습니다.");
     if (!state.spendCategories.includes(category)) return toast("삭제할 항목을 선택해주세요.");
     if (state.spendCategories.length === 1) return toast("항목은 최소 하나가 필요합니다.");
     if (!confirm("‘" + displayTerms(category) + "’ 항목을 목록에서 삭제할까요? 기존 사용 기록의 항목명은 그대로 남습니다.")) return;
@@ -1246,6 +1371,7 @@
     const effectiveDate = $("spend-date").value;
     const note = $("spend-note").value.trim();
     const category = $("spend-category").value;
+    if (category === "이체") return saveTransfer();
     if (!state.spendCategories.includes(category)) return toast("사용 항목을 선택해주세요.");
     if (!Number.isSafeInteger(amount) || !validDate(effectiveDate) || !note) return toast("금액·사용일·내역을 확인해주세요.");
     if (!commit(draft => {
@@ -1309,6 +1435,21 @@
       hour: "2-digit", minute: "2-digit",
     });
   }
+  const historyActionIcons = {
+    edit: '<path d="M4 20h4l11-11-4-4L4 16v4Z"/><path d="m13 7 4 4"/>',
+    delete: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/>',
+    restore: '<path d="M4 11V5m0 6h6M4 11a8 8 0 1 1 1.5 6"/>',
+    purge: '<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11l4 5m0-5-4 5"/>',
+  };
+  function historyAction(label, icon, callback) {
+    const button = node("button", "history-icon" + (icon === "delete" || icon === "purge" ? " danger" : ""));
+    button.type = "button";
+    button.title = label;
+    button.setAttribute("aria-label", label);
+    button.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + historyActionIcons[icon] + '</svg>';
+    button.onclick = callback;
+    return button;
+  }
   function renderHistory() {
     const child = historyChild;
     const kind = $("history-kind").value;
@@ -1317,7 +1458,7 @@
     const year = yearSelect.value;
     const years = [...new Set([String(seoulDate().getFullYear()), year,
       ...state.records.map(record => record.effectiveDate.slice(0, 4))].filter(Boolean))].sort().reverse();
-    yearSelect.replaceChildren(option("", "연도 선택"), ...years.map(value => option(value, value + "년")));
+    yearSelect.replaceChildren(option("", "연도"), ...years.map(value => option(value, value + "년")));
     yearSelect.value = year;
     const list = state.records.filter(record =>
       (child === "all" || record.child === child) &&
@@ -1340,7 +1481,7 @@
     const head = node("div", "history-summary-row summary-head");
     head.append(node("span", "", "조회 합계"), node("span", "", "총 용돈내역"), node("span", "", "총 사용내역"));
     summary.append(head);
-    const scopes = kind === "all" && child === "all" ? ["all", ...children.map(item => item.id)] : [child];
+    const scopes = child === "all" ? ["all", ...children.map(item => item.id)] : [child];
     for (const scope of scopes) {
       const row = node("div", "history-summary-row" + (scope === "all" ? " summary-all" : ""));
       if (scope !== "all") row.dataset.child = scope;
@@ -1356,7 +1497,10 @@
       const box = node("div", "entry" + (active(record) ? "" : " cancelled"));
       box.dataset.child = record.child;
       const top = node("div", "entry-top"), info = node("div");
-      info.append(node("div", "entry-title", label(record.kind, record.child, record.period)));
+      const heading = node("div", "entry-heading");
+      heading.append(node("div", "entry-title", label(record.kind, record.child, record.period)),
+        node("div", "entry-amount " + (record.amount < 0 ? "negative" : "positive"), (record.amount > 0 ? "+" : "") + won(record.amount)));
+      info.append(heading);
       const detail = [
         record.effectiveDate + (record.kind === "spend" ? " 사용" : " 용돈"),
         record.kind === "weekly" ? record.period + (dateFromKey(record.period).getDay() === 0 ? "(일~토)" : "(월~일)") + " · " + record.count + "회"
@@ -1367,28 +1511,16 @@
         active(record) ? "" : "삭제됨",
       ].filter(Boolean).join(" · ");
       info.append(node("div", "entry-detail", detail));
-      top.append(info, node("div", "entry-amount " + (record.amount < 0 ? "negative" : "positive"), (record.amount > 0 ? "+" : "") + won(record.amount)));
-      box.append(top);
-      const bottom = node("div", "entry-bottom");
-      bottom.append(node("span", "recorded", "입력 " + displayDateTime(record.createdAt) +
-        (record.updatedAt !== record.createdAt ? " · 수정 " + displayDateTime(record.updatedAt) : "")));
-      const edit = node("button", "edit-btn", "수정");
-      edit.onclick = () => openEdit(record.id);
       const actions = node("span", "entry-actions");
-      actions.append(edit);
+      actions.append(historyAction("수정", "edit", () => openEdit(record.id)));
       if (active(record)) {
-        const remove = node("button", "edit-btn delete-btn", "삭제");
-        remove.onclick = () => deleteRecord(record.id);
-        actions.append(remove);
+        actions.append(historyAction("삭제", "delete", () => deleteRecord(record.id)));
       } else {
-        const restore = node("button", "edit-btn", "복구");
-        restore.onclick = () => restoreRecord(record.id);
-        const purge = node("button", "edit-btn delete-btn", "완전 삭제");
-        purge.onclick = () => purgeRecord(record.id);
-        actions.append(restore, purge);
+        actions.append(historyAction("복구", "restore", () => restoreRecord(record.id)));
+        actions.append(historyAction("완전 삭제", "purge", () => purgeRecord(record.id)));
       }
-      bottom.append(actions);
-      box.append(bottom);
+      top.append(info, actions);
+      box.append(top);
       root.append(box);
     }
   }
@@ -1403,6 +1535,7 @@
     renderBase();
     renderOther();
     renderSpendCategories();
+    renderTransferRows();
     renderHistory();
     renderSingleInclusion("spend-opening-note", $("spend-date").value);
     setTab(activeTab);
@@ -1473,7 +1606,7 @@
         const before = recordBefore(record);
         record.includedInOpening = true;
         record.updatedAt = timestamp();
-        record.history.push({ at: record.updatedAt, action: "시트 시작값 포함", before, after: recordBefore(record), changes: describeChange(before, record) });
+        record.history.push({ at: record.updatedAt, action: "시트에 이미 포함", before, after: recordBefore(record), changes: describeChange(before, record) });
       }
     })) return;
     $("opening-dialog").close();
@@ -1573,7 +1706,7 @@
     input.type = "checkbox";
     input.id = "edit-included";
     input.checked = checked;
-    line.append(input, node("span", "", "시트 시작값에 이미 포함된 기록 (잔액에 다시 더하거나 빼지 않음)"));
+    line.append(input, node("span", "", "시트에 이미 포함"));
     container.append(line);
   }
   function openEdit(recordId) {
@@ -1613,6 +1746,9 @@
     field(grid, "edit-note", "메모", "text", displayTerms(record.note || ""));
     root.append(grid);
     editCheck(root, record.includedInOpening);
+    const editInclusion = $("edit-included").closest("label");
+    editInclusion.classList.toggle("hidden", !needsSheetInclusion(record.effectiveDate));
+    $("edit-date").onchange = () => editInclusion.classList.toggle("hidden", !needsSheetInclusion($("edit-date").value));
     const audit = $("audit-list");
     audit.replaceChildren();
     if (!record.history?.length) audit.append(node("p", "", "수정 이력이 없습니다."));
@@ -1631,7 +1767,7 @@
     const effectiveDate = $("edit-date").value;
     const note = $("edit-note").value.trim();
     if (!children.some(item => item.id === child) || !validDate(effectiveDate)) return toast("아이와 날짜를 확인해주세요.");
-    const changes = { child, effectiveDate, note, includedInOpening: $("edit-included").checked };
+    const changes = { child, effectiveDate, note, includedInOpening: needsSheetInclusion(effectiveDate) && $("edit-included").checked };
     if (record.kind === "spend") changes.category = $("edit-category").value;
     if (["weekly", "walk"].includes(record.kind)) {
       const period = $("edit-period").value;
@@ -1768,7 +1904,7 @@
     if (!storageReady) return toast("장부를 불러오지 못해 CSV 파일을 만들 수 없습니다.");
     const rows = [[
       "아이", "구분", "사용 항목", "금액", "기준 기간", "횟수·워크", "조정액",
-      "용돈 지급일·사용일", "실제 입력시각", "마지막 수정시각", "시트 시작값 포함", "상태", "메모",
+      "용돈 지급일·사용일", "실제 입력시각", "마지막 수정시각", "시트에 이미 포함", "상태", "메모",
     ]];
     for (const record of state.records) rows.push([
       childName(record.child), recordNames[record.kind], displayTerms(record.category || ""),
@@ -1815,6 +1951,13 @@
   function selectChildren(id) {
     for (const child of children) $(id).append(option(child.id, child.name));
   }
+  function shiftEntryMonth(id, offset, render) {
+    const selected = $(id).value;
+    if (!validMonth(selected)) return;
+    const date = dateFromKey(selected + "-01");
+    $(id).value = monthKey(new Date(date.getFullYear(), date.getMonth() + offset, 1));
+    render();
+  }
   function shiftHistoryMonth(offset) {
     historyRecent = false;
     const selected = $("history-month").value || monthKey(seoulDate());
@@ -1833,6 +1976,7 @@
     for (const id of ["spend-child", "other-child"]) selectChildren(id);
     const today = seoulDate();
     $("spend-date").value = dateKey(today);
+    $("transfer-date").value = dateKey(today);
     $("other-date").value = dateKey(today);
     $("base-date").value = dateKey(today);
     $("base-period").value = monthKey(today);
@@ -1849,16 +1993,44 @@
       renderWeekly();
     };
     $("walk-period").onchange = renderWalk;
+    $("walk-prev-month").onclick = () => shiftEntryMonth("walk-period", -1, renderWalk);
+    $("walk-next-month").onclick = () => shiftEntryMonth("walk-period", 1, renderWalk);
     for (const id of ["week-credit", "walk-credit"]) $(id).oninput = () => {
       $(id).dataset.dirty = "1";
       showDateNote(id === "week-credit" ? "week-opening-note" : "walk-opening-note", $(id).value);
       const rows = $(id === "week-credit" ? "weekly-rows" : "walk-rows");
+      for (const line of rows.querySelectorAll("label.checkline")) {
+        line.classList.toggle("hidden", !needsSheetInclusion($(id).value));
+        const included = line.querySelector("input[data-included]");
+        if (included && !needsSheetInclusion($(id).value)) included.checked = false;
+      }
       for (const input of rows.querySelectorAll("input[data-child]")) input.dispatchEvent(new Event("input"));
     };
     for (const id of ["week-note", "walk-note"]) $(id).oninput = () => { $(id).dataset.dirty = "1"; };
     $("weekly-save").onclick = () => saveBulk("weekly");
     $("walk-save").onclick = () => saveBulk("walk");
     $("view-spend").onsubmit = saveSpend;
+    $("spend-category").onchange = renderSpendMode;
+    $("transfer-save").onclick = saveTransfer;
+    $("transfer-date").onchange = () => {
+      const date = $("transfer-date").value;
+      for (const child of children) {
+        const amount = $("transfer-rows").querySelector('input[data-transfer-amount="' + child.id + '"]');
+        const selected = $("transfer-rows").querySelector('input[data-transfer-child="' + child.id + '"]');
+        const grade = validDate(date) ? gradeFor(rulesAt(date), child.id, Number(date.slice(0, 4))) : null;
+        if (!amount.dataset.dirty) {
+          amount.value = grade ? String(grade.amount) : "";
+          selected.checked = Boolean(grade);
+        }
+        const note = amount.closest(".bulk-row").querySelector(".bulk-note");
+        note.textContent = grade?.name || "통장 이체";
+      }
+      for (const input of $("transfer-rows").querySelectorAll("input[data-transfer-included]")) {
+        input.closest("label").classList.toggle("hidden", !needsSheetInclusion(date));
+        input.checked = needsSheetInclusion(date) && openingDefault(date);
+      }
+      showDateNote("transfer-opening-note", date);
+    };
     $("spend-add-category").onclick = () => {
       $("spend-category-editor").classList.toggle("hidden");
       if (!$("spend-category-editor").classList.contains("hidden")) $("spend-category-new").focus();
@@ -1867,6 +2039,8 @@
     $("spend-delete-category").onclick = deleteSpendCategory;
     $("spend-date").onchange = () => renderSingleInclusion("spend-opening-note", $("spend-date").value);
     $("base-period").onchange = renderBase;
+    $("base-prev-month").onclick = () => shiftEntryMonth("base-period", -1, renderBase);
+    $("base-next-month").onclick = () => shiftEntryMonth("base-period", 1, renderBase);
     $("base-date").onchange = renderBase;
     $("base-save").onclick = saveBase;
     $("event-year").onchange = () => renderOther(false, true);
