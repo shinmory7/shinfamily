@@ -93,6 +93,13 @@
     .top h1 .status{display:inline-block;margin-left:5px;padding:0;border:0;border-radius:0;background:none;color:#7b8b9d;font-size:.42em;font-weight:750;letter-spacing:0;line-height:1;vertical-align:super;white-space:nowrap}
     @media(max-width:650px){.rule-list .rule{gap:7px;min-height:84px;padding:8px 10px}.rule-icon{width:26px;height:26px}}
     @media(max-width:480px){.rule-list{grid-template-columns:1fr}.rule-list .rule{min-height:68px}.rule-icon{width:30px;height:30px}}
+    .rules-title{display:flex;align-items:center;gap:10px}
+    .shared-rule-toggle{display:none;align-items:center;justify-content:center;padding:5px 10px;border:1px solid #d6e3ee;border-radius:8px;background:#fff;color:#456a87;font-size:.78rem;font-weight:800;cursor:pointer}
+    .shared-rule-toggle:hover{background:#edf6ff}
+    html[data-shared="true"] .shared-rule-toggle{display:inline-flex}
+    html[data-shared="true"] .rule-list:not(.expanded){display:none}
+    html[data-shared="true"] .rules-head{margin-bottom:0}
+    html[data-shared="true"] .rule-list.expanded{margin-top:9px}
     html[data-shared="true"] .layout{grid-template-columns:1fr}
     html[data-shared="true"] .layout>section.panel,html[data-shared="true"] .intro>div,html[data-shared="true"] .top-tools>:not(.status),html[data-shared="true"] .entry-actions,html[data-shared="true"] .setup-note,html[data-shared="true"] .history-recent{display:none!important}
   </style>
@@ -102,7 +109,7 @@
     <header class="top"><div class="brand"><div class="mark">₩</div><h1>신씨네가족 용돈규칙<sup class="status">공유본 · 2026-09-27</sup></h1></div>
       <div class="top-tools" aria-label="정산 상태와 파일 작업">
         <details id="due-popover" class="top-popover"><summary id="due-indicator" class="top-icon" aria-label="확인할 정산" title="정산 모두 기록됨"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 9h18m-12 6 2 2 4-4"></path></svg><span id="due-count" class="icon-count complete">✓</span><span class="top-label" aria-hidden="true">정산</span></summary><div class="popover-card"><h2>확인할 정산</h2><div id="due-list" class="due-list"><p class="due-empty">현재까지 지급일이 지난 정산은 모두 입력되어 있습니다.</p></div></div></details>
-        <details id="status-popover" class="top-popover"><summary id="status-indicator" class="top-icon" aria-label="장부 상태" title="장부 상태 · 파일 생성 완료"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="top-label" aria-hidden="true">장부</span></summary><div class="popover-card status-card"><h2>장부 상태</h2><p id="ledger-updated">장부 수정 2026. 9. 27. 오후 12:11</p><p id="backup-status">백업 생성 2026. 9. 27. 오후 12:11 · 최신 장부</p><p id="share-status">공유 파일 생성 2026. 9. 27. 오후 12:18 · 최신 장부</p><small>파일 생성 시각입니다. GitHub 게시 여부는 별도로 확인하세요.</small></div></details>
+        <details id="status-popover" class="top-popover"><summary id="status-indicator" class="top-icon" aria-label="장부 상태" title="장부 상태 · 파일 생성 완료"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="top-label" aria-hidden="true">장부</span></summary><div class="popover-card status-card"><h2>장부 상태</h2><p id="ledger-updated">장부 수정 2026. 9. 27. 오후 12:11</p><p id="backup-status">백업 생성 2026. 9. 27. 오후 12:11 · 최신 장부</p><p id="share-status">공유 파일 생성 2026. 9. 27. 오후 12:31 · 최신 장부</p><small>파일 생성 시각입니다. GitHub 게시 여부는 별도로 확인하세요.</small></div></details>
         <span class="top-divider" aria-hidden="true"></span>
         <button id="export-csv" class="top-icon" type="button" title="기록 CSV 저장" aria-label="기록 CSV 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M3 14h18M10 9v11"></path></svg><span class="top-label" aria-hidden="true">CSV</span></button>
         <button id="export-json" class="top-icon" type="button" title="장부 백업 저장" aria-label="장부 백업 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"></path></svg><span class="top-label" aria-hidden="true">백업</span></button>
@@ -112,8 +119,8 @@
       </div>
     </header>
     <section class="rules" aria-label="용돈규칙">
-      <div class="rules-head"><h2>정산 기준</h2><span>학년별 용돈 적용</span></div>
-      <div class="rule-list">
+      <div class="rules-head"><div class="rules-title"><h2>정산 기준</h2><button id="shared-rule-toggle" class="shared-rule-toggle" type="button" aria-controls="shared-rule-list" aria-expanded="false">자세히보기</button></div><span>학년별 용돈 적용</span></div>
+      <div id="shared-rule-list" class="rule-list">
         <div class="rule rule-weekly"><svg class="rule-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 9h18m-12 6 2 2 4-4"></path></svg><div class="rule-copy"><b>말해보카 · 월~일</b><strong id="weekly-rule">1회 500원 · 7회면 5,000원</strong></div></div>
         <div class="rule rule-walk"><svg class="rule-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M5 16l4-5 4 2 4-7 3 2"></path><circle cx="5" cy="16" r="1"></circle><circle cx="17" cy="6" r="1"></circle></svg><div class="rule-copy"><b>슈퍼워크 · 다음 달 1일</b><strong id="walk-rule">매달 WALK 개수 × 80% × 100원</strong></div></div>
         <div class="rule rule-base" tabindex="0" aria-label="기본 용돈, 학년별 용돈 금액 보기" aria-describedby="base-allowance-tooltip"><svg class="rule-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="9" width="16" height="12" rx="2"></rect><path d="M3 9h18M12 9v12M12 9c-4 0-6-1-6-4 0-2 3-3 6 4Zm0 0c4 0 6-1 6-4 0-2-3-3-6 4Z"></path></svg><div class="rule-copy"><b>기본 용돈 · 매월 1일</b><strong id="base-rule">주완 6만 · 윤아 2.2만 · 주하 2만</strong></div><div id="base-allowance-tooltip" class="rule-tooltip" role="tooltip"><div class="allowance-tip-row"><span>11 (초4)</span><strong>18,000원</strong></div><div class="allowance-tip-row"><span>12 (초5)</span><strong>20,000원</strong></div><div class="allowance-tip-row"><span>13 (초6)</span><strong>22,000원</strong></div><div class="allowance-tip-row"><span>14 (중1)</span><strong>50,000원</strong></div><div class="allowance-tip-row"><span>15 (중2)</span><strong>60,000원</strong></div><div class="allowance-tip-row"><span>16 (중3)</span><strong>70,000원</strong></div><div class="allowance-tip-row"><span>17 (고1)</span><strong>80,000원</strong></div><div class="allowance-tip-row"><span>18 (고2)</span><strong>90,000원</strong></div><div class="allowance-tip-row"><span>19 (고3)</span><strong>100,000원</strong></div></div></div>
@@ -1818,6 +1825,11 @@
     renderHistory();
   }
   function init() {
+    $("shared-rule-toggle").onclick = () => {
+      const expanded = $("shared-rule-list").classList.toggle("expanded");
+      $("shared-rule-toggle").setAttribute("aria-expanded", String(expanded));
+      $("shared-rule-toggle").textContent = expanded ? "접기" : "자세히보기";
+    };
     for (const id of ["spend-child", "other-child"]) selectChildren(id);
     const today = seoulDate();
     $("spend-date").value = dateKey(today);
