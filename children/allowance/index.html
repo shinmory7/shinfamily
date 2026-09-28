@@ -456,7 +456,7 @@
         <button id="open-settings" class="top-icon top-setting" type="button" title="용돈규칙 수정" aria-label="용돈규칙 수정"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M12 2v3m0 14v3M2 12h3m14 0h3M5 5l2 2m10 10 2 2M19 5l-2 2M7 17l-2 2"></path></svg><span class="top-label" aria-hidden="true">규칙</span></button>
         <span class="top-divider" aria-hidden="true"></span>
         <details id="due-popover" class="top-popover"><summary id="due-indicator" class="top-icon" aria-label="확인할 정산" title="정산 모두 기록됨"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"></rect><path d="M8 2v4M16 2v4M3 9h18m-12 6 2 2 4-4"></path></svg><span id="due-count" class="icon-count complete">✓</span><span class="top-label" aria-hidden="true">정산</span></summary><div class="popover-card"><h2>확인할 정산</h2><div id="due-list" class="due-list"><p class="due-empty">현재까지 지급일이 지난 정산은 모두 입력되어 있습니다.</p></div></div></details>
-        <details id="status-popover" class="top-popover"><summary id="status-indicator" class="top-icon" aria-label="장부 상태" title="장부 상태 · 파일 생성 완료"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="top-label" aria-hidden="true">장부</span></summary><div class="popover-card status-card"><h2>장부 상태</h2><p id="ledger-updated">장부 수정 2026. 9. 27. 오후 10:23</p><p id="backup-status">백업 생성 2026. 9. 27. 오후 10:23 · 최신 장부</p><p id="share-status">공유 파일 생성 2026. 9. 28. 오후 10:09 · 최신 장부</p><small>파일 생성 시각입니다. GitHub 게시 여부는 별도로 확인하세요.</small></div></details>
+        <details id="status-popover" class="top-popover"><summary id="status-indicator" class="top-icon" aria-label="장부 상태" title="장부 상태 · 파일 생성 완료"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7h.01"></path></svg><span class="top-label" aria-hidden="true">장부</span></summary><div class="popover-card status-card"><h2>장부 상태</h2><p id="ledger-updated">장부 수정 2026. 9. 27. 오후 10:23</p><p id="backup-status">백업 생성 2026. 9. 27. 오후 10:23 · 최신 장부</p><p id="share-status">공유 파일 생성 2026. 9. 28. 오후 10:19 · 최신 장부</p><small>파일 생성 시각입니다. GitHub 게시 여부는 별도로 확인하세요.</small></div></details>
         <span class="top-divider" aria-hidden="true"></span>
         <button id="export-csv" class="top-icon" type="button" title="기록 CSV 저장" aria-label="기록 CSV 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M3 9h18M3 14h18M10 9v11"></path></svg><span class="top-label" aria-hidden="true">CSV</span></button>
         <button id="export-json" class="top-icon" type="button" title="장부 백업 저장" aria-label="장부 백업 저장"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3"></path></svg><span class="top-label" aria-hidden="true">백업</span></button>
@@ -2538,18 +2538,18 @@ dialog .dialog-body{overscroll-behavior:contain;scrollbar-gutter:stable}
 }
 /* Keep the complete history filter set visible on one mobile row. */
 @media (max-width:650px){
-  .history-controls{display:grid;grid-template-columns:minmax(68px,.9fr) minmax(118px,1.45fr) minmax(50px,.65fr) 38px;gap:4px;overflow:visible;white-space:normal;padding:0}
+  .history-controls{display:grid;grid-template-columns:60px minmax(140px,1fr) 44px 34px;gap:3px;overflow:visible;white-space:normal;padding:0}
   .history-controls #history-kind,.history-controls .history-month-nav,.history-controls #history-year,.history-controls #history-clear{flex:none;min-width:0;width:100%;margin:0}
-  .history-controls #history-kind{font-size:.7rem;padding:4px}
+  .history-controls #history-kind{font-size:.66rem;padding:4px 2px}
   .history-controls .history-month-nav{gap:2px}
-  .history-controls .history-month-nav button{flex:0 0 25px;width:25px;min-height:36px}
-  .history-controls .history-month-nav input{min-width:0;width:100%;padding:4px 1px;font-size:.7rem}
-  .history-controls #history-year{font-size:.68rem;padding:4px 2px}
-  .history-controls #history-clear{min-height:36px;padding:4px 1px;font-size:.68rem}
+  .history-controls .history-month-nav button{flex:0 0 22px;width:22px;min-width:22px;min-height:36px;padding:0}
+  .history-controls .history-month-nav input{min-width:0;width:100%;padding:4px 1px;font-size:.66rem;font-variant-numeric:tabular-nums}
+  .history-controls #history-year{font-size:.64rem;padding:4px 1px}
+  .history-controls #history-clear{min-height:36px;padding:4px 0;font-size:.64rem}
 }
 @media (max-width:360px){
-  .history-controls{grid-template-columns:minmax(60px,.9fr) minmax(110px,1.45fr) minmax(43px,.65fr) 34px;gap:3px}
-  .history-controls .history-month-nav button{flex-basis:23px;width:23px}
+  .history-controls{grid-template-columns:56px minmax(136px,1fr) 41px 31px;gap:2px}
+  .history-controls .history-month-nav button{flex-basis:20px;width:20px;min-width:20px}
 }
 @media (min-width:580px) and (max-width:900px){
   .history-controls{grid-template-columns:104px 28px minmax(164px,1fr) 28px 72px 48px}
@@ -2561,6 +2561,9 @@ dialog .dialog-body{overscroll-behavior:contain;scrollbar-gutter:stable}
 html[data-shared="true"] .top-tools{display:none!important}
 html[data-shared="true"] .top{margin-bottom:10px}
 html[data-shared="true"] .top>.status{display:block;margin:0 3pt 0 auto;padding:0;border:0;border-radius:0;background:none;color:#7b8b9d;font-size:.8rem;font-weight:750;letter-spacing:0;line-height:1;white-space:nowrap;align-self:center}
+.entry-heading .entry-amount{grid-row:1;align-self:center}
+.entry-detail{grid-column:1/3;grid-row:2;white-space:normal;overflow-wrap:anywhere;word-break:keep-all}
+html[data-shared="true"] .entry-detail{grid-column:1/-1;padding-right:0}
 @media (max-width:650px){
   html[data-shared="true"] .top{flex-wrap:nowrap;align-items:center;gap:8px;margin-bottom:10px}
   html[data-shared="true"] .top h1{font-size:1.35rem;white-space:nowrap}
