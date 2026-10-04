@@ -1,1 +1,1839 @@
+<!doctype html>
+<html lang="ko" data-shared="true"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0d766e">
+  <title>경비관리 · 조회용 공유본</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>:root {
+  --bg: #f3f6f4;
+  --panel: #ffffff;
+  --ink: #172321;
+  --muted: #66736f;
+  --line: #dce4e1;
+  --green: #0d766e;
+  --green-dark: #07544f;
+  --green-soft: #e4f4ef;
+  --blue: #176fae;
+  --blue-soft: #e8f2fa;
+  --amber: #f3a712;
+  --amber-soft: #fff4d6;
+  --red: #bd2b32;
+  --red-soft: #fff0f0;
+  --shadow: 0 14px 38px rgba(19, 48, 43, .08);
+  --radius: 18px;
+}
 
+* { box-sizing: border-box; }
+html { font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif; color: var(--ink); background: var(--bg); }
+body { margin: 0; min-width: 320px; overflow-x: hidden; }
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.topbar {
+  position: relative;
+  display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  padding: 12px max(24px, calc((100vw - 1440px) / 2));
+  color: white; background: linear-gradient(120deg, #084e49, #0d766e 52%, #176fae);
+  box-shadow: 0 8px 25px rgba(3, 62, 56, .18);
+}
+.brand-wrap, .top-actions, .balance-line, .panel-head, .preview-head, .modal-actions { display: flex; align-items: center; }
+.brand-wrap { gap: 14px; }
+.brand-mark {
+  position: relative; width: 60px; height: 60px; flex: 0 0 60px; border-radius: 17px; display: grid; place-items: center; cursor: pointer;
+  color: #0d615a; background: white; box-shadow: inset 0 0 0 4px rgba(13,118,110,.12);
+}
+.brand-mark svg { width: 43px; height: 43px; transform: translateY(-2px); }
+.brand-mark span { position: absolute; bottom: 5px; font-size: 10px; font-weight: 950; letter-spacing: -.08em; color: #0d615a; }
+.eyebrow { margin: 0 0 2px; font-weight: 800; color: #d8fff5; font-size: 14px; }
+.topbar h1 { margin: 0; font-size: 25px; letter-spacing: -.04em; }
+.top-actions { gap: 10px; }
+.save-state { color: #d9f6ee; font-size: 13px; margin-right: 5px; }
+.top-balance { display: grid; grid-template-columns: auto auto; gap: 0 8px; align-items: baseline; margin-left: 16px; }
+.top-balance span { color: #c6efe5; font-size: 12px; font-weight: 800; }
+.top-balance strong { color: #fff; font-size: 25px; letter-spacing: -.05em; }
+.top-balance small { grid-column: 1 / -1; color: #c6efe5; font-size: 10px; }
+.top-account { position: absolute; left: 50%; transform: translateX(-50%); display: grid; gap: 2px; text-align: left; }
+.top-account span { color: #c6efe5; font-size: 14.3px; font-weight: 850; }
+.top-account strong { color: #fff; font-size: 20px; white-space: nowrap; letter-spacing: .01em; }
+.top-periods { display: flex; gap: 7px; margin-left: auto; }
+.top-periods label { display: grid; gap: 4px; color: #c6efe5; font-size: 10px; font-weight: 800; }
+.top-periods select { min-width: 104px; border: 0; border-radius: 8px; padding: 7px 9px; color: #07544f; font-weight: 850; }
+.icon-tool { position: relative; width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid rgba(255,255,255,.4); border-radius: 10px; color: #eafff8; background: rgba(255,255,255,.1); font-size: 25px; font-weight: 500; line-height: 1; }
+.icon-tool:hover { background: rgba(255,255,255,.22); }
+.icon-tool svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.icon-tool svg circle { fill: currentColor; stroke: none; }
+.icon-tool.share { color: #0a554d; background: #f6c742; border-color: #f6c742; }
+.icon-tool::after { content: attr(data-tooltip); position: absolute; z-index: 12; top: calc(100% + 9px); right: 0; padding: 7px 9px; border-radius: 8px; color: #fff; background: #183f39; font-size: 12px; font-weight: 750; line-height: 1; white-space: nowrap; opacity: 0; transform: translateY(-3px); pointer-events: none; transition: .15s; }
+.icon-tool:hover::after, .icon-tool:focus-visible::after { opacity: 1; transform: translateY(0); }
+
+/* GitHub에 올리는 공유본은 조회 전용으로 보여줍니다. */
+html[data-shared="true"] .top-actions,
+html[data-shared="true"] .tabs { display: none !important; }
+html[data-shared="true"] .app-shell { padding-top: 18px; }
+html[data-shared="true"] #importView,
+html[data-shared="true"] #settingsView,
+html[data-shared="true"] .modal,
+html[data-shared="true"] #transactionsView { display: none !important; }
+html[data-shared="true"] [data-action="add-transaction"] { display: none !important; }
+.shared-badge { position: absolute; right: max(24px, calc((100vw - 1440px) / 2)); top: 50%; transform: translateY(-50%); color: #d9f6ee; font-size: 12px; font-weight: 800; white-space: nowrap; }
+@media (max-width: 680px) { .shared-badge { display: none; } }
+
+.app-shell { max-width: 1440px; margin: 0 auto; padding: 26px 24px 70px; }
+.hero-panel {
+  display: flex; align-items: end; justify-content: space-between; gap: 24px;
+  padding: 16px 28px; color: white; border-radius: 18px;
+  background: linear-gradient(135deg, #0b5f58, #0e8176 60%, #0b6a83); box-shadow: var(--shadow);
+}
+.hero-label { margin: 0 0 5px; color: #c9f4e9; font-size: 13px; font-weight: 750; }
+.balance-line { gap: 18px; align-items: baseline; flex-wrap: wrap; }
+.balance-line span { font-size: 18px; font-weight: 700; }
+.balance-line strong { font-size: clamp(30px, 3vw, 42px); letter-spacing: -.05em; }
+.hero-panel .muted { color: #d6eee9; margin: 4px 0 0; font-size: 12px; }
+.period-controls { display: flex; gap: 10px; }
+.year-control { min-width: 150px; }
+.year-control label { display: block; color: #d6eee9; font-size: 13px; margin: 0 0 6px; }
+.year-control select { width: 100%; padding: 11px 14px; border: 0; border-radius: 12px; font-weight: 800; color: var(--green-dark); }
+
+.tabs { display: flex; gap: 6px; margin: 20px 0; padding: 6px; background: #e7ecea; border-radius: 14px; width: fit-content; }
+.tab { border: 0; background: transparent; color: #56625f; padding: 10px 17px; border-radius: 10px; font-weight: 800; }
+.tab.active { background: white; color: var(--green-dark); box-shadow: 0 3px 10px rgba(20,48,43,.08); }
+.view { display: none; }
+.view.active { display: block; }
+#dashboardView.active { display: flex; flex-direction: column; }
+#dashboardView.active ~ #transactionsView { display: block; }
+#transactionsView .panel { margin-top: 14px; }
+#dashboardView > .summary-grid { order: 1; }
+#dashboardView > .two-column { order: 3; }
+#dashboardView > .panel { order: 2; }
+
+.summary-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 14px; }
+.summary-card { position: relative; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 18px; box-shadow: 0 7px 25px rgba(24,59,53,.04); }
+.summary-card .label { color: var(--muted); font-size: 13px; font-weight: 750; }
+.summary-card .hint { position: absolute; top: 14px; right: 18px; color: var(--muted); font-size: 12px; }
+.summary-card.balance { color: #fff; border-color: #0b6f68; background: linear-gradient(135deg, #075b55, #0d8b80); box-shadow: 0 9px 26px rgba(7,91,85,.22); }
+.summary-card.balance .label, .summary-card.balance .hint { color: #d8fff5; }
+.summary-card.balance strong { color: #fff; }
+.summary-card strong { display: block; font-size: 24px; margin-top: 5px; letter-spacing: -.04em; }
+.summary-card .hint { display: block; color: var(--muted); font-size: 12px; margin-top: 3px; }
+.summary-card.income { border-top: 4px solid var(--green); }
+.summary-card.expense { border-top: 4px solid var(--red); }
+.summary-card.dues { border-top: 4px solid var(--blue); }
+.summary-card.members { border-top: 4px solid var(--amber); }
+
+.action-board { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.action-card { border-radius: var(--radius); padding: 20px; min-height: 164px; background: var(--panel); border: 1px solid var(--line); box-shadow: var(--shadow); }
+.action-card.alert { background: linear-gradient(135deg, #fff7e6, #fffdf7); border-color: #f1d18a; }
+.action-card.good { background: linear-gradient(135deg, #ecfaf5, #f9fffd); border-color: #b9e4d6; }
+.action-card.neutral { background: linear-gradient(135deg, #eef7fd, #fbfdff); border-color: #c6dfef; }
+.action-card .action-kicker { margin: 0 0 7px; font-size: 12px; color: var(--muted); font-weight: 850; }
+.action-card h3 { font-size: 21px; margin: 0; letter-spacing: -.04em; }
+.action-card p { color: #52605d; margin: 8px 0 0; font-size: 13px; line-height: 1.55; }
+.action-card .action-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.action-chip { padding: 5px 8px; border-radius: 999px; color: #8c5000; background: #fff1ce; font-size: 12px; font-weight: 800; }
+.action-card .action-link { display: inline-block; color: var(--green-dark); font-weight: 850; font-size: 13px; margin-top: 12px; border: 0; background: transparent; padding: 0; }
+
+.quick-entry-panel { padding-bottom: 16px; }
+.quick-entry-form { display: grid; grid-template-columns: 1.5fr 1fr 1.25fr 2fr 1.1fr auto; align-items: end; gap: 10px; }
+.quick-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.quick-field span { color: #51605c; font-size: 12px; font-weight: 800; }
+.quick-field input, .quick-field select { width: 100%; border: 1px solid #cdd8d4; border-radius: 10px; padding: 10px 11px; background: white; color: var(--ink); }
+.quick-mode-buttons { display: flex; overflow: hidden; border: 1px solid #cdd8d4; border-radius: 10px; background: white; }
+.quick-mode { flex: 1; min-height: 42px; padding: 7px 8px; border: 0; border-right: 1px solid #dfe7e4; background: white; color: #65736f; font-size: 12px; font-weight: 850; white-space: nowrap; }
+.quick-mode:last-child { border-right: 0; }
+.quick-mode.active { color: #07544f; background: #dff3ec; }
+.quick-mode.expense.active { color: #a71d26; background: #fff0f0; }
+.quick-save { white-space: nowrap; min-height: 42px; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px; margin-bottom: 16px; }
+.panel-head { justify-content: space-between; gap: 20px; margin-bottom: 17px; }
+.panel-head.compact { margin-bottom: 10px; align-items: flex-start; }
+.heading-with-total { display: flex; align-items: baseline; gap: 18px; min-width: 0; }
+.heading-with-total h2 { white-space: nowrap; }
+.panel-head.compact > .list-total { margin: 0 0 0 auto; text-align: right; white-space: nowrap; }
+.panel-head.compact > .list-tools,
+.panel-head.compact > .list-total { margin-top: 5px; }
+.panel-head.compact > .list-tools { margin-top: 0; align-self: center; }
+.dues-period-controls { display: flex; gap: 8px; align-items: end; }
+.dues-period-controls label { display: grid; gap: 3px; color: var(--muted); font-size: 10px; font-weight: 800; }
+.dues-period-controls select { min-width: 104px; border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; color: var(--green-dark); background: #fff; font-weight: 850; }
+.panel h2, .panel h3 { margin: 0; letter-spacing: -.03em; }
+.panel h2 { font-size: 22px; }
+.two-column .panel-head { align-items: center; }
+.list-total { margin: 14px auto 0; color: var(--green); font-size: 17.333px; font-weight: 950; letter-spacing: -.04em; white-space: nowrap; }
+.list-total.expense { color: var(--red); }
+
+@media (min-width: 681px) {
+  .two-column .panel-head.compact { position: relative; }
+  .two-column .panel-head.compact > .list-tools { position: absolute; left: 42%; top: 50%; transform: translate(-50%, -50%); }
+}
+.section-kicker { margin: 0 0 5px; color: var(--green); font-size: 12px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.section-kicker.red { color: var(--red); }
+.legend { display: flex; gap: 14px; color: var(--muted); font-size: 12px; }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.dot.paid { background: var(--green); } .dot.partial { background: var(--amber); } .dot.unpaid { background: #d74e5a; } .dot.scheduled { background: #fff; border: 1px solid #cfd8d5; }
+.dues-tools { display: flex; align-items: center; gap: 14px; }
+.panel-head:has(.dues-list-tools) { position: relative; }
+.dues-list-tools { position: absolute; top: 50%; left: calc(50% - 55px); transform: translate(-50%, -50%); }
+.view-switch { display: inline-flex; padding: 3px; gap: 2px; border-radius: 10px; background: #eaf0ee; }
+.switch-btn { border: 0; color: #65736f; background: transparent; padding: 7px 9px; border-radius: 7px; font-size: 12px; font-weight: 850; }
+.switch-btn.active { color: var(--green-dark); background: #fff; box-shadow: 0 1px 4px rgba(20,48,43,.15); }
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; background: white; }
+.data-table th { padding: 10px 9px; background: #f1f5f3; color: #53605d; font-size: 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.data-table td { padding: 10px 9px; border-bottom: 1px solid #e8edeb; text-align: center; white-space: nowrap; }
+.data-table tbody tr:last-child td { border-bottom: 0; }
+.data-table tbody tr:hover { background: #f8fbfa; }
+.data-table .name-cell { position: sticky; left: 0; z-index: 2; min-width: 160px; text-align: left; background: white; font-weight: 800; }
+.data-table thead .name-cell { z-index: 3; background: #0c746b; color: white; text-align: center; }
+.dues-table thead th { background: #176fae; color: white; }
+.dues-table thead th:first-child { background: #0c746b; }
+.dues-table .total-cell { background: #fff0bd; font-weight: 900; }
+.dues-table .other-cell { color: #78600d; background: #fff8e4; }
+.dues-table td.month-cell { min-width: 48px; font-weight: 800; }
+.dues-table td.month-cell.paid { background: var(--green-soft); color: var(--green-dark); }
+.dues-table td.month-cell.partial { background: var(--amber-soft); color: #7a5100; }
+.dues-table td.month-cell.empty { color: #adb6b3; }
+.dues-table td.month-cell.covered { background: #d8f2e8; color: #08705a; font-size: 14px; }
+.dues-table td.month-cell.missing { background: #f7c9ce; color: #a32131; }
+.dues-table .status-cell { min-width: 116px; font-weight: 850; }
+.dues-table.dues-summary { table-layout: fixed; }
+.dues-summary th:nth-child(1), .dues-summary td:nth-child(1) { width: 6%; }
+.dues-summary th:nth-child(2), .dues-summary td:nth-child(2) { width: 20%; }
+.dues-summary th:nth-child(3), .dues-summary td:nth-child(3) { width: 13%; }
+.dues-summary th:nth-child(4), .dues-summary td:nth-child(4) { width: 22%; }
+.dues-summary th:nth-child(5), .dues-summary td:nth-child(5) { width: 18%; }
+.dues-summary th:nth-child(6), .dues-summary td:nth-child(6) { width: 21%; }
+.dues-summary .name-cell { min-width: 0; }
+.dues-table .name-cell { text-align: center; }
+.status-pill { display: inline-block; min-width: 62px; padding: 5px 8px; border-radius: 999px; font-size: 12px; font-weight: 900; }
+.status-pill.complete { background: #ccefe3; color: #08634f; }
+.status-pill.partial { background: #fff0c9; color: #805300; }
+.status-pill.unpaid { background: #f5c5ca; color: #9d2030; }
+.dues-summary tbody tr.complete td { background: #f1fbf7; }
+.dues-summary tbody tr.partial td { background: #fffaf0; }
+.dues-summary tbody tr.unpaid td { background: #fce3e5; }
+.dues-summary tbody tr.complete .name-cell { background: #f1fbf7; }
+.dues-summary tbody tr.annual-complete td,
+.dues-summary tbody tr.annual-complete .name-cell { background: #cdeee3; }
+.dues-summary tbody tr.annual-complete .status-pill { background: #9fddca; color: #075b4a; }
+.dues-summary tbody tr.partial .name-cell { background: #fffaf0; }
+.dues-summary tbody tr.unpaid .name-cell { background: #fce3e5; }
+.dues-table:not(.dues-summary) tbody tr.complete td { background: #f1fbf7; }
+.dues-table:not(.dues-summary) tbody tr.complete .name-cell { background: #f1fbf7; }
+.dues-table:not(.dues-summary) tbody tr.complete td.month-cell.paid { background: #ccefe3; color: #08634f; }
+.dues-table:not(.dues-summary) tbody tr.complete td.month-cell.covered { background: #d8f2e8; color: #08705a; }
+.dues-table:not(.dues-summary) tbody tr.annual-complete td,
+.dues-table:not(.dues-summary) tbody tr.annual-complete .name-cell { background: #cdeee3; }
+.dues-table:not(.dues-summary) tbody tr.annual-complete .status-pill { background: #9fddca; color: #075b4a; }
+.dues-table:not(.dues-summary) tbody tr.unpaid td.month-cell.missing { background: #f3bcc2; color: #9d2030; }
+.due-bar { width: 115px; height: 8px; margin: 5px auto 0; overflow: hidden; background: #dde6e2; border-radius: 9px; }
+.due-bar.unpaid { background: #efaab2; }
+.due-bar > span { display: block; height: 100%; border-radius: inherit; background: var(--green); }
+.due-bar.partial > span { background: var(--amber); }
+.due-bar.unpaid > span { background: #d74e5a; }
+.dues-table tfoot td { font-weight: 900; background: #f3f6f5; border-top: 2px solid var(--line); }
+.table-note { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 10px 2px 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+
+.two-column { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.two-column > .panel { min-width: 0; }
+.transaction-list { min-height: 90px; }
+.transaction-item { display: grid; grid-template-columns: 68px 1fr auto; gap: 12px; align-items: center; padding: 12px 4px; border-bottom: 1px solid #edf1ef; }
+.transaction-item:last-child { border-bottom: 0; }
+.transaction-item .date { color: var(--muted); font-size: 12px; }
+.transaction-item .memo { font-weight: 750; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.transaction-item .sub { display: block; color: var(--muted); font-size: 11px; font-weight: 500; margin-top: 3px; }
+.transaction-item .amount { font-size: 16px; font-weight: 900; }
+.transaction-item .amount.in { color: var(--green); }
+.transaction-item .amount.out { color: var(--red); }
+.list-tools { display: flex; align-items: center; gap: 5px; }
+.sort-btn { width: 30px; height: 30px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--green-dark); font-size: 18px; font-weight: 900; line-height: 1; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.sort-btn[data-list-sort-mode="amount"] { font-size: 13px; }
+.sort-btn.date-sort { width: 38px; font-size: 16px; letter-spacing: -2px; }
+.sort-btn.active { background: var(--soft-green); }
+.sort-btn:hover { background: var(--soft-green); }
+.nav-btn { width: 28px; height: 28px; border: 1px solid #d5dfdc; border-radius: 8px; color: var(--green-dark); background: #fff; font-size: 20px; line-height: 1; display: inline-flex; align-items: center; justify-content: center; }
+.period-chip { height: 28px; border: 1px solid #d5dfdc; border-radius: 8px; padding: 0 8px; color: #38534e; background: #fff; font-size: 12px; font-weight: 850; white-space: nowrap; display: inline-flex; align-items: center; justify-content: center; }
+.period-stack { display: grid; grid-template-rows: 10px 28px 10px; gap: 2px; align-items: center; }
+.period-step { width: 100%; height: 10px; padding: 0; border: 0; color: var(--green-dark); background: transparent; font-size: 9px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+.period-step:hover { color: var(--green); }
+#incomeYearLabel, #expenseYearLabel, #duesYearLabel { width: 64px; }
+#incomeMonthLabel, #expenseMonthLabel, #duesMonthLabel { width: 74px; }
+.period-chip.active { color: var(--green-dark); background: var(--green-soft); border-color: #9cd3c4; }
+.more-box { width: 100%; margin-top: 10px; padding: 10px; border: 1px dashed #9ccfc2; border-radius: 9px; color: var(--green-dark); background: #f1fbf7; font-size: 13px; font-weight: 850; }
+.more-box.expense { color: var(--red); border-color: #e8b4b8; background: #fff6f6; }
+.more-box:disabled { color: #9aa5a2; border-color: #dfe5e3; background: #f8faf9; cursor: default; }
+.empty-state { padding: 28px 10px; color: var(--muted); text-align: center; font-size: 13px; }
+
+.btn { border: 1px solid transparent; padding: 10px 14px; border-radius: 10px; font-weight: 800; transition: .16s ease; }
+.btn:hover { transform: translateY(-1px); }
+.btn.primary { background: #f6c742; color: #16352f; }
+.btn.secondary { background: var(--green-soft); color: var(--green-dark); border-color: #bfe2d8; }
+.btn.ghost { background: rgba(255,255,255,.11); color: inherit; border-color: rgba(255,255,255,.3); }
+.panel .btn.ghost, .modal .btn.ghost { color: #42504d; background: white; border-color: var(--line); }
+.btn.danger-outline { color: var(--red); background: white; border-color: #e7b3b6; }
+.btn.wide { width: 100%; margin: 5px 0; text-align: center; display: block; }
+.text-btn { border: 0; background: none; color: var(--green); font-weight: 850; padding: 7px; }
+.text-btn.danger { color: var(--red); }
+
+.filter-head { align-items: flex-start; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; }
+.filters input, .filters select, .field input, .field select { border: 1px solid #cdd8d4; border-radius: 10px; padding: 10px 12px; background: white; color: var(--ink); }
+.filters input { min-width: 230px; }
+.ledger-table td:nth-child(3) { text-align: left; min-width: 220px; white-space: normal; }
+.ledger-table .row-action { border: 0; background: var(--blue-soft); color: var(--blue); border-radius: 8px; padding: 6px 9px; font-weight: 800; }
+.board-pager { display: flex; align-items: center; justify-content: center; gap: 10px; padding-top: 16px; color: var(--muted); font-size: 13px; }
+.board-pager strong { color: var(--green-dark); }
+.pager-btn { min-width: 64px; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--green-dark); background: #fff; font-weight: 800; }
+.pager-btn:disabled { color: #aeb9b6; background: #f4f7f6; cursor: default; }
+.type-badge { display: inline-block; padding: 4px 8px; border-radius: 999px; font-size: 11px; font-weight: 850; background: #eef3f1; color: #53605d; }
+.type-badge.dues { background: var(--green-soft); color: var(--green-dark); }
+.type-badge.expense { background: var(--red-soft); color: var(--red); }
+.type-badge.interest { background: var(--blue-soft); color: var(--blue); }
+
+.import-panel { padding: 28px; }
+.import-copy { max-width: 720px; }
+.import-copy p:last-child { color: var(--muted); line-height: 1.7; }
+.drop-zone { margin-top: 20px; min-height: 190px; border: 2px dashed #8cc8ba; border-radius: 18px; background: #f0faf7; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; color: var(--green-dark); text-align: center; transition: .2s; }
+.drop-zone:hover, .drop-zone.dragover { background: #e2f6f0; border-color: var(--green); transform: translateY(-1px); }
+.drop-zone span:last-of-type { color: var(--muted); font-size: 13px; }
+.drop-icon { font-size: 35px; line-height: 1; }
+.import-status { margin-top: 14px; padding: 13px 15px; border-radius: 10px; background: var(--blue-soft); color: #155d8f; }
+.import-status.error { background: var(--red-soft); color: var(--red); }
+.preview-head { justify-content: space-between; gap: 20px; margin: 23px 0 12px; }
+.preview-head p { margin: 5px 0 0; }
+.guide-panel ol { color: #4e5d59; line-height: 1.9; padding-left: 22px; }
+
+.settings-grid { align-items: start; }
+.member-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 13px 4px; border-bottom: 1px solid #edf1ef; }
+.member-item:last-child { border-bottom: 0; }
+.member-item strong { display: block; }
+.member-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+.member-item button { border: 0; background: #eef4f2; color: var(--green-dark); border-radius: 8px; padding: 7px 10px; font-weight: 800; }
+.settings-panel hr { border: 0; border-top: 1px solid var(--line); margin: 17px 0; }
+.field { display: flex; flex-direction: column; gap: 6px; margin: 12px 0; }
+.field > span { color: #51605c; font-size: 12px; font-weight: 800; }
+.file-btn { cursor: pointer; }
+
+.modal { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: rgba(11,32,28,.56); backdrop-filter: blur(4px); }
+.modal-card { position: relative; width: min(720px, 100%); max-height: 92vh; overflow-y: auto; background: white; border-radius: 20px; padding: 28px; box-shadow: 0 30px 80px rgba(0,0,0,.24); }
+.quick-modal-card { width: min(540px, 100%); }
+.modal-modes { margin: 16px 0 2px; }
+.modal-close { position: absolute; top: 14px; right: 16px; border: 0; background: none; color: #66736f; font-size: 28px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 14px; margin-top: 18px; }
+.field.full { grid-column: 1 / -1; }
+.modal-actions { margin-top: 20px; gap: 9px; }
+.spacer { flex: 1; }
+.toast { position: fixed; z-index: 80; right: 24px; bottom: 24px; max-width: 380px; padding: 13px 17px; border-radius: 12px; background: #183f39; color: white; box-shadow: 0 14px 40px rgba(0,0,0,.22); }
+.muted { color: var(--muted); }
+.small { font-size: 12px; line-height: 1.55; }
+.hidden { display: none !important; }
+
+@media (max-width: 980px) {
+  .topbar { padding: 15px 18px; }
+  .save-state { display: none; }
+  .top-balance { margin-left: 0; }
+  .summary-grid { grid-template-columns: 1fr 1fr 1fr; }
+  .action-board { grid-template-columns: 1fr; }
+  .quick-entry-form { grid-template-columns: 1fr 1fr 1fr; }
+  .two-column { grid-template-columns: 1fr; }
+  .filter-head { align-items: start; flex-direction: column; }
+}
+@media (max-width: 680px) {
+  .topbar { align-items: center; flex-wrap: nowrap; gap: 8px; padding: 10px 12px; }
+  .brand-wrap { width: auto; flex: 1 1 auto; gap: 7px; min-width: 0; }
+  .brand-wrap > div:last-child { display: block; min-width: 0; }
+  .brand-wrap .eyebrow { margin: 0 0 2px; white-space: nowrap; font-size: 12px; }
+  .brand-wrap h1 { white-space: nowrap; }
+  .topbar h1 { font-size: 22px; }
+  .brand-mark { width: 44px; height: 44px; flex-basis: 44px; border-radius: 13px; }
+  .brand-mark svg { width: 34px; height: 34px; }
+  .top-actions { width: auto; margin-left: 0; justify-content: flex-end; gap: 4px; flex: 0 0 auto; }
+  .top-balance { width: auto; margin: 0; }
+  .top-account { width: auto; padding: 0; border-left: 0; position: absolute; left: 50%; transform: translateX(-50%); text-align: left; flex: 0 0 auto; }
+  .top-account span { font-size: 12px; }
+  .top-account strong { font-size: 18px; }
+  .icon-tool { width: 32px; height: 32px; border-radius: 9px; font-size: 21px; }
+  .icon-tool svg { width: 16px; height: 16px; }
+  .top-periods { width: 100%; }
+  .top-periods label { flex: 1; }
+  .top-periods select { width: 100%; }
+  .top-actions .ghost { display: none; }
+  .top-actions .btn { padding: 9px 10px; font-size: 12px; }
+  .app-shell { width: 100%; padding: 16px 12px 55px; overflow-x: hidden; }
+  .hero-panel { padding: 22px; align-items: stretch; flex-direction: column; }
+  .period-controls { width: 100%; }
+  .year-control { width: 100%; }
+  .tabs { width: 100%; overflow-x: auto; }
+  .tab { flex: 0 0 auto; padding: 9px 12px; }
+  .summary-grid { grid-template-columns: 1fr; gap: 8px; }
+
+  /* 대시보드와 거래내역 사이의 세 구간을 같은 높이로 맞춘다. */
+  #dashboardView > .panel { margin-bottom: 8px; }
+  .two-column { gap: 8px; min-width: 0; width: 100%; }
+  .two-column > .panel { width: calc(100vw - 24px); max-width: calc(100vw - 24px); margin-bottom: 0; }
+  #transactionsView .panel { margin-top: 8px; }
+
+  .summary-card { padding: 8px 18px; }
+  .summary-card .hint { top: 8px; }
+  .summary-card strong { margin-top: 2px; }
+  .quick-entry-form { grid-template-columns: 1fr; }
+  .panel { padding: 16px; border-radius: 15px; }
+  .panel-head.compact { display: grid; grid-template-columns: max-content minmax(0, 1fr) max-content; flex-wrap: nowrap; gap: 3px; align-items: center; justify-content: stretch; width: 100%; }
+  .panel-head.compact .heading-with-total { flex: 0 0 auto; }
+  .panel-head.compact h2 { font-size: 20px; white-space: nowrap; }
+  .panel-head.compact > .list-tools { order: initial; width: auto; min-width: 0; gap: 3px; justify-content: center; transform: translateX(-10px); }
+  .panel-head.compact > .list-tools .period-stack { grid-template-rows: 9px 28px 9px; gap: 1px; }
+  .panel-head.compact > .list-tools #incomeYearLabel,
+  .panel-head.compact > .list-tools #expenseYearLabel { width: 58px; padding-inline: 4px; }
+  .panel-head.compact > .list-tools #incomeMonthLabel,
+  .panel-head.compact > .list-tools #expenseMonthLabel { width: 64px; padding-inline: 4px; }
+  .panel-head.compact > .list-tools .date-sort { width: 29px; font-size: 14px; }
+  .panel-head.compact > .list-tools .sort-btn[data-list-sort-mode="amount"] { width: 26px; font-size: 12px; }
+  .panel-head.compact > .list-total { margin-left: 0; flex: 0 0 auto; font-size: 17.333px; letter-spacing: -1px; white-space: nowrap; transform: none; }
+  .legend { display: none; }
+  .dues-tools { gap: 0; }
+  .dues-list-tools { position: static; transform: none; }
+  .dues-period-controls { order: 3; width: 100%; }
+  .panel-head:has(.dues-period-controls) { flex-wrap: wrap; }
+  .dues-period-controls label { flex: 1; }
+  .dues-period-controls select { width: 100%; min-width: 0; }
+  .form-grid { grid-template-columns: 1fr; }
+  .field.full { grid-column: auto; }
+  .filters { width: 100%; }
+  .filters input, .filters select, .filters .btn { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .topbar { gap: 5px; padding: 8px 10px; }
+  .brand-wrap { gap: 5px; }
+  .brand-wrap .eyebrow { display: block; margin-bottom: 1px; font-size: 10px; }
+  .topbar h1 { font-size: 16px; }
+  .brand-mark { width: 38px; height: 38px; flex-basis: 38px; }
+  .brand-mark svg { width: 29px; height: 29px; }
+  .top-account span { font-size: 10px; }
+  .top-account strong { font-size: 14px; }
+  .top-actions { gap: 2px; }
+  .icon-tool { width: 26px; height: 26px; border-radius: 7px; font-size: 18px; }
+  .icon-tool svg { width: 14px; height: 14px; }
+  .top-actions .icon-tool:nth-of-type(3),
+  .top-actions .icon-tool:nth-of-type(4) { display: none; }
+}
+
+@media print {
+  body { background: white; }
+  .topbar, .tabs, .top-actions, .text-btn, .filters, .table-note { display: none !important; }
+  .app-shell { max-width: none; padding: 0; }
+  .hero-panel { color: black; background: white; box-shadow: none; border: 1px solid #bbb; }
+  .hero-panel .muted, .hero-label { color: #333; }
+  .panel, .summary-card { box-shadow: none; break-inside: avoid; }
+  .two-column { grid-template-columns: 1fr; }
+}
+</style>
+<script id="shared-state" type="application/json">{"version":1,"createdAt":"2026-10-03T12:46:56.397Z","settings":{"account":"110-353-055170","monthlyDue":10000},"openingBalances":{"2024":3956069,"2025":4312481,"2026":3028946},"credits":{"2025":{"jeon":120000},"2026":{"jeong":120000}},"members":[{"id":"ahn","name":"안현철","nickname":"방글스","aliases":["안현철","방글스"]},{"id":"kimjh","name":"김정훈","nickname":"포스트맨","aliases":["김정훈","포스트맨"]},{"id":"kims","name":"김성연","nickname":"레브","aliases":["김성연","레브"]},{"id":"moon","name":"문형우","nickname":"문행크스","aliases":["문형우","문행크스"]},{"id":"shin","name":"신정철","nickname":"쇼미더머니","aliases":["신정철","쇼미더머니"]},{"id":"kang","name":"강희주","nickname":"찐쭈니","aliases":["강희주","강희주"]},{"id":"kimk","name":"김기수","nickname":"","aliases":["김기수"]},{"id":"lee","name":"이미숙","nickname":"울트라줌마","aliases":["이미숙","이믜숙","울트라줌마"]},{"id":"ji","name":"지수진","nickname":"","aliases":["지수진"]},{"id":"jeong","name":"정동섭","nickname":"","aliases":["정동섭"]},{"id":"heo","name":"허재영","nickname":"","aliases":["허재영","인수한의원"]},{"id":"jeon","name":"전홍태","nickname":"","aliases":["전홍태"]}],"transactions":[{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2023-12-29","direction":"in","amount":10000,"memo":"김기수(1)","type":"dues","memberId":"kimk","id":"seed-1","sourceKey":"2023-12-29||in|10000|김기수(1)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-01","direction":"in","amount":10000,"memo":"신정철(1)","type":"dues","memberId":"shin","id":"seed-2","sourceKey":"2024-01-01||in|10000|신정철(1)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-02","direction":"in","amount":10000,"memo":"김정훈(1)","type":"dues","memberId":"kimjh","id":"seed-3","sourceKey":"2024-01-02||in|10000|김정훈(1)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-04","direction":"in","amount":60000,"memo":"정동섭(2023년)","type":"dues","memberId":"jeong","id":"seed-4","sourceKey":"2024-01-04||in|60000|정동섭(2023년)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-04","direction":"in","amount":60000,"memo":"이미숙(2023년)","type":"dues","memberId":"lee","id":"seed-5","sourceKey":"2024-01-04||in|60000|이미숙(2023년)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-05","direction":"in","amount":120000,"memo":"문형우(1~12)","type":"dues","memberId":"moon","id":"seed-6","sourceKey":"2024-01-05||in|120000|문형우(1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-08","direction":"in","amount":60000,"memo":"김성연(2023년)","type":"dues","memberId":"kims","id":"seed-7","sourceKey":"2024-01-08||in|60000|김성연(2023년)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-13","direction":"in","amount":120000,"memo":"안현철(1~12)","type":"dues","memberId":"ahn","id":"seed-8","sourceKey":"2024-01-13||in|120000|안현철(1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-14","direction":"in","amount":120000,"memo":"지수진(1~12)","type":"dues","memberId":"ji","id":"seed-9","sourceKey":"2024-01-14||in|120000|지수진(1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-14","direction":"in","amount":120000,"memo":"허재영(1~12)","type":"dues","memberId":"heo","id":"seed-10","sourceKey":"2024-01-14||in|120000|허재영(1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":120000,"otherDues":20000,"balance":null,"bookYear":2024,"date":"2024-01-14","direction":"in","amount":140000,"memo":"전홍태(작년,1~12)","type":"dues","memberId":"jeon","id":"seed-11","sourceKey":"2024-01-14||in|140000|전홍태(작년,1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-15","direction":"in","amount":120000,"memo":"강희주(1~12)","type":"dues","memberId":"kang","id":"seed-12","sourceKey":"2024-01-15||in|120000|강희주(1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-01","direction":"in","amount":10000,"memo":"신정철(2)","type":"dues","memberId":"shin","id":"seed-13","sourceKey":"2024-02-01||in|10000|신정철(2)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-01","direction":"in","amount":10000,"memo":"김정훈(2)","type":"dues","memberId":"kimjh","id":"seed-14","sourceKey":"2024-02-01||in|10000|김정훈(2)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-01","direction":"in","amount":10000,"memo":"김기수(2)","type":"dues","memberId":"kimk","id":"seed-15","sourceKey":"2024-02-01||in|10000|김기수(2)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-08","direction":"in","amount":60000,"memo":"김성연(1~6)","type":"dues","memberId":"kims","id":"seed-16","sourceKey":"2024-02-08||in|60000|김성연(1~6)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":60000,"otherDues":60000,"balance":null,"bookYear":2024,"date":"2024-02-09","direction":"in","amount":120000,"memo":"정동섭(1~12)","type":"dues","memberId":"jeong","id":"seed-17","sourceKey":"2024-02-09||in|120000|정동섭(1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-13","direction":"in","amount":60000,"memo":"이미숙(1~6)","type":"dues","memberId":"lee","id":"seed-18","sourceKey":"2024-02-13||in|60000|이미숙(1~6)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-29","direction":"in","amount":10000,"memo":"김기수(3)","type":"dues","memberId":"kimk","id":"seed-19","sourceKey":"2024-02-29||in|10000|김기수(3)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-03-02","direction":"in","amount":10000,"memo":"신정철(3)","type":"dues","memberId":"shin","id":"seed-20","sourceKey":"2024-03-02||in|10000|신정철(3)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-03-04","direction":"in","amount":10000,"memo":"김정훈(3)","type":"dues","memberId":"kimjh","id":"seed-21","sourceKey":"2024-03-04||in|10000|김정훈(3)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-04-01","direction":"in","amount":10000,"memo":"신정철(4)","type":"dues","memberId":"shin","id":"seed-22","sourceKey":"2024-04-01||in|10000|신정철(4)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-04-01","direction":"in","amount":10000,"memo":"김기수(4)","type":"dues","memberId":"kimk","id":"seed-23","sourceKey":"2024-04-01||in|10000|김기수(4)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-04-30","direction":"in","amount":10000,"memo":"김기수(5)","type":"dues","memberId":"kimk","id":"seed-24","sourceKey":"2024-04-30||in|10000|김기수(5)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-05-01","direction":"in","amount":10000,"memo":"김정훈(5)","type":"dues","memberId":"kimjh","id":"seed-25","sourceKey":"2024-05-01||in|10000|김정훈(5)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-05-02","direction":"in","amount":10000,"memo":"신정철(5)","type":"dues","memberId":"shin","id":"seed-26","sourceKey":"2024-05-02||in|10000|신정철(5)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-05-31","direction":"in","amount":10000,"memo":"김기수(6)","type":"dues","memberId":"kimk","id":"seed-27","sourceKey":"2024-05-31||in|10000|김기수(6)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-06-03","direction":"in","amount":10000,"memo":"김정훈(6)","type":"dues","memberId":"kimjh","id":"seed-28","sourceKey":"2024-06-03||in|10000|김정훈(6)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-06-04","direction":"in","amount":10000,"memo":"신정철(6)","type":"dues","memberId":"shin","id":"seed-29","sourceKey":"2024-06-04||in|10000|신정철(6)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-07-01","direction":"in","amount":10000,"memo":"신정철(7)","type":"dues","memberId":"shin","id":"seed-30","sourceKey":"2024-07-01||in|10000|신정철(7)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-07-01","direction":"in","amount":10000,"memo":"김기수(7)","type":"dues","memberId":"kimk","id":"seed-31","sourceKey":"2024-07-01||in|10000|김기수(7)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-08-01","direction":"in","amount":10000,"memo":"신정철(8)","type":"dues","memberId":"shin","id":"seed-32","sourceKey":"2024-08-01||in|10000|신정철(8)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-08-01","direction":"in","amount":10000,"memo":"김정훈(8)","type":"dues","memberId":"kimjh","id":"seed-33","sourceKey":"2024-08-01||in|10000|김정훈(8)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-08-01","direction":"in","amount":10000,"memo":"김기수(8)","type":"dues","memberId":"kimk","id":"seed-34","sourceKey":"2024-08-01||in|10000|김기수(8)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-08-30","direction":"in","amount":10000,"memo":"김기수(9)","type":"dues","memberId":"kimk","id":"seed-35","sourceKey":"2024-08-30||in|10000|김기수(9)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-09-01","direction":"in","amount":10000,"memo":"신정철(9)","type":"dues","memberId":"shin","id":"seed-36","sourceKey":"2024-09-01||in|10000|신정철(9)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-09-02","direction":"in","amount":10000,"memo":"김정훈(9)","type":"dues","memberId":"kimjh","id":"seed-37","sourceKey":"2024-09-02||in|10000|김정훈(9)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":60000,"balance":null,"bookYear":2024,"date":"2024-09-19","direction":"in","amount":60000,"memo":"이미숙(7~12)","type":"dues","memberId":"lee","id":"seed-38","sourceKey":"2024-09-19||in|60000|이미숙(7~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-09-30","direction":"in","amount":10000,"memo":"김기수(10)","type":"dues","memberId":"kimk","id":"seed-39","sourceKey":"2024-09-30||in|10000|김기수(10)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-10-01","direction":"in","amount":10000,"memo":"신정철(10)","type":"dues","memberId":"shin","id":"seed-40","sourceKey":"2024-10-01||in|10000|신정철(10)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-10-02","direction":"in","amount":10000,"memo":"김정훈(10)","type":"dues","memberId":"kimjh","id":"seed-41","sourceKey":"2024-10-02||in|10000|김정훈(10)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":60000,"balance":null,"bookYear":2024,"date":"2024-10-08","direction":"in","amount":60000,"memo":"정동섭(내년1~6)","type":"dues","memberId":"jeong","id":"seed-42","sourceKey":"2024-10-08||in|60000|정동섭(내년1~6)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":60000,"balance":null,"bookYear":2024,"date":"2024-10-14","direction":"in","amount":60000,"memo":"김성연(7~12)","type":"dues","memberId":"kims","id":"seed-43","sourceKey":"2024-10-14||in|60000|김성연(7~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":120000,"balance":null,"bookYear":2024,"date":"2024-10-17","direction":"in","amount":120000,"memo":"전홍태(내년1~12)","type":"dues","memberId":"jeon","id":"seed-44","sourceKey":"2024-10-17||in|120000|전홍태(내년1~12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-11-01","direction":"in","amount":10000,"memo":"신정철(11)","type":"dues","memberId":"shin","id":"seed-45","sourceKey":"2024-11-01||in|10000|신정철(11)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-11-01","direction":"in","amount":10000,"memo":"김기수(11)","type":"dues","memberId":"kimk","id":"seed-46","sourceKey":"2024-11-01||in|10000|김기수(11)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-12-01","direction":"in","amount":10000,"memo":"신정철(12)","type":"dues","memberId":"shin","id":"seed-47","sourceKey":"2024-12-01||in|10000|신정철(12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-12-01","direction":"in","amount":10000,"memo":"김기수(12)","type":"dues","memberId":"kimk","id":"seed-48","sourceKey":"2024-12-01||in|10000|김기수(12)|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-13","direction":"out","amount":246600,"memo":"어가스시","type":"expense","memberId":"","id":"seed-49","sourceKey":"2024-01-13||out|246600|어가스시|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-01-13","direction":"out","amount":28800,"memo":"하삼동커피","type":"expense","memberId":"","id":"seed-50","sourceKey":"2024-01-13||out|28800|하삼동커피|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-02-08","direction":"out","amount":926000,"memo":"옥션원 결제","type":"expense","memberId":"","id":"seed-51","sourceKey":"2024-02-08||out|926000|옥션원결제|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-03-23","direction":"in","amount":960,"memo":"이자","type":"interest","memberId":"","id":"seed-52","sourceKey":"2024-03-23||in|960|이자|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-06-22","direction":"in","amount":859,"memo":"이자","type":"interest","memberId":"","id":"seed-53","sourceKey":"2024-06-22||in|859|이자|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-09-21","direction":"in","amount":879,"memo":"이자","type":"interest","memberId":"","id":"seed-54","sourceKey":"2024-09-21||in|879|이자|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-10-19","direction":"out","amount":140000,"memo":"대게맛집","type":"expense","memberId":"","id":"seed-55","sourceKey":"2024-10-19||out|140000|대게맛집|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-10-19","direction":"out","amount":85800,"memo":"아덴커피숍","type":"expense","memberId":"","id":"seed-56","sourceKey":"2024-10-19||out|85800|아덴커피숍|0"},{"time":"","note":"","source":"2024년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2024,"date":"2024-12-21","direction":"in","amount":914,"memo":"이자","type":"interest","memberId":"","id":"seed-57","sourceKey":"2024-12-21||in|914|이자|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-01","direction":"in","amount":10000,"memo":"신정철(1)","type":"dues","memberId":"shin","id":"seed-58","sourceKey":"2025-01-01||in|10000|신정철(1)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":40000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-01","direction":"in","amount":40000,"memo":"김정훈(미납금)","type":"dues","memberId":"kimjh","id":"seed-59","sourceKey":"2025-01-01||in|40000|김정훈(미납금)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":80000,"otherDues":40000,"balance":null,"bookYear":2025,"date":"2025-01-01","direction":"in","amount":120000,"memo":"김정훈(1~12)","type":"dues","memberId":"kimjh","id":"seed-60","sourceKey":"2025-01-01||in|120000|김정훈(1~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-01","direction":"in","amount":120000,"memo":"지수진(1~12)","type":"dues","memberId":"ji","id":"seed-61","sourceKey":"2025-01-01||in|120000|지수진(1~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-01","direction":"in","amount":10000,"memo":"김기수(1)","type":"dues","memberId":"kimk","id":"seed-62","sourceKey":"2025-01-01||in|10000|김기수(1)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-26","direction":"in","amount":120000,"memo":"안현철(1~12)","type":"dues","memberId":"ahn","id":"seed-63","sourceKey":"2025-01-26||in|120000|안현철(1~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-02-01","direction":"in","amount":10000,"memo":"김기수(2)","type":"dues","memberId":"kimk","id":"seed-64","sourceKey":"2025-02-01||in|10000|김기수(2)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-02-01","direction":"in","amount":10000,"memo":"신정철(2)","type":"dues","memberId":"shin","id":"seed-65","sourceKey":"2025-02-01||in|10000|신정철(2)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-02-10","direction":"in","amount":60000,"memo":"이미숙(1~6)","type":"dues","memberId":"lee","id":"seed-66","sourceKey":"2025-02-10||in|60000|이미숙(1~6)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-03-01","direction":"in","amount":10000,"memo":"김기수(3)","type":"dues","memberId":"kimk","id":"seed-67","sourceKey":"2025-03-01||in|10000|김기수(3)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-03-03","direction":"in","amount":10000,"memo":"신정철(3)","type":"dues","memberId":"shin","id":"seed-68","sourceKey":"2025-03-03||in|10000|신정철(3)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-03-10","direction":"in","amount":60000,"memo":"이미숙(7~12)","type":"dues","memberId":"lee","id":"seed-69","sourceKey":"2025-03-10||in|60000|이미숙(7~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-04-01","direction":"in","amount":10000,"memo":"신정철(4)","type":"dues","memberId":"shin","id":"seed-70","sourceKey":"2025-04-01||in|10000|신정철(4)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-04-01","direction":"in","amount":10000,"memo":"김기수(4)","type":"dues","memberId":"kimk","id":"seed-71","sourceKey":"2025-04-01||in|10000|김기수(4)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-01","direction":"in","amount":10000,"memo":"신정철(5)","type":"dues","memberId":"shin","id":"seed-72","sourceKey":"2025-05-01||in|10000|신정철(5)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-01","direction":"in","amount":10000,"memo":"김기수(5)","type":"dues","memberId":"kimk","id":"seed-73","sourceKey":"2025-05-01||in|10000|김기수(5)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-19","direction":"in","amount":60000,"memo":"김성연(1~6)","type":"dues","memberId":"kims","id":"seed-74","sourceKey":"2025-05-19||in|60000|김성연(1~6)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-31","direction":"in","amount":120000,"memo":"문형우(1~12)","type":"dues","memberId":"moon","id":"seed-75","sourceKey":"2025-05-31||in|120000|문형우(1~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-31","direction":"in","amount":120000,"memo":"강희주(1~12)","type":"dues","memberId":"kang","id":"seed-76","sourceKey":"2025-05-31||in|120000|강희주(1~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-06-01","direction":"in","amount":10000,"memo":"김기수(6)","type":"dues","memberId":"kimk","id":"seed-77","sourceKey":"2025-06-01||in|10000|김기수(6)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-06-01","direction":"in","amount":10000,"memo":"신정철(6)","type":"dues","memberId":"shin","id":"seed-78","sourceKey":"2025-06-01||in|10000|신정철(6)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":120000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-06-02","direction":"in","amount":120000,"memo":"정동섭(1~12)","type":"dues","memberId":"jeong","id":"seed-79","sourceKey":"2025-06-02||in|120000|정동섭(1~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-07-01","direction":"in","amount":10000,"memo":"신정철(7)","type":"dues","memberId":"shin","id":"seed-80","sourceKey":"2025-07-01||in|10000|신정철(7)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-07-01","direction":"in","amount":10000,"memo":"김기수(7)","type":"dues","memberId":"kimk","id":"seed-81","sourceKey":"2025-07-01||in|10000|김기수(7)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-08-01","direction":"in","amount":10000,"memo":"신정철(8)","type":"dues","memberId":"shin","id":"seed-82","sourceKey":"2025-08-01||in|10000|신정철(8)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-08-01","direction":"in","amount":10000,"memo":"김기수(8)","type":"dues","memberId":"kimk","id":"seed-83","sourceKey":"2025-08-01||in|10000|김기수(8)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-01","direction":"in","amount":10000,"memo":"김기수(9)","type":"dues","memberId":"kimk","id":"seed-84","sourceKey":"2025-09-01||in|10000|김기수(9)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":10000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-01","direction":"in","amount":10000,"memo":"신정철(9)","type":"dues","memberId":"shin","id":"seed-85","sourceKey":"2025-09-01||in|10000|신정철(9)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":10000,"balance":null,"bookYear":2025,"date":"2025-09-01","direction":"in","amount":10000,"memo":"김정훈(9)","type":"dues","memberId":"kimjh","id":"seed-86","sourceKey":"2025-09-01||in|10000|김정훈(9)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":60000,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-01","direction":"in","amount":60000,"memo":"김성연(7~12)","type":"dues","memberId":"kims","id":"seed-87","sourceKey":"2025-09-01||in|60000|김성연(7~12)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-25","direction":"out","amount":296000,"memo":"중화반","type":"expense","memberId":"","id":"seed-88","sourceKey":"2025-01-25||out|296000|중화반|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-01-25","direction":"out","amount":38800,"memo":"커피숍","type":"expense","memberId":"","id":"seed-89","sourceKey":"2025-01-25||out|38800|커피숍|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-03-22","direction":"in","amount":960,"memo":"이자","type":"interest","memberId":"","id":"seed-90","sourceKey":"2025-03-22||in|960|이자|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-19","direction":"out","amount":926000,"memo":"옥션원 구독","type":"expense","memberId":"","id":"seed-91","sourceKey":"2025-05-19||out|926000|옥션원구독|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-31","direction":"out","amount":116000,"memo":"부산 모임 비용","type":"expense","memberId":"","id":"seed-92","sourceKey":"2025-05-31||out|116000|부산모임비용|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-05-31","direction":"out","amount":43600,"memo":"커피숍","type":"expense","memberId":"","id":"seed-93","sourceKey":"2025-05-31||out|43600|커피숍|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-06-21","direction":"in","amount":919,"memo":"이자","type":"interest","memberId":"","id":"seed-94","sourceKey":"2025-06-21||in|919|이자|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-13","direction":"out","amount":846000,"memo":"대게만찬","type":"expense","memberId":"","id":"seed-95","sourceKey":"2025-09-13||out|846000|대게만찬|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-13","direction":"out","amount":50490,"memo":"커피숍","type":"expense","memberId":"","id":"seed-96","sourceKey":"2025-09-13||out|50490|커피숍|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-13","direction":"out","amount":30000,"memo":"기름값(문형우)","type":"expense","memberId":"","id":"seed-97","sourceKey":"2025-09-13||out|30000|기름값(문형우)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-13","direction":"out","amount":30000,"memo":"기름값(김정훈)","type":"expense","memberId":"","id":"seed-98","sourceKey":"2025-09-13||out|30000|기름값(김정훈)|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-13","direction":"out","amount":150000,"memo":"이미숙·정동섭·전홍태","type":"expense","memberId":"","id":"seed-99","sourceKey":"2025-09-13||out|150000|이미숙·정동섭·전홍태|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-09-13","direction":"out","amount":10000,"memo":"이미지 잔액 대조 조정","type":"adjustment","memberId":"","id":"seed-100","sourceKey":"2025-09-13||out|10000|이미지잔액대조조정|0"},{"time":"","note":"","source":"2025년 장부 이미지","currentDues":0,"otherDues":0,"balance":null,"bookYear":2025,"date":"2025-12-31","direction":"in","amount":61476,"memo":"2026년 이월잔액 대조 조정","type":"adjustment","memberId":"","id":"seed-101","sourceKey":"2025-12-31||in|61476|2026년이월잔액대조조정|0"},{"time":"22:16:34","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3078209,"id":"shinhan-2026-10-01-22:16:34-in-10000-3078209","bookYear":2026,"date":"2026-10-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-10-01|22:16:34|in|10000|신정철|3078209"},{"time":"14:02:40","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3068209,"id":"shinhan-2026-10-01-14:02:40-in-10000-3068209","bookYear":2026,"date":"2026-10-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-10-01|14:02:40|in|10000|김기수|3068209"},{"time":"08:04:19","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3058209,"id":"shinhan-2026-10-01-08:04:19-in-10000-3058209","bookYear":2026,"date":"2026-10-01","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-10-01|08:04:19|in|10000|김정훈|3058209"},{"time":"02:15:34","note":"이자","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3048209,"id":"shinhan-2026-09-19-02:15:34-in-838-3048209","bookYear":2026,"date":"2026-09-19","direction":"in","amount":838,"memo":"06.20~09.18","memberId":"","type":"interest","sourceKey":"2026-09-19|02:15:34|in|838|06.20~09.18|3048209"},{"time":"19:13:19","note":"인터넷","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3047371,"id":"shinhan-2026-09-14-19:13:19-out-30000-3047371","bookYear":2026,"date":"2026-09-14","direction":"out","amount":30000,"memo":"차량지원비","memberId":"","type":"expense","sourceKey":"2026-09-14|19:13:19|out|30000|차량지원비|3047371"},{"time":"19:13:19","note":"인터넷","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3077371,"id":"shinhan-2026-09-14-19:13:19-out-30000-3077371","bookYear":2026,"date":"2026-09-14","direction":"out","amount":30000,"memo":"차량지원비","memberId":"","type":"expense","sourceKey":"2026-09-14|19:13:19|out|30000|차량지원비|3077371"},{"time":"19:13:18","note":"인터넷","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3107371,"id":"shinhan-2026-09-14-19:13:18-out-926000-3107371","bookYear":2026,"date":"2026-09-14","direction":"out","amount":926000,"memo":"옥션원구독료","memberId":"","type":"expense","sourceKey":"2026-09-14|19:13:18|out|926000|옥션원구독료|3107371"},{"time":"19:13:18","note":"인터넷","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":4033371,"id":"shinhan-2026-09-14-19:13:18-out-147100-4033371","bookYear":2026,"date":"2026-09-14","direction":"out","amount":147100,"memo":"커피2곳빵주차","memberId":"","type":"expense","sourceKey":"2026-09-14|19:13:18|out|147100|커피2곳빵주차|4033371"},{"time":"19:16:39","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":30000,"otherDues":0,"balance":4180471,"id":"shinhan-2026-09-10-19:16:39-in-30000-4180471","bookYear":2026,"date":"2026-09-10","direction":"in","amount":30000,"memo":"이미숙","memberId":"lee","type":"dues","sourceKey":"2026-09-10|19:16:39|in|30000|이미숙|4180471"},{"time":"12:53:06","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":120000,"otherDues":0,"balance":4150471,"id":"shinhan-2026-09-06-12:53:06-in-120000-4150471","bookYear":2026,"date":"2026-09-06","direction":"in","amount":120000,"memo":"문형우","memberId":"moon","type":"dues","sourceKey":"2026-09-06|12:53:06|in|120000|문형우|4150471"},{"time":"20:50:02","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":4030471,"id":"shinhan-2026-09-01-20:50:02-in-10000-4030471","bookYear":2026,"date":"2026-09-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-09-01|20:50:02|in|10000|신정철|4030471"},{"time":"14:02:36","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":4020471,"id":"shinhan-2026-09-01-14:02:36-in-10000-4020471","bookYear":2026,"date":"2026-09-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-09-01|14:02:36|in|10000|김기수|4020471"},{"time":"08:04:49","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":4010471,"id":"shinhan-2026-09-01-08:04:49-in-10000-4010471","bookYear":2026,"date":"2026-09-01","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-09-01|08:04:49|in|10000|김정훈|4010471"},{"time":"08:03:48","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":4000471,"id":"shinhan-2026-08-03-08:03:48-in-10000-4000471","bookYear":2026,"date":"2026-08-03","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-08-03|08:03:48|in|10000|김정훈|4000471"},{"time":"14:02:19","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3990471,"id":"shinhan-2026-08-01-14:02:19-in-10000-3990471","bookYear":2026,"date":"2026-08-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-08-01|14:02:19|in|10000|김기수|3990471"},{"time":"08:35:09","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3980471,"id":"shinhan-2026-08-01-08:35:09-in-10000-3980471","bookYear":2026,"date":"2026-08-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-08-01|08:35:09|in|10000|신정철|3980471"},{"time":"12:36:14","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":60000,"otherDues":0,"balance":3970471,"id":"shinhan-2026-07-20-12:36:14-in-60000-3970471","bookYear":2026,"date":"2026-07-20","direction":"in","amount":60000,"memo":"김성연","memberId":"kims","type":"dues","sourceKey":"2026-07-20|12:36:14|in|60000|김성연|3970471"},{"time":"22:39:36","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3910471,"id":"shinhan-2026-07-02-22:39:36-in-10000-3910471","bookYear":2026,"date":"2026-07-02","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-07-02|22:39:36|in|10000|신정철|3910471"},{"time":"14:02:25","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3900471,"id":"shinhan-2026-07-01-14:02:25-in-10000-3900471","bookYear":2026,"date":"2026-07-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-07-01|14:02:25|in|10000|김기수|3900471"},{"time":"08:04:09","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3890471,"id":"shinhan-2026-07-01-08:04:09-in-10000-3890471","bookYear":2026,"date":"2026-07-01","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-07-01|08:04:09|in|10000|김정훈|3890471"},{"time":"03:58:55","note":"이자","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3880471,"id":"shinhan-2026-06-20-03:58:55-in-816-3880471","bookYear":2026,"date":"2026-06-20","direction":"in","amount":816,"memo":"03.21~06.19","memberId":"","type":"interest","sourceKey":"2026-06-20|03:58:55|in|816|03.21~06.19|3880471"},{"time":"19:49:56","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3879655,"id":"shinhan-2026-06-01-19:49:56-in-10000-3879655","bookYear":2026,"date":"2026-06-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-06-01|19:49:56|in|10000|신정철|3879655"},{"time":"14:02:39","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3869655,"id":"shinhan-2026-06-01-14:02:39-in-10000-3869655","bookYear":2026,"date":"2026-06-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-06-01|14:02:39|in|10000|김기수|3869655"},{"time":"08:04:17","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3859655,"id":"shinhan-2026-06-01-08:04:17-in-10000-3859655","bookYear":2026,"date":"2026-06-01","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-06-01|08:04:17|in|10000|김정훈|3859655"},{"time":"08:03:57","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3849655,"id":"shinhan-2026-05-04-08:03:57-in-10000-3849655","bookYear":2026,"date":"2026-05-04","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-05-04|08:03:57|in|10000|김정훈|3849655"},{"time":"14:02:23","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3839655,"id":"shinhan-2026-05-01-14:02:23-in-10000-3839655","bookYear":2026,"date":"2026-05-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-05-01|14:02:23|in|10000|김기수|3839655"},{"time":"12:09:52","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3829655,"id":"shinhan-2026-05-01-12:09:52-in-10000-3829655","bookYear":2026,"date":"2026-05-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-05-01|12:09:52|in|10000|신정철|3829655"},{"time":"21:13:08","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3819655,"id":"shinhan-2026-04-01-21:13:08-in-10000-3819655","bookYear":2026,"date":"2026-04-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-04-01|21:13:08|in|10000|신정철|3819655"},{"time":"14:02:28","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3809655,"id":"shinhan-2026-04-01-14:02:28-in-10000-3809655","bookYear":2026,"date":"2026-04-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-04-01|14:02:28|in|10000|김기수|3809655"},{"time":"08:03:49","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3799655,"id":"shinhan-2026-04-01-08:03:49-in-10000-3799655","bookYear":2026,"date":"2026-04-01","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-04-01|08:03:49|in|10000|김정훈|3799655"},{"time":"03:34:00","note":"이자","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3789655,"id":"shinhan-2026-03-21-03:34:00-in-709-3789655","bookYear":2026,"date":"2026-03-21","direction":"in","amount":709,"memo":"12.20~03.20","memberId":"","type":"interest","sourceKey":"2026-03-21|03:34:00|in|709|12.20~03.20|3789655"},{"time":"11:42:07","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":60000,"otherDues":0,"balance":3788946,"id":"shinhan-2026-03-10-11:42:07-in-60000-3788946","bookYear":2026,"date":"2026-03-10","direction":"in","amount":60000,"memo":"이미숙","memberId":"lee","type":"dues","sourceKey":"2026-03-10|11:42:07|in|60000|이미숙|3788946"},{"time":"08:04:19","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3728946,"id":"shinhan-2026-03-03-08:04:19-in-10000-3728946","bookYear":2026,"date":"2026-03-03","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-03-03|08:04:19|in|10000|김정훈|3728946"},{"time":"14:02:14","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3718946,"id":"shinhan-2026-03-01-14:02:14-in-10000-3718946","bookYear":2026,"date":"2026-03-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-03-01|14:02:14|in|10000|김기수|3718946"},{"time":"09:25:47","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3708946,"id":"shinhan-2026-03-01-09:25:47-in-10000-3708946","bookYear":2026,"date":"2026-03-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-03-01|09:25:47|in|10000|신정철|3708946"},{"time":"22:47:00","note":"인터넷","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":null,"id":"shinhan-2026-02-28-22:47:40-out-60000-3698946","bookYear":2026,"date":"2026-02-28","direction":"out","amount":60000,"memo":"초과계비반환 (정동섭)","memberId":"","type":"expense","sourceKey":"2026-02-28|22:47:00|out|60000|초과계비반환(정동섭)|0"},{"time":"22:34:00","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":0,"otherDues":60000,"balance":null,"id":"shinhan-2026-02-28-22:34:26-in-60000-3758946","bookYear":2026,"date":"2026-02-28","direction":"in","amount":60000,"memo":"25년 1~6월","memberId":"heo","type":"dues","sourceKey":"2026-02-28|22:34:00|in|60000|25년1~6월|0"},{"time":"21:13:00","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":120000,"otherDues":60000,"balance":null,"id":"shinhan-2026-02-28-21:13:46-in-180000-3698946","bookYear":2026,"date":"2026-02-28","direction":"in","amount":180000,"memo":"25년7~12월,26년1~12월","memberId":"heo","type":"dues","sourceKey":"2026-02-28|21:13:00|in|180000|25년7~12월,26년1~12월|0"},{"time":"18:20:50","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":120000,"otherDues":0,"balance":3518946,"id":"shinhan-2026-02-28-18:20:50-in-120000-3518946","bookYear":2026,"date":"2026-02-28","direction":"in","amount":120000,"memo":"강희주","memberId":"kang","type":"dues","sourceKey":"2026-02-28|18:20:50|in|120000|강희주|3518946"},{"time":"18:19:14","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3398946,"id":"shinhan-2026-02-28-18:19:14-in-154000-3398946","bookYear":2026,"date":"2026-02-28","direction":"in","amount":154000,"memo":"안현철찬조","memberId":"","type":"income","sourceKey":"2026-02-28|18:19:14|in|154000|안현철찬조|3398946"},{"time":"18:15:48","note":"인터넷","source":"신한은행 XLS","currentDues":0,"otherDues":0,"balance":3244946,"id":"shinhan-2026-02-28-18:15:48-out-154000-3244946","bookYear":2026,"date":"2026-02-28","direction":"out","amount":154000,"memo":"강갈비탕","memberId":"","type":"expense","sourceKey":"2026-02-28|18:15:48|out|154000|강갈비탕|3244946"},{"time":"17:08:53","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":120000,"otherDues":0,"balance":3398946,"id":"shinhan-2026-02-28-17:08:53-in-120000-3398946","bookYear":2026,"date":"2026-02-28","direction":"in","amount":120000,"memo":"안현철회비","memberId":"ahn","type":"dues","sourceKey":"2026-02-28|17:08:53|in|120000|안현철회비|3398946"},{"time":"08:03:58","note":"타행인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3278946,"id":"shinhan-2026-02-02-08:03:58-in-10000-3278946","bookYear":2026,"date":"2026-02-02","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-02-02|08:03:58|in|10000|김정훈|3278946"},{"time":"14:02:07","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3268946,"id":"shinhan-2026-02-01-14:02:07-in-10000-3268946","bookYear":2026,"date":"2026-02-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-02-01|14:02:07|in|10000|김기수|3268946"},{"time":"09:47:24","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3258946,"id":"shinhan-2026-02-01-09:47:24-in-10000-3258946","bookYear":2026,"date":"2026-02-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-02-01|09:47:24|in|10000|신정철|3258946"},{"time":"14:05:27","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":60000,"otherDues":0,"balance":3248946,"id":"shinhan-2026-01-29-14:05:27-in-60000-3248946","bookYear":2026,"date":"2026-01-29","direction":"in","amount":60000,"memo":"김성연","memberId":"kims","type":"dues","sourceKey":"2026-01-29|14:05:27|in|60000|김성연|3248946"},{"time":"09:52:13","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3188946,"id":"shinhan-2026-01-13-09:52:13-in-10000-3188946","bookYear":2026,"date":"2026-01-13","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-01-13|09:52:13|in|10000|김정훈|3188946"},{"time":"18:05:38","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":120000,"otherDues":0,"balance":3178946,"id":"shinhan-2026-01-01-18:05:38-in-120000-3178946","bookYear":2026,"date":"2026-01-01","direction":"in","amount":120000,"memo":"지수진","memberId":"ji","type":"dues","sourceKey":"2026-01-01|18:05:38|in|120000|지수진|3178946"},{"time":"14:02:05","note":"인터넷뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3058946,"id":"shinhan-2026-01-01-14:02:05-in-10000-3058946","bookYear":2026,"date":"2026-01-01","direction":"in","amount":10000,"memo":"김기수","memberId":"kimk","type":"dues","sourceKey":"2026-01-01|14:02:05|in|10000|김기수|3058946"},{"time":"13:27:20","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3048946,"id":"shinhan-2026-01-01-13:27:20-in-10000-3048946","bookYear":2026,"date":"2026-01-01","direction":"in","amount":10000,"memo":"김정훈","memberId":"kimjh","type":"dues","sourceKey":"2026-01-01|13:27:20|in|10000|김정훈|3048946"},{"time":"11:15:10","note":"타행모바일뱅킹","source":"신한은행 XLS","currentDues":10000,"otherDues":0,"balance":3038946,"id":"shinhan-2026-01-01-11:15:10-in-10000-3038946","bookYear":2026,"date":"2026-01-01","direction":"in","amount":10000,"memo":"신정철","memberId":"shin","type":"dues","sourceKey":"2026-01-01|11:15:10|in|10000|신정철|3038946"}]}</script></head>
+<body>
+  <header class="topbar">
+    <div class="brand-wrap">
+      <div class="brand-mark" data-action="home" role="button" tabindex="0" aria-label="첫 화면으로 이동">
+        <svg viewBox="0 0 64 64" role="img"><path d="M8 30 32 10l24 20v25a5 5 0 0 1-5 5H13a5 5 0 0 1-5-5Z" fill="currentColor"></path><path d="M20 31h24v29H20z" fill="#fff"></path><path d="M27 39h10v21H27z" fill="currentColor"></path><path d="M46 16h6v13h-6z" fill="currentColor"></path></svg>
+      </div>
+      <div>
+        <p class="eyebrow">부동산 1550 재테크</p>
+        <h1>경비관리</h1>
+      </div>
+    </div>
+    <section class="top-account" aria-label="입금 계좌">
+      <span>입금계좌 신한은행 신정철</span>
+      <strong id="accountNumber">110-353-055170</strong>
+    </section>
+    <div class="top-actions">
+      <span id="saveState" class="save-state">이 브라우저에 자동 저장</span>
+      <button class="icon-tool" data-action="open-quick" data-tooltip="빠른 기록" aria-label="빠른 기록 추가">＋</button>
+      <button class="icon-tool" data-action="open-settings" data-tooltip="회원·설정" aria-label="회원·설정">⚙</button>
+      <button class="icon-tool" data-action="backup" data-tooltip="백업 저장" aria-label="백업 저장">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h12l3 3v15H5z"></path><path d="M8 3v6h8V3M8 20v-6h8v6"></path></svg>
+      </button>
+      <button class="icon-tool" data-action="open-import" data-tooltip="은행 파일 가져오기" aria-label="은행 파일 가져오기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h9l5 5v13H5z"></path><path d="M14 3v6h6M12 18v-7m-3 3 3-3 3 3"></path></svg>
+      </button>
+      <button class="icon-tool share" data-action="share" data-tooltip="회원에게 공유" aria-label="회원에게 공유">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="2.5"></circle><circle cx="6" cy="12" r="2.5"></circle><circle cx="18" cy="19" r="2.5"></circle><path d="m8.2 10.8 7.5-4.4M8.2 13.2l7.5 4.4"></path></svg>
+      </button>
+    </div>
+  <span class="shared-badge">조회용 공유본 · 2026-10-04</span></header>
+
+  <main class="app-shell">
+    <section id="dashboardView" class="view active">
+      <div id="summaryCards" class="summary-grid"><article class="summary-card income"><span class="label">2026년 입금</span><strong>₩1,396,363</strong><span class="hint">45건</span></article><article class="summary-card expense"><span class="label">2026년 지출</span><strong>₩1,347,100</strong><span class="hint">6건</span></article><article class="summary-card balance"><span class="label">현재 통장 잔액</span><strong>₩3,078,209</strong><span class="hint">2026-10-01 기준</span></article></div>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 id="duesTitle">26년 전체 현황</h2>
+          </div>
+          <div class="dues-list-tools list-tools" aria-label="납부 현황 기간">
+            <div class="period-stack"><button class="period-step" data-list-period-step="income" data-period-unit="year" data-direction="1" aria-label="다음 연도">▲</button><button id="duesYearLabel" class="period-chip" data-list-year="income">2026년</button><button class="period-step" data-list-period-step="income" data-period-unit="year" data-direction="-1" aria-label="이전 연도">▼</button></div>
+            <div class="period-stack"><button class="period-step" data-list-period-step="income" data-period-unit="month" data-direction="1" aria-label="다음 월">▲</button><button id="duesMonthLabel" class="period-chip active" data-list-month="income">10월</button><button class="period-step" data-list-period-step="income" data-period-unit="month" data-direction="-1" aria-label="이전 월">▼</button></div>
+          </div>
+          <div class="dues-tools">
+            <div class="legend">
+              <span><i class="dot paid"></i>완납</span>
+              <span><i class="dot partial"></i>일부 납부</span>
+              <span><i class="dot unpaid"></i>미납</span>
+              <span><i class="dot scheduled"></i>예정</span>
+            </div>
+            <div class="view-switch" role="group" aria-label="회비표 보기 방식">
+              <button id="summaryDuesBtn" class="switch-btn active" type="button">한눈에 보기</button>
+              <button id="detailDuesBtn" class="switch-btn" type="button">월별 상세</button>
+            </div>
+          </div>
+        </div>
+        <div class="table-scroll dues-scroll">
+          <table id="duesTable" class="data-table dues-table dues-summary"><thead><tr><th>순서</th><th class="name-cell">회원</th><th>상태</th><th>올해 납부액</th><th>남은 회비</th><th>최근 입금</th></tr></thead><tbody><tr class="complete annual-complete"><td>1</td><td class="name-cell">안현철</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td>02/28 · 120,000</td></tr><tr class="partial"><td>2</td><td class="name-cell">김정훈</td><td class="status-cell"><span class="status-pill partial">일부 납부</span></td><td><strong>110,000</strong><div class="due-bar partial"><span style="width:92%"></span></div></td><td><strong>10,000</strong></td><td>10/01 · 10,000</td></tr><tr class="complete annual-complete"><td>3</td><td class="name-cell">김성연</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td>07/20 · 60,000</td></tr><tr class="complete annual-complete"><td>4</td><td class="name-cell">문형우</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td>09/06 · 120,000</td></tr><tr class="partial"><td>5</td><td class="name-cell">신정철</td><td class="status-cell"><span class="status-pill partial">일부 납부</span></td><td><strong>100,000</strong><div class="due-bar partial"><span style="width:83%"></span></div></td><td><strong>20,000</strong></td><td>10/01 · 10,000</td></tr><tr class="complete annual-complete"><td>6</td><td class="name-cell">강희주</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td>02/28 · 120,000</td></tr><tr class="partial"><td>7</td><td class="name-cell">김기수</td><td class="status-cell"><span class="status-pill partial">일부 납부</span></td><td><strong>100,000</strong><div class="due-bar partial"><span style="width:83%"></span></div></td><td><strong>20,000</strong></td><td>10/01 · 10,000</td></tr><tr class="partial"><td>8</td><td class="name-cell">이미숙</td><td class="status-cell"><span class="status-pill partial">일부 납부</span></td><td><strong>90,000</strong><div class="due-bar partial"><span style="width:75%"></span></div></td><td><strong>30,000</strong></td><td>09/10 · 30,000</td></tr><tr class="complete annual-complete"><td>9</td><td class="name-cell">지수진</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td>01/01 · 120,000</td></tr><tr class="complete annual-complete"><td>10</td><td class="name-cell">정동섭</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td><span class="muted">입금 없음</span></td></tr><tr class="complete annual-complete"><td>11</td><td class="name-cell">허재영</td><td class="status-cell"><span class="status-pill complete">완납</span></td><td><strong>120,000</strong><div class="due-bar complete"><span style="width:100%"></span></div></td><td><strong class="muted">없음</strong></td><td>02/28 · 60,000</td></tr><tr class="unpaid"><td>12</td><td class="name-cell">전홍태</td><td class="status-cell"><span class="status-pill unpaid">미납</span></td><td><strong>0</strong><div class="due-bar unpaid"><span style="width:0%"></span></div></td><td><strong>120,000</strong></td><td><span class="muted">입금 없음</span></td></tr></tbody></table>
+        </div>
+        <div class="table-note">
+          <span>• 매월 숫자 : 해당 월의 입금액</span>
+          <span>• 초록색 : 회비가 충당된 월</span>
+          <span>• 빨간색 : 현재까지 미납된 월</span>
+        </div>
+      </section>
+
+      <div class="two-column">
+        <section class="panel">
+          <div class="panel-head compact">
+            <div class="heading-with-total">
+              <h2>입금</h2>
+            </div>
+            <div class="list-tools"><div class="period-stack"><button class="period-step" data-list-period-step="income" data-period-unit="year" data-direction="1" aria-label="다음 연도">▲</button><button id="incomeYearLabel" class="period-chip" data-list-year="income">2026년</button><button class="period-step" data-list-period-step="income" data-period-unit="year" data-direction="-1" aria-label="이전 연도">▼</button></div><div class="period-stack"><button class="period-step" data-list-period-step="income" data-period-unit="month" data-direction="1" aria-label="다음 월">▲</button><button id="incomeMonthLabel" class="period-chip active" data-list-month="income">10월</button><button class="period-step" data-list-period-step="income" data-period-unit="month" data-direction="-1" aria-label="이전 월">▼</button></div><button class="sort-btn date-sort active" data-list-sort="income" data-list-sort-mode="date" aria-label="최신순·과거순 전환" title="최신순 · 클릭하면 과거순">◷↓</button><button class="sort-btn" data-list-sort="income" data-list-sort-mode="amount" aria-label="금액순 정렬" title="금액순 정렬">₩↓</button></div>
+            <p id="incomeListTotal" class="list-total">총 +30,000원</p>
+          </div>
+          <div id="incomeList" class="transaction-list"><div class="transaction-item" data-edit-id="shinhan-2026-10-01-22:16:34-in-10000-3078209"><span class="date">10/01</span><span class="memo">신정철<span class="sub">신정철</span></span><span class="amount in">+10,000원</span></div><div class="transaction-item" data-edit-id="shinhan-2026-10-01-14:02:40-in-10000-3068209"><span class="date">10/01</span><span class="memo">김기수<span class="sub">김기수</span></span><span class="amount in">+10,000원</span></div><div class="transaction-item" data-edit-id="shinhan-2026-10-01-08:04:19-in-10000-3058209"><span class="date">10/01</span><span class="memo">김정훈<span class="sub">김정훈</span></span><span class="amount in">+10,000원</span></div></div>
+          <button class="more-box" data-list-more="income" disabled="">표시할 내역이 모두 보입니다</button>
+        </section>
+        <section class="panel">
+          <div class="panel-head compact">
+            <div class="heading-with-total">
+              <h2>지출</h2>
+            </div>
+            <div class="list-tools"><div class="period-stack"><button class="period-step" data-list-period-step="expense" data-period-unit="year" data-direction="1" aria-label="다음 연도">▲</button><button id="expenseYearLabel" class="period-chip" data-list-year="expense">2026년</button><button class="period-step" data-list-period-step="expense" data-period-unit="year" data-direction="-1" aria-label="이전 연도">▼</button></div><div class="period-stack"><button class="period-step" data-list-period-step="expense" data-period-unit="month" data-direction="1" aria-label="다음 월">▲</button><button id="expenseMonthLabel" class="period-chip active" data-list-month="expense">10월</button><button class="period-step" data-list-period-step="expense" data-period-unit="month" data-direction="-1" aria-label="이전 월">▼</button></div><button class="sort-btn date-sort active" data-list-sort="expense" data-list-sort-mode="date" aria-label="최신순·과거순 전환" title="최신순 · 클릭하면 과거순">◷↓</button><button class="sort-btn" data-list-sort="expense" data-list-sort-mode="amount" aria-label="금액순 정렬" title="금액순 정렬">₩↓</button></div>
+            <p id="expenseListTotal" class="list-total expense">총 -0원</p>
+          </div>
+          <div id="expenseList" class="transaction-list"><div class="empty-state">표시할 내역이 없습니다.</div></div>
+          <button class="more-box expense" data-list-more="expense" disabled="">표시할 내역이 모두 보입니다</button>
+        </section>
+      </div>
+    </section>
+
+    <section id="transactionsView" class="view">
+      <section class="panel">
+        <div class="panel-head filter-head">
+          <div>
+            <h2>전체 거래내역</h2>
+          </div>
+          <div class="filters">
+            <input id="transactionSearch" type="search" placeholder="이름·내용 검색">
+            <select id="transactionTypeFilter">
+              <option value="all">전체 유형</option>
+              <option value="dues">회비</option>
+              <option value="interest">이자</option>
+              <option value="expense">지출</option>
+              <option value="income">기타수입</option>
+            </select>
+            <button class="btn secondary" data-action="add-transaction">거래 추가</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table id="transactionsTable" class="data-table ledger-table"><thead><tr><th>날짜</th><th>유형</th><th>내용</th><th>입금</th><th>출금</th><th>은행 잔액</th><th>출처</th><th></th></tr></thead><tbody><tr><td>2026-10-01<br><span class="muted">22:16:34</span></td><td><span class="type-badge dues">회비</span></td><td><strong>신정철</strong><br><span class="muted">신정철</span></td><td>10,000</td><td></td><td>3,078,209</td><td>신한은행 XLS</td><td><button class="row-action" data-edit-id="shinhan-2026-10-01-22:16:34-in-10000-3078209">수정</button></td></tr><tr><td>2026-10-01<br><span class="muted">14:02:40</span></td><td><span class="type-badge dues">회비</span></td><td><strong>김기수</strong><br><span class="muted">김기수</span></td><td>10,000</td><td></td><td>3,068,209</td><td>신한은행 XLS</td><td><button class="row-action" data-edit-id="shinhan-2026-10-01-14:02:40-in-10000-3068209">수정</button></td></tr><tr><td>2026-10-01<br><span class="muted">08:04:19</span></td><td><span class="type-badge dues">회비</span></td><td><strong>김정훈</strong><br><span class="muted">김정훈</span></td><td>10,000</td><td></td><td>3,058,209</td><td>신한은행 XLS</td><td><button class="row-action" data-edit-id="shinhan-2026-10-01-08:04:19-in-10000-3058209">수정</button></td></tr></tbody></table>
+        </div>
+        <nav id="transactionsPager" class="board-pager" aria-label="전체 거래내역 페이지 이동"><button class="pager-btn" data-transaction-page="-1" disabled="">이전</button><span><strong>1</strong> / 1</span><button class="pager-btn" data-transaction-page="1" disabled="">다음</button></nav>
+      </section>
+    </section>
+
+    <section id="importView" class="view">
+      <section class="panel import-panel">
+        <div class="import-copy">
+          <p class="section-kicker">자동 입력</p>
+          <h2>신한은행 거래내역 가져오기</h2>
+          <p>신한은행에서 내려받은 <strong>.xls, .xlsx, .csv</strong> 파일을 그대로 선택하세요. 날짜·입출금·내용·잔액을 읽고, 기존 거래는 중복으로 넣지 않습니다.</p>
+        </div>
+        <label id="dropZone" class="drop-zone" for="bankFile">
+          <span class="drop-icon">⇩</span>
+          <strong>파일을 끌어놓거나 눌러서 선택</strong>
+          <span>신한은행 거래내역조회 파일</span>
+          <input id="bankFile" type="file" accept=".xls,.xlsx,.csv,.txt" hidden="">
+        </label>
+        <div id="importStatus" class="import-status hidden"></div>
+        <div id="importPreview" class="hidden">
+          <div class="preview-head">
+            <div>
+              <h3>가져오기 미리보기</h3>
+              <p id="importSummary" class="muted"></p>
+            </div>
+            <button id="confirmImport" class="btn primary">새 거래 반영</button>
+          </div>
+          <div class="table-scroll">
+            <table id="importTable" class="data-table"></table>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel guide-panel">
+        <h3>앞으로 이렇게 쓰면 됩니다</h3>
+        <ol>
+          <li>신한은행에서 원하는 기간의 거래내역을 엑셀로 내려받습니다.</li>
+          <li>이 화면에 파일을 넣고 미리보기를 확인한 뒤 ‘새 거래 반영’을 누릅니다.</li>
+          <li>이름이 낯설거나 분류가 애매한 거래만 전체 거래에서 수정합니다.</li>
+          <li>가끔 ‘백업 저장’으로 JSON 파일을 보관하면 컴퓨터를 바꿔도 복원할 수 있습니다.</li>
+        </ol>
+      </section>
+    </section>
+
+    <section id="settingsView" class="view">
+      <div class="two-column settings-grid">
+        <section class="panel">
+          <div class="panel-head compact">
+            <div>
+              <p class="section-kicker">회원</p>
+              <h2>회원 및 자동 매칭 이름</h2>
+            </div>
+            <button class="text-btn" data-action="add-member">회원 추가</button>
+          </div>
+          <div id="memberList" class="member-list"><div class="member-item"><div><strong>안현철</strong><span>자동 매칭: 안현철, 방글스</span></div><button data-member-id="ahn">수정</button></div><div class="member-item"><div><strong>김정훈</strong><span>자동 매칭: 김정훈, 포스트맨</span></div><button data-member-id="kimjh">수정</button></div><div class="member-item"><div><strong>김성연</strong><span>자동 매칭: 김성연, 레브</span></div><button data-member-id="kims">수정</button></div><div class="member-item"><div><strong>문형우</strong><span>자동 매칭: 문형우, 문행크스</span></div><button data-member-id="moon">수정</button></div><div class="member-item"><div><strong>신정철</strong><span>자동 매칭: 신정철, 쇼미더머니</span></div><button data-member-id="shin">수정</button></div><div class="member-item"><div><strong>강희주</strong><span>자동 매칭: 강희주, 강희주</span></div><button data-member-id="kang">수정</button></div><div class="member-item"><div><strong>김기수</strong><span>자동 매칭: 김기수</span></div><button data-member-id="kimk">수정</button></div><div class="member-item"><div><strong>이미숙</strong><span>자동 매칭: 이미숙, 이믜숙, 울트라줌마</span></div><button data-member-id="lee">수정</button></div><div class="member-item"><div><strong>지수진</strong><span>자동 매칭: 지수진</span></div><button data-member-id="ji">수정</button></div><div class="member-item"><div><strong>정동섭</strong><span>자동 매칭: 정동섭</span></div><button data-member-id="jeong">수정</button></div><div class="member-item"><div><strong>허재영</strong><span>자동 매칭: 허재영, 인수한의원</span></div><button data-member-id="heo">수정</button></div><div class="member-item"><div><strong>전홍태</strong><span>자동 매칭: 전홍태</span></div><button data-member-id="jeon">수정</button></div></div>
+        </section>
+
+        <section class="panel settings-panel">
+          <p class="section-kicker">관리</p>
+          <h2>장부 설정과 백업</h2>
+          <label class="field">
+            <span>월 회비</span>
+            <input id="monthlyDueInput" type="number" min="0" step="1000">
+          </label>
+          <label class="field">
+            <span>선택 연도 시작 잔액</span>
+            <input id="openingBalanceInput" type="number" step="1">
+          </label>
+          <button class="btn secondary wide" data-action="save-settings">설정 저장</button>
+          <hr>
+          <button class="btn secondary wide" data-action="backup">JSON 백업 저장</button>
+          <label class="btn secondary wide file-btn" for="restoreFile">JSON 백업 복원</label>
+          <input id="restoreFile" type="file" accept=".json" hidden="">
+          <button class="btn ghost wide" data-action="export-csv">선택 연도 CSV 저장</button>
+          <hr>
+          <button class="btn danger-outline wide" data-action="reset-data">최초 복원 데이터로 되돌리기</button>
+          <p class="small muted">데이터는 이 HTML을 연 브라우저에 저장됩니다. 파일 이동·브라우저 변경 전에는 JSON 백업을 받아두세요.</p>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <button class="modal-close" data-action="close-modal" aria-label="닫기">×</button>
+      <h2 id="modalTitle">거래 추가</h2>
+      <form id="transactionForm">
+        <input id="transactionId" type="hidden">
+        <div class="form-grid">
+          <label class="field"><span>날짜</span><input id="txDate" type="date" required=""></label>
+          <label class="field"><span>시간</span><input id="txTime" type="time"></label>
+          <label class="field"><span>구분</span>
+            <select id="txDirection"><option value="in">입금</option><option value="out">출금</option></select>
+          </label>
+          <label class="field"><span>금액</span><input id="txAmount" type="number" min="0" step="1" required=""></label>
+          <label class="field"><span>유형</span>
+            <select id="txType">
+              <option value="dues">회비</option><option value="interest">이자</option>
+              <option value="expense">지출</option><option value="income">기타수입</option>
+            </select>
+          </label>
+          <label class="field"><span>회원</span><select id="txMember"><option value="">회원 없음</option><option value="ahn">안현철</option><option value="kimjh">김정훈</option><option value="kims">김성연</option><option value="moon">문형우</option><option value="shin">신정철</option><option value="kang">강희주</option><option value="kimk">김기수</option><option value="lee">이미숙</option><option value="ji">지수진</option><option value="jeong">정동섭</option><option value="heo">허재영</option><option value="jeon">전홍태</option></select></label>
+          <label class="field full"><span>내용</span><input id="txMemo" type="text" required="" placeholder="예: 김기수 10월 회비"></label>
+          <label class="field"><span>올해 회비 배정액</span><input id="txCurrentDues" type="number" min="0" step="10000"></label>
+          <label class="field"><span>타연도 회비액</span><input id="txOtherDues" type="number" min="0" step="10000"></label>
+          <label class="field full"><span>메모</span><input id="txNote" type="text" placeholder="납부 대상월, 정정 사유 등"></label>
+        </div>
+        <div class="modal-actions">
+          <button type="button" id="deleteTransaction" class="btn danger-outline hidden">삭제</button>
+          <span class="spacer"></span>
+          <button type="button" class="btn ghost" data-action="close-modal">취소</button>
+          <button type="submit" class="btn primary">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="quickModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+    <div class="modal-card quick-modal-card">
+      <button class="modal-close" data-action="close-quick" aria-label="닫기">×</button>
+      <p class="section-kicker">빠른 기록</p>
+      <h2 id="quickModalTitle">입금 또는 지출 추가</h2>
+      <form id="quickEntryForm">
+        <input id="quickMode" type="hidden" value="dues">
+        <div class="quick-mode-buttons modal-modes" role="group" aria-label="기록 종류"><button type="button" class="quick-mode active" data-quick-mode="dues">회비 입금</button><button type="button" class="quick-mode" data-quick-mode="income">기타 입금</button><button type="button" class="quick-mode expense" data-quick-mode="expense">지출</button></div>
+        <div class="form-grid">
+          <label class="field"><span>날짜</span><input id="quickDate" type="date" required=""></label>
+          <label id="quickMemberField" class="field"><span>회원</span><select id="quickMember" required=""><option value="">회원 선택</option><option value="ahn">안현철</option><option value="kimjh">김정훈</option><option value="kims">김성연</option><option value="moon">문형우</option><option value="shin">신정철</option><option value="kang">강희주</option><option value="kimk">김기수</option><option value="lee">이미숙</option><option value="ji">지수진</option><option value="jeong">정동섭</option><option value="heo">허재영</option><option value="jeon">전홍태</option></select></label>
+          <label class="field full"><span id="quickMemoLabel">메모 (선택)</span><input id="quickMemo" type="text" placeholder="선택 사항: 연납, 미납금 등"></label>
+          <label class="field full"><span>금액</span><input id="quickAmount" type="number" min="1" step="1" placeholder="예: 10000" required=""></label>
+        </div>
+        <p id="quickHint" class="table-note">회원과 금액만 적으면 남은 올해 회비에 자동 배정합니다. 연납·미납금은 메모에 간단히 남겨두세요.</p>
+        <div class="modal-actions"><span class="spacer"></span><button type="button" class="btn ghost" data-action="close-quick">취소</button><button class="btn primary" type="submit">저장</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  
+  <script>(() => {
+  'use strict';
+
+  const STORAGE_KEY = 'club1550LedgerV1';
+  const APP_VERSION = 1;
+  const $ = (selector, root = document) => root.querySelector(selector);
+  const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+  const won = new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW', maximumFractionDigits: 0 });
+  const number = new Intl.NumberFormat('ko-KR');
+  const typeLabels = { dues: '회비', interest: '이자', expense: '지출', income: '기타수입', adjustment: '잔액조정' };
+  const sharedStateElement = document.getElementById('shared-state');
+  let sharedMode = false;
+  let state;
+  let selectedYear = 2026;
+  let selectedMonth = 'all';
+  let pendingImport = [];
+  let toastTimer;
+  let duesView = 'summary';
+  let listPeriods = { income: null, expense: null };
+  let listSort = { mode: 'date', dateDirection: 'desc', amountDirection: 'desc' };
+  let listExpanded = { income: false, expense: false };
+  let transactionsPage = 1;
+
+  const memberSeeds = [
+    ['ahn', '안현철', '방글스', ['안현철', '방글스']],
+    ['kimjh', '김정훈', '포스트맨', ['김정훈', '포스트맨']],
+    ['kims', '김성연', '레브', ['김성연', '레브']],
+    ['moon', '문형우', '문행크스', ['문형우', '문행크스']],
+    ['shin', '신정철', '쇼미더머니', ['신정철', '쇼미더머니']],
+    ['kang', '강희주', '찐쭈니', ['강희주', '강희주']],
+    ['kimk', '김기수', '', ['김기수']],
+    ['lee', '이미숙', '울트라줌마', ['이미숙', '이믜숙', '울트라줌마']],
+    ['ji', '지수진', '', ['지수진']],
+    ['jeong', '정동섭', '', ['정동섭']],
+    ['heo', '허재영', '', ['허재영', '인수한의원']],
+    ['jeon', '전홍태', '', ['전홍태']]
+  ].map(([id, name, nickname, aliases]) => ({ id, name, nickname, aliases }));
+
+  const bank2026 = [
+    ['2026-10-01','22:16:34','in',10000,'신정철',3078209,'타행모바일뱅킹'],
+    ['2026-10-01','14:02:40','in',10000,'김기수',3068209,'인터넷뱅킹'],
+    ['2026-10-01','08:04:19','in',10000,'김정훈',3058209,'타행인터넷뱅킹'],
+    ['2026-09-19','02:15:34','in',838,'06.20~09.18',3048209,'이자'],
+    ['2026-09-14','19:13:19','out',30000,'차량지원비',3047371,'인터넷'],
+    ['2026-09-14','19:13:19','out',30000,'차량지원비',3077371,'인터넷'],
+    ['2026-09-14','19:13:18','out',926000,'옥션원구독료',3107371,'인터넷'],
+    ['2026-09-14','19:13:18','out',147100,'커피2곳빵주차',4033371,'인터넷'],
+    ['2026-09-10','19:16:39','in',30000,'이미숙',4180471,'타행인터넷뱅킹'],
+    ['2026-09-06','12:53:06','in',120000,'문형우',4150471,'타행모바일뱅킹'],
+    ['2026-09-01','20:50:02','in',10000,'신정철',4030471,'타행모바일뱅킹'],
+    ['2026-09-01','14:02:36','in',10000,'김기수',4020471,'인터넷뱅킹'],
+    ['2026-09-01','08:04:49','in',10000,'김정훈',4010471,'타행인터넷뱅킹'],
+    ['2026-08-03','08:03:48','in',10000,'김정훈',4000471,'타행인터넷뱅킹'],
+    ['2026-08-01','14:02:19','in',10000,'김기수',3990471,'인터넷뱅킹'],
+    ['2026-08-01','08:35:09','in',10000,'신정철',3980471,'타행모바일뱅킹'],
+    ['2026-07-20','12:36:14','in',60000,'김성연',3970471,'타행모바일뱅킹'],
+    ['2026-07-02','22:39:36','in',10000,'신정철',3910471,'타행모바일뱅킹'],
+    ['2026-07-01','14:02:25','in',10000,'김기수',3900471,'인터넷뱅킹'],
+    ['2026-07-01','08:04:09','in',10000,'김정훈',3890471,'타행인터넷뱅킹'],
+    ['2026-06-20','03:58:55','in',816,'03.21~06.19',3880471,'이자'],
+    ['2026-06-01','19:49:56','in',10000,'신정철',3879655,'타행모바일뱅킹'],
+    ['2026-06-01','14:02:39','in',10000,'김기수',3869655,'인터넷뱅킹'],
+    ['2026-06-01','08:04:17','in',10000,'김정훈',3859655,'타행인터넷뱅킹'],
+    ['2026-05-04','08:03:57','in',10000,'김정훈',3849655,'타행인터넷뱅킹'],
+    ['2026-05-01','14:02:23','in',10000,'김기수',3839655,'인터넷뱅킹'],
+    ['2026-05-01','12:09:52','in',10000,'신정철',3829655,'타행모바일뱅킹'],
+    ['2026-04-01','21:13:08','in',10000,'신정철',3819655,'타행모바일뱅킹'],
+    ['2026-04-01','14:02:28','in',10000,'김기수',3809655,'인터넷뱅킹'],
+    ['2026-04-01','08:03:49','in',10000,'김정훈',3799655,'타행인터넷뱅킹'],
+    ['2026-03-21','03:34:00','in',709,'12.20~03.20',3789655,'이자'],
+    ['2026-03-10','11:42:07','in',60000,'이미숙',3788946,'타행인터넷뱅킹'],
+    ['2026-03-03','08:04:19','in',10000,'김정훈',3728946,'타행인터넷뱅킹'],
+    ['2026-03-01','14:02:14','in',10000,'김기수',3718946,'인터넷뱅킹'],
+    ['2026-03-01','09:25:47','in',10000,'신정철',3708946,'타행모바일뱅킹'],
+    ['2026-02-28','22:47:40','out',60000,'초과계비반환',3698946,'인터넷'],
+    ['2026-02-28','22:34:26','in',60000,'허재영(인수한의원)',3758946,'타행모바일뱅킹'],
+    ['2026-02-28','21:13:46','in',180000,'허재영(인수한의원)',3698946,'타행모바일뱅킹'],
+    ['2026-02-28','18:20:50','in',120000,'강희주',3518946,'타행모바일뱅킹'],
+    ['2026-02-28','18:19:14','in',154000,'안현철찬조',3398946,'타행모바일뱅킹'],
+    ['2026-02-28','18:15:48','out',154000,'강갈비탕',3244946,'인터넷'],
+    ['2026-02-28','17:08:53','in',120000,'안현철회비',3398946,'타행모바일뱅킹'],
+    ['2026-02-02','08:03:58','in',10000,'김정훈',3278946,'타행인터넷뱅킹'],
+    ['2026-02-01','14:02:07','in',10000,'김기수',3268946,'인터넷뱅킹'],
+    ['2026-02-01','09:47:24','in',10000,'신정철',3258946,'타행모바일뱅킹'],
+    ['2026-01-29','14:05:27','in',60000,'김성연',3248946,'타행모바일뱅킹'],
+    ['2026-01-13','09:52:13','in',10000,'김정훈',3188946,'타행모바일뱅킹'],
+    ['2026-01-01','18:05:38','in',120000,'지수진',3178946,'타행모바일뱅킹'],
+    ['2026-01-01','14:02:05','in',10000,'김기수',3058946,'인터넷뱅킹'],
+    ['2026-01-01','13:27:20','in',10000,'김정훈',3048946,'타행모바일뱅킹'],
+    ['2026-01-01','11:15:10','in',10000,'신정철',3038946,'타행모바일뱅킹']
+  ];
+
+  const historyRows = [
+    // 2024년 이미지에서 복원한 입금 내역
+    [2024,'2023-12-29','in',10000,'김기수(1)','dues','kimk'],
+    [2024,'2024-01-01','in',10000,'신정철(1)','dues','shin'],
+    [2024,'2024-01-02','in',10000,'김정훈(1)','dues','kimjh'],
+    [2024,'2024-01-04','in',60000,'정동섭(2023년)','dues','jeong'],
+    [2024,'2024-01-04','in',60000,'이미숙(2023년)','dues','lee'],
+    [2024,'2024-01-05','in',120000,'문형우(1~12)','dues','moon'],
+    [2024,'2024-01-08','in',60000,'김성연(2023년)','dues','kims'],
+    [2024,'2024-01-13','in',120000,'안현철(1~12)','dues','ahn'],
+    [2024,'2024-01-14','in',120000,'지수진(1~12)','dues','ji'],
+    [2024,'2024-01-14','in',120000,'허재영(1~12)','dues','heo'],
+    [2024,'2024-01-14','in',140000,'전홍태(작년,1~12)','dues','jeon'],
+    [2024,'2024-01-15','in',120000,'강희주(1~12)','dues','kang'],
+    [2024,'2024-02-01','in',10000,'신정철(2)','dues','shin'],
+    [2024,'2024-02-01','in',10000,'김정훈(2)','dues','kimjh'],
+    [2024,'2024-02-01','in',10000,'김기수(2)','dues','kimk'],
+    [2024,'2024-02-08','in',60000,'김성연(1~6)','dues','kims'],
+    [2024,'2024-02-09','in',120000,'정동섭(1~12)','dues','jeong'],
+    [2024,'2024-02-13','in',60000,'이미숙(1~6)','dues','lee'],
+    [2024,'2024-02-29','in',10000,'김기수(3)','dues','kimk'],
+    [2024,'2024-03-02','in',10000,'신정철(3)','dues','shin'],
+    [2024,'2024-03-04','in',10000,'김정훈(3)','dues','kimjh'],
+    [2024,'2024-04-01','in',10000,'신정철(4)','dues','shin'],
+    [2024,'2024-04-01','in',10000,'김기수(4)','dues','kimk'],
+    [2024,'2024-04-30','in',10000,'김기수(5)','dues','kimk'],
+    [2024,'2024-05-01','in',10000,'김정훈(5)','dues','kimjh'],
+    [2024,'2024-05-02','in',10000,'신정철(5)','dues','shin'],
+    [2024,'2024-05-31','in',10000,'김기수(6)','dues','kimk'],
+    [2024,'2024-06-03','in',10000,'김정훈(6)','dues','kimjh'],
+    [2024,'2024-06-04','in',10000,'신정철(6)','dues','shin'],
+    [2024,'2024-07-01','in',10000,'신정철(7)','dues','shin'],
+    [2024,'2024-07-01','in',10000,'김기수(7)','dues','kimk'],
+    [2024,'2024-08-01','in',10000,'신정철(8)','dues','shin'],
+    [2024,'2024-08-01','in',10000,'김정훈(8)','dues','kimjh'],
+    [2024,'2024-08-01','in',10000,'김기수(8)','dues','kimk'],
+    [2024,'2024-08-30','in',10000,'김기수(9)','dues','kimk'],
+    [2024,'2024-09-01','in',10000,'신정철(9)','dues','shin'],
+    [2024,'2024-09-02','in',10000,'김정훈(9)','dues','kimjh'],
+    [2024,'2024-09-19','in',60000,'이미숙(7~12)','dues','lee'],
+    [2024,'2024-09-30','in',10000,'김기수(10)','dues','kimk'],
+    [2024,'2024-10-01','in',10000,'신정철(10)','dues','shin'],
+    [2024,'2024-10-02','in',10000,'김정훈(10)','dues','kimjh'],
+    [2024,'2024-10-08','in',60000,'정동섭(내년1~6)','dues','jeong'],
+    [2024,'2024-10-14','in',60000,'김성연(7~12)','dues','kims'],
+    [2024,'2024-10-17','in',120000,'전홍태(내년1~12)','dues','jeon'],
+    [2024,'2024-11-01','in',10000,'신정철(11)','dues','shin'],
+    [2024,'2024-11-01','in',10000,'김기수(11)','dues','kimk'],
+    [2024,'2024-12-01','in',10000,'신정철(12)','dues','shin'],
+    [2024,'2024-12-01','in',10000,'김기수(12)','dues','kimk'],
+    [2024,'2024-01-13','out',246600,'어가스시','expense',''],
+    [2024,'2024-01-13','out',28800,'하삼동커피','expense',''],
+    [2024,'2024-02-08','out',926000,'옥션원 결제','expense',''],
+    [2024,'2024-03-23','in',960,'이자','interest',''],
+    [2024,'2024-06-22','in',859,'이자','interest',''],
+    [2024,'2024-09-21','in',879,'이자','interest',''],
+    [2024,'2024-10-19','out',140000,'대게맛집','expense',''],
+    [2024,'2024-10-19','out',85800,'아덴커피숍','expense',''],
+    [2024,'2024-12-21','in',914,'이자','interest',''],
+
+    // 2025년 이미지에서 복원한 내역
+    [2025,'2025-01-01','in',10000,'신정철(1)','dues','shin'],
+    [2025,'2025-01-01','in',40000,'김정훈(미납금)','dues','kimjh'],
+    [2025,'2025-01-01','in',120000,'김정훈(1~12)','dues','kimjh'],
+    [2025,'2025-01-01','in',120000,'지수진(1~12)','dues','ji'],
+    [2025,'2025-01-01','in',10000,'김기수(1)','dues','kimk'],
+    [2025,'2025-01-26','in',120000,'안현철(1~12)','dues','ahn'],
+    [2025,'2025-02-01','in',10000,'김기수(2)','dues','kimk'],
+    [2025,'2025-02-01','in',10000,'신정철(2)','dues','shin'],
+    [2025,'2025-02-10','in',60000,'이미숙(1~6)','dues','lee'],
+    [2025,'2025-03-01','in',10000,'김기수(3)','dues','kimk'],
+    [2025,'2025-03-03','in',10000,'신정철(3)','dues','shin'],
+    [2025,'2025-03-10','in',60000,'이미숙(7~12)','dues','lee'],
+    [2025,'2025-04-01','in',10000,'신정철(4)','dues','shin'],
+    [2025,'2025-04-01','in',10000,'김기수(4)','dues','kimk'],
+    [2025,'2025-05-01','in',10000,'신정철(5)','dues','shin'],
+    [2025,'2025-05-01','in',10000,'김기수(5)','dues','kimk'],
+    [2025,'2025-05-19','in',60000,'김성연(1~6)','dues','kims'],
+    [2025,'2025-05-31','in',120000,'문형우(1~12)','dues','moon'],
+    [2025,'2025-05-31','in',120000,'강희주(1~12)','dues','kang'],
+    [2025,'2025-06-01','in',10000,'김기수(6)','dues','kimk'],
+    [2025,'2025-06-01','in',10000,'신정철(6)','dues','shin'],
+    [2025,'2025-06-02','in',120000,'정동섭(1~12)','dues','jeong'],
+    [2025,'2025-07-01','in',10000,'신정철(7)','dues','shin'],
+    [2025,'2025-07-01','in',10000,'김기수(7)','dues','kimk'],
+    [2025,'2025-08-01','in',10000,'신정철(8)','dues','shin'],
+    [2025,'2025-08-01','in',10000,'김기수(8)','dues','kimk'],
+    [2025,'2025-09-01','in',10000,'김기수(9)','dues','kimk'],
+    [2025,'2025-09-01','in',10000,'신정철(9)','dues','shin'],
+    [2025,'2025-09-01','in',10000,'김정훈(9)','dues','kimjh'],
+    [2025,'2025-09-01','in',60000,'김성연(7~12)','dues','kims'],
+    [2025,'2025-01-25','out',296000,'중화반','expense',''],
+    [2025,'2025-01-25','out',38800,'커피숍','expense',''],
+    [2025,'2025-03-22','in',960,'이자','interest',''],
+    [2025,'2025-05-19','out',926000,'옥션원 구독','expense',''],
+    [2025,'2025-05-31','out',116000,'부산 모임 비용','expense',''],
+    [2025,'2025-05-31','out',43600,'커피숍','expense',''],
+    [2025,'2025-06-21','in',919,'이자','interest',''],
+    [2025,'2025-09-13','out',846000,'대게만찬','expense',''],
+    [2025,'2025-09-13','out',50490,'커피숍','expense',''],
+    [2025,'2025-09-13','out',30000,'기름값(문형우)','expense',''],
+    [2025,'2025-09-13','out',30000,'기름값(김정훈)','expense',''],
+    [2025,'2025-09-13','out',150000,'이미숙·정동섭·전홍태','expense',''],
+    [2025,'2025-09-13','out',10000,'이미지 잔액 대조 조정','adjustment',''],
+    [2025,'2025-12-31','in',61476,'2026년 이월잔액 대조 조정','adjustment','']
+  ];
+
+  function normalizeText(value) {
+    return String(value ?? '').replace(/\s+/g, '').toLowerCase();
+  }
+
+  function findMemberId(memo, members = memberSeeds) {
+    const text = normalizeText(memo);
+    if (!text) return '';
+    const match = members.find(member => member.aliases.some(alias => text.includes(normalizeText(alias))));
+    return match?.id || '';
+  }
+
+  function fingerprint(tx) {
+    return [tx.date, tx.time || '', tx.direction, Number(tx.amount) || 0, normalizeText(tx.memo), Number(tx.balance) || 0].join('|');
+  }
+
+  function createSeedState() {
+    const transactions = [];
+    let sequence = 1;
+    const add = tx => {
+      const record = { time: '', note: '', source: '복원 이미지', currentDues: 0, otherDues: 0, balance: null, ...tx };
+      record.id = record.id || `seed-${sequence++}`;
+      record.sourceKey = record.sourceKey || fingerprint(record);
+      transactions.push(record);
+      return record;
+    };
+
+    historyRows.forEach(([bookYear, date, direction, amount, memo, type, memberId]) => {
+      add({ bookYear, date, direction, amount, memo, type, memberId, source: `${bookYear}년 장부 이미지` });
+    });
+
+    bank2026.forEach(([date, time, direction, amount, memo, balance, description]) => {
+      const memberId = findMemberId(memo);
+      const isInterest = description === '이자';
+      const isDues = direction === 'in' && memberId && !normalizeText(memo).includes('찬조');
+      add({
+        id: `shinhan-${date}-${time}-${direction}-${amount}-${balance}`,
+        bookYear: 2026,
+        date, time, direction, amount, memo, balance, memberId: isDues ? memberId : '',
+        type: isInterest ? 'interest' : direction === 'out' ? 'expense' : isDues ? 'dues' : 'income',
+        note: description,
+        source: '신한은행 XLS'
+      });
+    });
+
+    allocateSeedDues(transactions, 2024, 10000);
+    allocateSeedDues(transactions, 2025, 10000);
+    allocateSeedDues(transactions, 2026, 10000);
+
+    return {
+      version: APP_VERSION,
+      createdAt: new Date().toISOString(),
+      settings: { account: '110-353-055170', monthlyDue: 10000 },
+      openingBalances: { '2024': 3956069, '2025': 4312481, '2026': 3028946 },
+      credits: { '2025': { jeon: 120000 }, '2026': { jeong: 120000 } },
+      members: structuredClone(memberSeeds),
+      transactions
+    };
+  }
+
+  function allocateSeedDues(transactions, year, monthlyDue) {
+    const cap = monthlyDue * 12;
+    const used = {};
+    transactions
+      .filter(tx => tx.bookYear === year && tx.type === 'dues' && tx.memberId)
+      .sort(sortAscending)
+      .forEach(tx => {
+        const already = used[tx.memberId] || 0;
+        const current = Math.min(tx.amount, Math.max(0, cap - already));
+        tx.currentDues = current;
+        tx.otherDues = tx.amount - current;
+        used[tx.memberId] = already + current;
+      });
+  }
+
+  function loadState() {
+    if (sharedStateElement) {
+      try {
+        const snapshot = JSON.parse(sharedStateElement.textContent);
+        if (snapshot && Array.isArray(snapshot.transactions) && Array.isArray(snapshot.members)) {
+          sharedMode = true;
+          document.documentElement.dataset.shared = 'true';
+          return migrate(snapshot);
+        }
+      } catch (error) { console.warn('공유 데이터 읽기 실패', error); }
+    }
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && Array.isArray(saved.transactions) && Array.isArray(saved.members)) return migrate(saved);
+    } catch (error) {
+      console.warn('저장 데이터 읽기 실패', error);
+    }
+    return createSeedState();
+  }
+
+  function migrate(saved) {
+    saved.version = APP_VERSION;
+    saved.settings ||= { account: '110-353-055170', monthlyDue: 10000 };
+    saved.openingBalances ||= {};
+    saved.credits ||= {};
+    saved.transactions.forEach(tx => {
+      tx.bookYear ||= Number(String(tx.date).slice(0, 4));
+      tx.currentDues = Number(tx.currentDues) || 0;
+      tx.otherDues = Number(tx.otherDues) || 0;
+      tx.sourceKey ||= fingerprint(tx);
+    });
+    return saved;
+  }
+
+  function saveState(message = '저장됨') {
+    if (sharedMode) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    const indicator = $('#saveState');
+    indicator.textContent = message;
+    clearTimeout(indicator._timer);
+    indicator._timer = setTimeout(() => indicator.textContent = '이 브라우저에 자동 저장', 1500);
+  }
+
+  function sortAscending(a, b) {
+    return `${a.date}T${a.time || '00:00:00'}`.localeCompare(`${b.date}T${b.time || '00:00:00'}`);
+  }
+  function sortDescending(a, b) { return sortAscending(b, a); }
+  function amountAscending(a, b) { return Number(a.amount || 0) - Number(b.amount || 0) || sortAscending(a, b); }
+  function amountDescending(a, b) { return amountAscending(b, a); }
+  function bookYearOf(tx) { return Number(tx.bookYear || String(tx.date).slice(0, 4)); }
+  function monthOf(tx) { return Number(String(tx.date).slice(5, 7)); }
+  function getMember(id) { return state.members.find(member => member.id === id); }
+  function displayMember(member) { return member.name; }
+  function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[char]);
+  }
+  function formatDateShort(date) { return String(date).slice(5).replace('-', '/'); }
+  function formatWon(value) { return won.format(Number(value) || 0); }
+  function formatPlainWon(value) { return `${number.format(Number(value) || 0)}원`; }
+  function latestBankTransaction() {
+    return state.transactions.filter(tx => Number.isFinite(Number(tx.balance)) && Number(tx.balance) > 0).sort(sortDescending)[0];
+  }
+
+  function currentAccountBalance() {
+    const base = latestBankTransaction();
+    if (!base) return { value: 0, date: '' };
+    const baseKey = `${base.date}T${base.time || '00:00:00'}`;
+    const additions = state.transactions
+      .filter(tx => (tx.balance === null || tx.balance === undefined || tx.balance === '') && `${tx.date}T${tx.time || '00:00:00'}` > baseKey)
+      .reduce((sum, tx) => sum + (tx.direction === 'in' ? Number(tx.amount || 0) : -Number(tx.amount || 0)), 0);
+    const latestManual = state.transactions
+      .filter(tx => (tx.balance === null || tx.balance === undefined || tx.balance === '') && `${tx.date}T${tx.time || '00:00:00'}` > baseKey)
+      .sort(sortDescending)[0];
+    return { value: Number(base.balance) + additions, date: latestManual?.date || base.date };
+  }
+
+  function allYears() {
+    const years = new Set([2024, 2025, 2026, new Date().getFullYear(), ...Object.keys(state.openingBalances).map(Number), ...state.transactions.map(bookYearOf)]);
+    return [...years].filter(year => year >= 2026 && year <= 2100).sort((a, b) => b - a);
+  }
+
+  function render() {
+    renderYears();
+    renderHero();
+    renderDashboard();
+    renderTransactions();
+    renderMembers();
+    renderSettings();
+  }
+
+  function renderYears() {
+  }
+
+  function renderHero() {
+    $('#accountNumber').textContent = state.settings.account;
+    const latest = latestBankTransaction();
+    const accountBalance = currentAccountBalance();
+    // 잔액은 renderDashboard()에서 오른쪽 요약 카드에 표시합니다.
+    void latest;
+  }
+
+  function calculateYearBalance(year) {
+    const opening = Number(state.openingBalances[String(year)]) || 0;
+    return state.transactions.filter(tx => bookYearOf(tx) === year).reduce((sum, tx) => sum + (tx.direction === 'in' ? tx.amount : -tx.amount), opening);
+  }
+
+  function yearTransactions(year = selectedYear) {
+    return state.transactions.filter(tx => bookYearOf(tx) === year);
+  }
+
+  function periodTransactions() {
+    const txs = yearTransactions();
+    return selectedMonth === 'all' ? txs : txs.filter(tx => monthOf(tx) === Number(selectedMonth));
+  }
+
+  function periodLabel() {
+    const shortYear = String(selectedYear).slice(-2);
+    return selectedMonth === 'all' ? `${shortYear}년 전체` : `${shortYear}년 ${selectedMonth}월`;
+  }
+
+  function renderDashboard() {
+    const annualTxs = yearTransactions();
+    const income = annualTxs.filter(tx => tx.direction === 'in' && tx.type !== 'adjustment').reduce((sum, tx) => sum + tx.amount, 0);
+    const expense = annualTxs.filter(tx => tx.direction === 'out' && tx.type !== 'adjustment').reduce((sum, tx) => sum + tx.amount, 0);
+    const latest = latestBankTransaction();
+    const accountBalance = currentAccountBalance();
+    const cards = [
+      ['income', `${selectedYear}년 입금`, formatWon(income), `${annualTxs.filter(tx => tx.direction === 'in').length}건`],
+      ['expense', `${selectedYear}년 지출`, formatWon(expense), `${annualTxs.filter(tx => tx.direction === 'out').length}건`],
+      ['balance', '현재 통장 잔액', formatWon(accountBalance.value), accountBalance.date ? `${accountBalance.date} 기준` : '잔액 자료 없음']
+    ];
+    $('#summaryCards').innerHTML = cards.map(([klass, label, value, hint]) => `<article class="summary-card ${klass}"><span class="label">${label}</span><strong>${value}</strong><span class="hint">${hint}</span></article>`).join('');
+    $('#duesTitle').textContent = `${periodLabel()} 현황`;
+    renderQuickEntry();
+    renderDuesTable();
+    renderRecentLists();
+  }
+
+  function activeMonthForYear() {
+    const now = new Date();
+    if (selectedYear < now.getFullYear()) return 12;
+    if (selectedYear > now.getFullYear()) return 0;
+    return now.getMonth() + 1;
+  }
+
+  function memberStatus(memberId) {
+    const cutoffMonth = selectedMonth === 'all' ? 12 : Number(selectedMonth);
+    const annualDue = Number(state.settings.monthlyDue) * 12;
+    const target = Number(state.settings.monthlyDue) * cutoffMonth;
+    const paid = memberPaidAmount(memberId);
+    const label = selectedMonth === 'all' || paid >= annualDue ? '완납' : '누적 완료';
+    if (paid >= target) return { key: 'complete', label, paid, remaining: 0 };
+    if (paid > 0) return { key: 'partial', label: '일부 납부', paid, remaining: target - paid };
+    return { key: 'unpaid', label: '미납', paid: 0, remaining: target };
+  }
+
+  function renderActionBoard() {
+    const due = Number(state.settings.monthlyDue) || 10000;
+    const month = selectedMonth === 'all' ? activeMonthForYear() : Number(selectedMonth);
+    const periodTarget = due * month;
+    const incomplete = state.members.filter(member => memberPaidAmount(member.id) < periodTarget);
+    const complete = state.members.filter(member => memberStatus(member.id).key === 'complete');
+    const unassigned = yearTransactions().filter(tx => tx.direction === 'in' && tx.type === 'income' && !tx.memberId && !normalizeText(tx.memo).includes('찬조'));
+    const monthIncome = yearTransactions().filter(tx => tx.type === 'dues' && monthOf(tx) === month).reduce((sum, tx) => sum + Number(tx.currentDues || 0), 0);
+    const periodName = month ? `${month}월` : `${selectedYear}년`;
+    const names = incomplete.map(member => displayMember(member));
+    $('#actionBoard').innerHTML = `
+      <article class="action-card alert">
+        <p class="action-kicker">${periodName} 총무 확인 사항</p>
+        <h3>${incomplete.length ? `${incomplete.length}명 회비 확인 필요` : '이번 달 회비 확인 완료'}</h3>
+        <p>${month ? `${periodName}까지 납부 기준으로 계산했습니다.` : '선택한 미래 연도에는 아직 납부 기준이 없습니다.'}</p>
+        <div class="action-list">${names.length ? names.slice(0, 7).map(name => `<span class="action-chip">${escapeHtml(name)}</span>`).join('') : '<span class="action-chip">확인할 회원 없음</span>'}${names.length > 7 ? `<span class="action-chip">외 ${names.length - 7}명</span>` : ''}</div>
+      </article>
+      <article class="action-card good">
+        <p class="action-kicker">${selectedYear}년 완납 현황</p>
+        <h3>${complete.length}명 완납</h3>
+        <p>완납 회원은 회원표에서 행 전체를 초록색으로 표시합니다.</p>
+        <button class="action-link" type="button" data-action="show-detail-dues">월별 납부 상태 보기</button>
+      </article>
+      <article class="action-card neutral">
+        <p class="action-kicker">${periodName} 회비 입금</p>
+        <h3>${formatWon(monthIncome)}</h3>
+        <p>${unassigned.length ? `자동 분류 확인 필요 입금 ${unassigned.length}건이 있습니다.` : '자동 분류 확인이 필요한 입금은 없습니다.'}</p>
+        <button class="action-link" type="button" data-action="open-import">은행 파일 가져오기</button>
+      </article>`;
+  }
+
+  function renderQuickEntry() {
+    $('#quickDate').value ||= new Date().toISOString().slice(0, 10);
+    $('#quickMember').innerHTML = `<option value="">회원 선택</option>${state.members.map(member => `<option value="${escapeHtml(member.id)}">${escapeHtml(displayMember(member))}</option>`).join('')}`;
+    updateQuickEntryMode();
+  }
+
+  function updateQuickEntryMode() {
+    const mode = $('#quickMode').value;
+    $$('.quick-mode').forEach(button => button.classList.toggle('active', button.dataset.quickMode === mode));
+    const memberField = $('#quickMemberField');
+    const memo = $('#quickMemo');
+    const label = $('#quickMemoLabel');
+    const hint = $('#quickHint');
+    const isDues = mode === 'dues';
+    memberField.classList.toggle('hidden', !isDues);
+    $('#quickMember').required = isDues;
+    memo.required = !isDues;
+    if (isDues) {
+      memo.placeholder = '선택 사항: 연납, 미납금 등';
+      label.textContent = '메모 (선택)';
+      hint.textContent = '회원과 금액만 적으면 남은 올해 회비에 자동 배정합니다. 연납·미납금은 메모에 간단히 남겨두세요.';
+    } else if (mode === 'expense') {
+      memo.placeholder = '예: 10월 모임 식사비';
+      label.textContent = '지출 내용';
+      hint.textContent = '날짜, 지출 내용, 금액만 적고 저장하세요. 은행 파일을 가져오면 같은 거래는 중복으로 들어가지 않습니다.';
+    } else {
+      memo.placeholder = '예: 찬조금, 기타 입금자';
+      label.textContent = '입금 내용';
+      hint.textContent = '회비가 아닌 입금은 기타 입금으로 기록합니다.';
+    }
+  }
+
+  function memberPaidAmount(memberId, cutoffMonth = selectedMonth === 'all' ? 12 : Number(selectedMonth)) {
+    const cash = yearTransactions().filter(tx => tx.type === 'dues' && tx.memberId === memberId && monthOf(tx) <= cutoffMonth).reduce((sum, tx) => sum + Number(tx.currentDues || 0), 0);
+    return cash + Number(state.credits?.[String(selectedYear)]?.[memberId] || 0);
+  }
+
+  function renderDuesTable() {
+    const monthlyDue = Number(state.settings.monthlyDue) || 10000;
+    const txs = yearTransactions().filter(tx => tx.type === 'dues');
+    const cutoffMonth = selectedMonth === 'all' ? 12 : Number(selectedMonth);
+    $('#summaryDuesBtn').classList.toggle('active', duesView === 'summary');
+    $('#detailDuesBtn').classList.toggle('active', duesView === 'detail');
+    if (duesView === 'summary') {
+      const rows = state.members.map((member, index) => {
+        const status = memberStatus(member.id);
+        const latest = txs.filter(tx => tx.memberId === member.id && monthOf(tx) <= cutoffMonth).sort(sortDescending)[0];
+        const target = monthlyDue * (selectedMonth === 'all' ? 12 : Number(selectedMonth));
+        const percent = Math.min(100, Math.round(status.paid / target * 100));
+        const annualComplete = memberPaidAmount(member.id, cutoffMonth) >= monthlyDue * 12 ? ' annual-complete' : '';
+        return `<tr class="${status.key}${annualComplete}"><td>${index + 1}</td><td class="name-cell">${escapeHtml(displayMember(member))}</td><td class="status-cell"><span class="status-pill ${status.key}">${status.label}</span></td><td><strong>${number.format(status.paid)}</strong><div class="due-bar ${status.key}"><span style="width:${percent}%"></span></div></td><td>${status.remaining ? `<strong>${number.format(status.remaining)}</strong>` : '<strong class="muted">없음</strong>'}</td><td>${latest ? `${formatDateShort(latest.date)} · ${number.format(latest.currentDues || latest.amount)}` : '<span class="muted">입금 없음</span>'}</td></tr>`;
+      }).join('');
+      $('#duesTable').className = 'data-table dues-table dues-summary';
+      const paidHeader = selectedMonth === 'all' ? '올해 납부액' : `${selectedMonth}월까지 납부액`;
+      const remainingHeader = selectedMonth === 'all' ? '남은 회비' : `${selectedMonth}월까지 부족액`;
+      $('#duesTable').innerHTML = `<thead><tr><th>순서</th><th class="name-cell">회원</th><th>상태</th><th>${paidHeader}</th><th>${remainingHeader}</th><th>최근 입금</th></tr></thead><tbody>${rows}</tbody>`;
+      return;
+    }
+    const monthTotals = Array(12).fill(0);
+    let grandCurrent = 0;
+    let grandOther = 0;
+    const rows = state.members.map((member, index) => {
+      const own = txs.filter(tx => tx.memberId === member.id && monthOf(tx) <= cutoffMonth);
+      const status = memberStatus(member.id);
+      // 월별 상세는 '납부 대상월'이 아닌 실제 이체월을 보존한다.
+      const months = Array.from({ length: 12 }, (_, monthIndex) => {
+        const amount = own.filter(tx => monthOf(tx) === monthIndex + 1).reduce((sum, tx) => sum + Number(tx.currentDues || 0), 0);
+        monthTotals[monthIndex] += amount;
+        return amount;
+      });
+      const current = months.reduce((sum, amount) => sum + amount, 0);
+      const other = own.reduce((sum, tx) => sum + Number(tx.otherDues || 0), 0) + Number(state.credits?.[String(selectedYear)]?.[member.id] || 0);
+      grandCurrent += current;
+      grandOther += other;
+      const coveredMonths = Math.min(12, Math.floor(status.paid / monthlyDue));
+      const monthCells = months.map((amount, monthIndex) => {
+        const units = amount / monthlyDue;
+        const isCovered = monthIndex < coveredMonths;
+        const isMissing = !isCovered && monthIndex + 1 <= cutoffMonth;
+        const klass = amount ? (isCovered ? 'paid' : 'partial') : (isCovered ? 'covered' : isMissing ? 'missing' : 'empty');
+        return `<td class="month-cell ${klass}">${amount ? formatUnits(units) : isCovered ? '✓' : '·'}</td>`;
+      }).join('');
+      const annualComplete = memberPaidAmount(member.id, cutoffMonth) >= monthlyDue * 12 ? ' annual-complete' : '';
+      return `<tr class="${status.key}${annualComplete}"><td>${index + 1}</td><td class="name-cell">${escapeHtml(displayMember(member))}</td><td class="status-cell"><span class="status-pill ${status.key}">${status.label}</span></td><td class="other-cell">${formatUnits(other / monthlyDue)}</td><td class="total-cell">${formatUnits(current / monthlyDue)}</td>${monthCells}</tr>`;
+    }).join('');
+    const headers = Array.from({ length: 12 }, (_, index) => `<th>${index + 1}월</th>`).join('');
+    const footerMonths = monthTotals.map(amount => `<td>${formatUnits(amount / monthlyDue)}</td>`).join('');
+    $('#duesTable').className = 'data-table dues-table';
+    $('#duesTable').innerHTML = `<thead><tr><th>순서</th><th class="name-cell">회원</th><th>상태</th><th>타연도</th><th>올해</th>${headers}</tr></thead><tbody>${rows}</tbody><tfoot><tr><td colspan="3">합계 (만원)</td><td>${formatUnits(grandOther / monthlyDue)}</td><td>${formatUnits(grandCurrent / monthlyDue)}</td>${footerMonths}</tr></tfoot>`;
+  }
+
+  function formatUnits(value) {
+    if (!value) return '0';
+    return Number.isInteger(value) ? String(value) : value.toFixed(1).replace(/\.0$/, '');
+  }
+
+  function renderRecentLists() {
+    ['income', 'expense'].forEach(kind => {
+      if (!listPeriods[kind]) listPeriods[kind] = { year: selectedYear, month: selectedMonth === 'all' ? (sharedMode ? 'all' : activeMonthForYear()) : Number(selectedMonth) };
+      const period = listPeriods[kind];
+      const direction = listSort.mode === 'amount' ? listSort.amountDirection : listSort.dateDirection;
+      const comparator = listSort.mode === 'amount' ? (direction === 'asc' ? amountAscending : amountDescending) : (direction === 'asc' ? sortAscending : sortDescending);
+      const txs = state.transactions.filter(tx => bookYearOf(tx) === period.year && (period.month === 'all' || monthOf(tx) === period.month) && (kind === 'income' ? tx.direction === 'in' : tx.direction === 'out')).sort(comparator);
+      const total = txs.reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+      const visible = listExpanded[kind] ? txs : txs.slice(0, 5);
+      renderList($(`#${kind}List`), visible);
+      $(`#${kind}YearLabel`).textContent = `${period.year}년`;
+      $(`#${kind}MonthLabel`).textContent = period.month === 'all' ? '연간 전체' : `${String(period.month).padStart(2, '0')}월`;
+      $(`#${kind}YearLabel`).classList.toggle('active', period.month === 'all');
+      $(`#${kind}MonthLabel`).classList.toggle('active', period.month !== 'all');
+      if (kind === 'income') {
+        $('#duesYearLabel').textContent = `${period.year}년`;
+        $('#duesMonthLabel').textContent = period.month === 'all' ? '연간 전체' : `${String(period.month).padStart(2, '0')}월`;
+        $('#duesYearLabel').classList.toggle('active', period.month === 'all');
+        $('#duesMonthLabel').classList.toggle('active', period.month !== 'all');
+      }
+      $(`#${kind}ListTotal`).textContent = `총 ${kind === 'income' ? '+' : '-'}${formatPlainWon(total)}`;
+      document.querySelectorAll(`[data-list-sort="${kind}"]`).forEach(button => {
+        const mode = button.dataset.listSortMode || 'date';
+        button.classList.toggle('active', listSort.mode === mode);
+        const direction = mode === 'amount' ? listSort.amountDirection : listSort.dateDirection;
+        if (mode === 'date') {
+          button.textContent = direction === 'desc' ? '◷↓' : '◷↑';
+          button.title = listSort.mode === 'date' ? (direction === 'desc' ? '최신순 · 클릭하면 과거순' : '과거순 · 클릭하면 최신순') : '시간순 정렬';
+        } else if (mode === 'amount') {
+          button.textContent = direction === 'desc' ? '₩↓' : '₩↑';
+          button.title = listSort.mode === 'amount' ? (direction === 'desc' ? '금액 내림차순 · 클릭하면 오름차순' : '금액 오름차순 · 클릭하면 내림차순') : '금액순 정렬';
+        }
+      });
+      const more = document.querySelector(`[data-list-more="${kind}"]`);
+      more.classList.remove('hidden');
+      more.textContent = txs.length > 5 ? (listExpanded[kind] ? '목록 접기' : `더보기 (${txs.length}건)`) : '표시할 내역이 모두 보입니다';
+      more.disabled = txs.length <= 5;
+    });
+  }
+
+  function moveListPeriod(kind, direction) {
+    const period = listPeriods[kind] || { year: selectedYear, month: activeMonthForYear() };
+    if (period.month === 'all') period.year += Number(direction);
+    else {
+      period.month += Number(direction);
+      if (period.month === 0) { period.month = 12; period.year -= 1; }
+      if (period.month === 13) { period.month = 1; period.year += 1; }
+    }
+    if (period.year < 2026) { period.year = 2026; period.month = period.month === 'all' ? 'all' : 1; }
+    listPeriods[kind] = period;
+    listExpanded[kind] = false;
+    const other = kind === 'income' ? 'expense' : 'income';
+    listPeriods[other] = { ...period };
+    listExpanded[other] = false;
+    transactionsPage = 1;
+    selectedYear = period.year;
+    selectedMonth = period.month;
+    render();
+  }
+
+  function moveListPeriodUnit(kind, unit, direction) {
+    const period = listPeriods[kind] || { year: selectedYear, month: activeMonthForYear() };
+    const delta = Number(direction);
+    if (unit === 'year') {
+      period.year += delta;
+    } else {
+      if (period.month === 'all') period.month = activeMonthForYear();
+      period.month += delta;
+      if (period.month === 0) { period.month = 12; period.year -= 1; }
+      if (period.month === 13) { period.month = 1; period.year += 1; }
+    }
+    if (period.year < 2026) { period.year = 2026; period.month = period.month === 'all' ? 'all' : 1; }
+    listPeriods[kind] = period;
+    listExpanded[kind] = false;
+    const other = kind === 'income' ? 'expense' : 'income';
+    listPeriods[other] = { ...period };
+    listExpanded[other] = false;
+    transactionsPage = 1;
+    selectedYear = period.year;
+    selectedMonth = period.month;
+    render();
+  }
+
+  function toggleListMore(kind) {
+    listExpanded[kind] = !listExpanded[kind];
+    renderRecentLists();
+  }
+
+  function toggleListSort(mode) {
+    const key = mode === 'amount' ? 'amountDirection' : 'dateDirection';
+    listSort[key] = listSort[key] === 'desc' ? 'asc' : 'desc';
+    listSort.mode = mode;
+    renderRecentLists();
+  }
+
+  function setListPeriodMode(kind, mode) {
+    const period = listPeriods[kind] || { year: selectedYear, month: activeMonthForYear() };
+    period.month = mode === 'year' ? 'all' : (period.month === 'all' ? activeMonthForYear() : period.month);
+    listPeriods[kind] = period;
+    listExpanded[kind] = false;
+    const other = kind === 'income' ? 'expense' : 'income';
+    listPeriods[other] = { ...period };
+    listExpanded[other] = false;
+    transactionsPage = 1;
+    selectedYear = period.year;
+    selectedMonth = period.month;
+    render();
+  }
+
+  function renderList(container, txs) {
+    container.innerHTML = txs.length ? txs.map(tx => {
+      const member = getMember(tx.memberId);
+      const sub = member ? displayMember(member) : typeLabels[tx.type] || '';
+      return `<div class="transaction-item"${sharedMode ? '' : ` data-edit-id="${escapeHtml(tx.id)}"`}><span class="date">${formatDateShort(tx.date)}</span><span class="memo">${escapeHtml(tx.memo)}<span class="sub">${escapeHtml(sub)}</span></span><span class="amount ${tx.direction}">${tx.direction === 'out' ? '-' : '+'}${number.format(tx.amount)}원</span></div>`;
+    }).join('') : '<div class="empty-state">표시할 내역이 없습니다.</div>';
+  }
+
+  function renderTransactions() {
+    const query = normalizeText($('#transactionSearch')?.value || '');
+    const filter = $('#transactionTypeFilter')?.value || 'all';
+    const ledgerPeriod = listPeriods.income || { year: selectedYear, month: selectedMonth };
+    const txs = state.transactions.filter(tx => bookYearOf(tx) === ledgerPeriod.year && (ledgerPeriod.month === 'all' || monthOf(tx) === Number(ledgerPeriod.month))).filter(tx => {
+      const member = getMember(tx.memberId);
+      const haystack = normalizeText(`${tx.memo} ${tx.note || ''} ${member?.name || ''} ${member?.nickname || ''}`);
+      return (!query || haystack.includes(query)) && (filter === 'all' || tx.type === filter);
+    }).sort(sortDescending);
+    const pageSize = 10;
+    const totalPages = Math.max(1, Math.ceil(txs.length / pageSize));
+    transactionsPage = Math.min(transactionsPage, totalPages);
+    const visibleTxs = txs.slice((transactionsPage - 1) * pageSize, transactionsPage * pageSize);
+    const rows = visibleTxs.map(tx => {
+      const member = getMember(tx.memberId);
+      const editCell = sharedMode ? '' : `<td><button class="row-action" data-edit-id="${escapeHtml(tx.id)}">수정</button></td>`;
+      return `<tr><td>${escapeHtml(tx.date)}<br><span class="muted">${escapeHtml(tx.time || '')}</span></td><td><span class="type-badge ${tx.type}">${typeLabels[tx.type] || tx.type}</span></td><td><strong>${escapeHtml(tx.memo)}</strong><br><span class="muted">${escapeHtml(member ? displayMember(member) : tx.note || '')}</span></td><td>${tx.direction === 'in' ? number.format(tx.amount) : ''}</td><td>${tx.direction === 'out' ? number.format(tx.amount) : ''}</td><td>${tx.balance ? number.format(tx.balance) : ''}</td><td>${escapeHtml(tx.source || '')}</td>${editCell}</tr>`;
+    }).join('');
+    const editHeader = sharedMode ? '' : '<th></th>';
+    const columnCount = sharedMode ? 7 : 8;
+    $('#transactionsTable').innerHTML = `<thead><tr><th>날짜</th><th>유형</th><th>내용</th><th>입금</th><th>출금</th><th>은행 잔액</th><th>출처</th>${editHeader}</tr></thead><tbody>${rows || `<tr><td colspan="${columnCount}" class="empty-state">조건에 맞는 거래가 없습니다.</td></tr>`}</tbody>`;
+    const pager = $('#transactionsPager');
+    pager.innerHTML = `<button class="pager-btn" data-transaction-page="-1" ${transactionsPage === 1 ? 'disabled' : ''}>이전</button><span><strong>${transactionsPage}</strong> / ${totalPages}</span><button class="pager-btn" data-transaction-page="1" ${transactionsPage === totalPages ? 'disabled' : ''}>다음</button>`;
+  }
+
+  function renderMembers() {
+    $('#memberList').innerHTML = state.members.map(member => `<div class="member-item"><div><strong>${escapeHtml(displayMember(member))}</strong><span>자동 매칭: ${escapeHtml(member.aliases.join(', '))}</span></div><button data-member-id="${escapeHtml(member.id)}">수정</button></div>`).join('');
+    const select = $('#txMember');
+    select.innerHTML = `<option value="">회원 없음</option>${state.members.map(member => `<option value="${escapeHtml(member.id)}">${escapeHtml(displayMember(member))}</option>`).join('')}`;
+  }
+
+  function renderSettings() {
+    $('#monthlyDueInput').value = state.settings.monthlyDue;
+    $('#openingBalanceInput').value = state.openingBalances[String(selectedYear)] || 0;
+  }
+
+  function switchTab(name) {
+    $$('.tab').forEach(tab => tab.classList.toggle('active', tab.dataset.tab === name));
+    $$('.view').forEach(view => view.classList.toggle('active', view.id === `${name}View`));
+  }
+
+  function openTransactionModal(mode = 'in', id = '') {
+    const tx = id ? state.transactions.find(item => item.id === id) : null;
+    $('#modalTitle').textContent = tx ? '거래 수정' : mode === 'out' ? '지출 추가' : '거래 추가';
+    $('#transactionId').value = tx?.id || '';
+    $('#txDate').value = tx?.date || new Date().toISOString().slice(0, 10);
+    $('#txTime').value = tx?.time?.slice(0, 5) || '';
+    $('#txDirection').value = tx?.direction || mode;
+    $('#txAmount').value = tx?.amount || '';
+    $('#txType').value = tx?.type || (mode === 'out' ? 'expense' : 'dues');
+    $('#txMember').value = tx?.memberId || '';
+    $('#txMemo').value = tx?.memo || '';
+    $('#txCurrentDues').value = tx?.currentDues || '';
+    $('#txOtherDues').value = tx?.otherDues || '';
+    $('#txNote').value = tx?.note || '';
+    $('#deleteTransaction').classList.toggle('hidden', !tx);
+    $('#modal').classList.remove('hidden');
+    setTimeout(() => $('#txAmount').focus(), 0);
+  }
+
+  function closeModal() { $('#modal').classList.add('hidden'); }
+  function openQuickModal() { renderQuickEntry(); $('#quickModal').classList.remove('hidden'); setTimeout(() => $('#quickAmount').focus(), 0); }
+  function closeQuickModal() { $('#quickModal').classList.add('hidden'); }
+
+  function saveTransaction(event) {
+    event.preventDefault();
+    const id = $('#transactionId').value;
+    const date = $('#txDate').value;
+    const amount = Number($('#txAmount').value);
+    if (!date || !amount) return toast('날짜와 금액을 확인해주세요.');
+    const record = {
+      id: id || `manual-${Date.now()}`,
+      bookYear: Number(date.slice(0, 4)),
+      date,
+      time: $('#txTime').value ? `${$('#txTime').value}:00` : '',
+      direction: $('#txDirection').value,
+      amount,
+      type: $('#txType').value,
+      memberId: $('#txMember').value,
+      memo: $('#txMemo').value.trim(),
+      currentDues: Number($('#txCurrentDues').value) || 0,
+      otherDues: Number($('#txOtherDues').value) || 0,
+      note: $('#txNote').value.trim(),
+      balance: null,
+      source: id ? (state.transactions.find(tx => tx.id === id)?.source || '직접 입력') : '직접 입력'
+    };
+    if (record.type === 'dues' && !record.currentDues && !record.otherDues) record.currentDues = Math.min(amount, state.settings.monthlyDue * 12);
+    record.sourceKey = fingerprint(record);
+    const index = state.transactions.findIndex(tx => tx.id === id);
+    if (index >= 0) state.transactions[index] = { ...state.transactions[index], ...record };
+    else state.transactions.push(record);
+    saveState(); closeModal(); render(); toast('거래를 저장했습니다.');
+  }
+
+  function saveQuickEntry(event) {
+    event.preventDefault();
+    const mode = $('#quickMode').value;
+    const date = $('#quickDate').value;
+    const amount = Number($('#quickAmount').value);
+    const memberId = $('#quickMember').value;
+    const memoInput = $('#quickMemo').value.trim();
+    if (!date || !amount || (mode === 'dues' && !memberId) || (mode !== 'dues' && !memoInput)) {
+      return toast(mode === 'dues' ? '날짜, 회원, 금액을 입력해주세요.' : '날짜, 내용, 금액을 입력해주세요.');
+    }
+    const member = getMember(memberId);
+    const tx = {
+      id: `quick-${Date.now()}`,
+      bookYear: Number(date.slice(0, 4)),
+      date,
+      time: '',
+      direction: mode === 'expense' ? 'out' : 'in',
+      amount,
+      type: mode,
+      memberId: mode === 'dues' ? memberId : '',
+      memo: mode === 'dues' ? (memoInput || `${member.name} 회비`) : memoInput,
+      currentDues: 0,
+      otherDues: 0,
+      note: '',
+      balance: null,
+      source: '빠른 기록'
+    };
+    if (mode === 'dues') allocateImportedDues([tx]);
+    tx.sourceKey = fingerprint(tx);
+    state.transactions.push(tx);
+    selectedYear = tx.bookYear;
+    saveState();
+    $('#quickAmount').value = '';
+    $('#quickMemo').value = '';
+    $('#quickMember').value = '';
+    closeQuickModal();
+    render();
+    toast(mode === 'dues' ? '회비 입금을 기록하고 납부 현황에 반영했습니다.' : '거래를 기록했습니다.');
+  }
+
+  function deleteTransaction() {
+    const id = $('#transactionId').value;
+    if (!id || !confirm('이 거래를 삭제할까요?')) return;
+    state.transactions = state.transactions.filter(tx => tx.id !== id);
+    saveState(); closeModal(); render(); toast('거래를 삭제했습니다.');
+  }
+
+  function toast(message) {
+    const element = $('#toast');
+    element.textContent = message;
+    element.classList.remove('hidden');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => element.classList.add('hidden'), 2600);
+  }
+
+  async function readBankFile(file) {
+    const status = $('#importStatus');
+    status.className = 'import-status';
+    status.textContent = '파일을 읽고 있습니다…';
+    status.classList.remove('hidden');
+    $('#importPreview').classList.add('hidden');
+    try {
+      if (!window.XLSX) throw new Error('엑셀 읽기 파일(xlsx.full.min.js)을 찾지 못했습니다. HTML과 같은 폴더에 두세요.');
+      const data = await file.arrayBuffer();
+      const workbook = XLSX.read(data, { type: 'array', cellDates: false, cellNF: true });
+      let rows = [];
+      for (const sheetName of workbook.SheetNames) {
+        const candidate = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: false, defval: '', blankrows: false });
+        if (candidate.some(row => row.some(cell => normalizeText(cell).includes('거래일자')))) { rows = candidate; break; }
+      }
+      if (!rows.length) throw new Error('신한은행 거래내역 표를 찾지 못했습니다. 원본 거래내역조회 파일인지 확인해주세요.');
+      pendingImport = parseShinhanRows(rows);
+      renderImportPreview();
+      status.classList.add('hidden');
+    } catch (error) {
+      console.error(error);
+      status.className = 'import-status error';
+      status.textContent = error.message || '파일을 읽지 못했습니다.';
+    }
+  }
+
+  function parseShinhanRows(rows) {
+    const headerIndex = rows.findIndex(row => row.some(cell => normalizeText(cell).includes('거래일자')) && row.some(cell => normalizeText(cell).includes('입금')));
+    if (headerIndex < 0) throw new Error('거래일자/입금/출금 머리글을 찾지 못했습니다.');
+    const headers = rows[headerIndex].map(normalizeText);
+    const indexOf = term => headers.findIndex(header => header.includes(term));
+    const dateIndex = indexOf('거래일자');
+    const timeIndex = indexOf('거래시간');
+    const descIndex = indexOf('적요');
+    const outIndex = indexOf('출금');
+    const inIndex = indexOf('입금');
+    const memoIndex = indexOf('내용');
+    const balanceIndex = indexOf('잔액');
+    const existing = new Set(state.transactions.map(tx => tx.sourceKey || fingerprint(tx)));
+    return rows.slice(headerIndex + 1).map((row, rowIndex) => {
+      const date = parseDateCell(row[dateIndex]);
+      if (!date) return null;
+      const incoming = parseAmount(row[inIndex]);
+      const outgoing = parseAmount(row[outIndex]);
+      if (!incoming && !outgoing) return null;
+      const direction = incoming ? 'in' : 'out';
+      const amount = incoming || outgoing;
+      const memo = String(row[memoIndex] || row[descIndex] || '').trim();
+      const description = String(row[descIndex] || '').trim();
+      const memberId = findMemberId(memo, state.members);
+      const interest = normalizeText(description).includes('이자');
+      const dues = direction === 'in' && memberId && !normalizeText(memo).includes('찬조');
+      const tx = {
+        id: `import-${Date.now()}-${rowIndex}`,
+        bookYear: Number(date.slice(0, 4)),
+        date,
+        time: normalizeTime(row[timeIndex]),
+        direction, amount, memo,
+        balance: parseAmount(row[balanceIndex]) || null,
+        memberId: dues ? memberId : '',
+        type: interest ? 'interest' : direction === 'out' ? 'expense' : dues ? 'dues' : 'income',
+        note: description,
+        source: '신한은행 파일 가져오기',
+        currentDues: 0,
+        otherDues: 0
+      };
+      tx.sourceKey = fingerprint(tx);
+      tx.duplicate = existing.has(tx.sourceKey);
+      return tx;
+    }).filter(Boolean);
+  }
+
+  function parseDateCell(value) {
+    const text = String(value ?? '').trim();
+    let match = text.match(/(20\d{2})\D+(\d{1,2})\D+(\d{1,2})/);
+    if (!match && /^\d{8}$/.test(text)) match = [text, text.slice(0,4), text.slice(4,6), text.slice(6,8)];
+    if (!match) return '';
+    return `${match[1]}-${String(match[2]).padStart(2, '0')}-${String(match[3]).padStart(2, '0')}`;
+  }
+  function normalizeTime(value) {
+    const match = String(value ?? '').match(/(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    return match ? `${String(match[1]).padStart(2,'0')}:${match[2]}:${match[3] || '00'}` : '';
+  }
+  function parseAmount(value) {
+    const text = String(value ?? '').trim();
+    if (!text) return 0;
+    const negative = /^\(.*\)$/.test(text) || text.includes('-');
+    const parsed = Number(text.replace(/[^0-9.]/g, '')) || 0;
+    return negative ? -parsed : parsed;
+  }
+
+  function renderImportPreview() {
+    const fresh = pendingImport.filter(tx => !tx.duplicate);
+    const duplicates = pendingImport.length - fresh.length;
+    $('#importSummary').textContent = `전체 ${pendingImport.length}건 · 새 거래 ${fresh.length}건 · 이미 있는 거래 ${duplicates}건`;
+    $('#confirmImport').disabled = fresh.length === 0;
+    const rows = pendingImport.slice(0, 200).map(tx => {
+      const member = getMember(tx.memberId);
+      return `<tr><td>${tx.date}<br><span class="muted">${tx.time}</span></td><td>${escapeHtml(tx.memo)}</td><td>${tx.direction === 'in' ? number.format(tx.amount) : ''}</td><td>${tx.direction === 'out' ? number.format(tx.amount) : ''}</td><td>${escapeHtml(member?.name || typeLabels[tx.type])}</td><td><span class="type-badge ${tx.duplicate ? '' : tx.type}">${tx.duplicate ? '중복 제외' : '새 거래'}</span></td></tr>`;
+    }).join('');
+    $('#importTable').innerHTML = `<thead><tr><th>일시</th><th>내용</th><th>입금</th><th>출금</th><th>자동 분류</th><th>상태</th></tr></thead><tbody>${rows}</tbody>`;
+    $('#importPreview').classList.remove('hidden');
+  }
+
+  function confirmImport() {
+    const fresh = pendingImport.filter(tx => !tx.duplicate).sort(sortAscending);
+    if (!fresh.length) return toast('새로 반영할 거래가 없습니다.');
+    allocateImportedDues(fresh);
+    state.transactions.push(...fresh.map(tx => { const { duplicate, ...clean } = tx; return clean; }));
+    saveState(`${fresh.length}건 저장됨`);
+    pendingImport = [];
+    $('#importPreview').classList.add('hidden');
+    $('#bankFile').value = '';
+    render();
+    switchTab('dashboard');
+    toast(`새 거래 ${fresh.length}건을 반영했습니다.`);
+  }
+
+  function allocateImportedDues(newTransactions) {
+    const cap = Number(state.settings.monthlyDue) * 12;
+    const used = {};
+    state.transactions.filter(tx => tx.type === 'dues').forEach(tx => {
+      const key = `${bookYearOf(tx)}|${tx.memberId}`;
+      used[key] = (used[key] || 0) + Number(tx.currentDues || 0);
+    });
+    newTransactions.filter(tx => tx.type === 'dues' && tx.memberId).forEach(tx => {
+      const key = `${bookYearOf(tx)}|${tx.memberId}`;
+      const current = Math.min(tx.amount, Math.max(0, cap - (used[key] || 0)));
+      tx.currentDues = current;
+      tx.otherDues = tx.amount - current;
+      used[key] = (used[key] || 0) + current;
+    });
+  }
+
+  function download(filename, content, mime = 'application/json') {
+    const blob = new Blob([content], { type: `${mime};charset=utf-8` });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url; anchor.download = filename; anchor.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  function backup() {
+    const stamp = new Date().toISOString().slice(0, 10).replaceAll('-', '');
+    download(`1550계모임_백업_${stamp}.json`, JSON.stringify(state, null, 2));
+    toast('백업 파일을 저장했습니다.');
+  }
+
+  function shareApp() {
+    const root = document.documentElement.cloneNode(true);
+    const styleSource = document.querySelector('#share-style-source')?.textContent;
+    const appSource = document.querySelector('#share-app-source')?.textContent;
+    if (!styleSource || !appSource) {
+      toast('공유 파일 준비 중입니다. 페이지를 새로고침한 뒤 다시 눌러주세요.');
+      return;
+    }
+    root.querySelector('#shared-state')?.remove();
+    root.dataset.shared = 'true';
+    root.querySelector('title').textContent = '경비관리 · 조회용 공유본';
+    const stylesheet = root.querySelector('link[href="styles.css"]');
+    const inlineStyle = document.createElement('style');
+    inlineStyle.textContent = styleSource;
+    stylesheet?.replaceWith(inlineStyle);
+    const appScript = root.querySelector('script[src="app.js"]');
+    const inlineApp = document.createElement('script');
+    inlineApp.textContent = appSource;
+    appScript?.replaceWith(inlineApp);
+    root.querySelector('script[src="xlsx.full.min.js"]')?.remove();
+    root.querySelector('#share-style-source')?.remove();
+    root.querySelector('#share-app-source')?.remove();
+    const snapshot = document.createElement('script');
+    snapshot.id = 'shared-state';
+    snapshot.type = 'application/json';
+    snapshot.textContent = JSON.stringify(state).replaceAll('<', '\\u003c');
+    root.querySelector('head').append(snapshot);
+    const badge = document.createElement('span');
+    badge.className = 'shared-badge';
+    badge.textContent = `조회용 공유본 · ${new Date().toISOString().slice(0, 10)}`;
+    root.querySelector('.topbar')?.append(badge);
+    download('1550.html', `<!doctype html>\n${root.outerHTML}`, 'text/html');
+    toast('조회 전용 공유본 1550.html을 저장했습니다.');
+  }
+
+  async function restore(file) {
+    try {
+      const restored = JSON.parse(await file.text());
+      if (!restored || !Array.isArray(restored.members) || !Array.isArray(restored.transactions)) throw new Error('올바른 1550 장부 백업 파일이 아닙니다.');
+      state = migrate(restored);
+      saveState('백업 복원됨'); render(); toast('백업을 복원했습니다.');
+    } catch (error) { toast(error.message || '백업을 복원하지 못했습니다.'); }
+  }
+
+  function exportCsv() {
+    const headers = ['날짜','시간','구분','유형','회원','내용','입금','출금','은행잔액','출처'];
+    const rows = yearTransactions().sort(sortAscending).map(tx => [tx.date, tx.time, tx.direction === 'in' ? '입금' : '출금', typeLabels[tx.type], getMember(tx.memberId)?.name || '', tx.memo, tx.direction === 'in' ? tx.amount : '', tx.direction === 'out' ? tx.amount : '', tx.balance || '', tx.source || '']);
+    const csv = [headers, ...rows].map(row => row.map(value => `"${String(value ?? '').replaceAll('"','""')}"`).join(',')).join('\r\n');
+    download(`1550계모임_${selectedYear}년_거래내역.csv`, `\ufeff${csv}`, 'text/csv');
+  }
+
+  function saveSettings() {
+    const due = Number($('#monthlyDueInput').value);
+    const opening = Number($('#openingBalanceInput').value);
+    if (due < 0 || !Number.isFinite(opening)) return toast('설정 금액을 확인해주세요.');
+    state.settings.monthlyDue = due;
+    state.openingBalances[String(selectedYear)] = opening;
+    saveState(); render(); toast('설정을 저장했습니다.');
+  }
+
+  function editMember(id) {
+    const member = state.members.find(item => item.id === id);
+    if (!member) return;
+    const name = prompt('실명', member.name);
+    if (name === null || !name.trim()) return;
+    const nickname = prompt('별명 (없으면 빈칸)', member.nickname || '');
+    if (nickname === null) return;
+    const aliases = prompt('은행 자동 매칭 이름을 쉼표로 구분', member.aliases.join(', '));
+    if (aliases === null) return;
+    member.name = name.trim();
+    member.nickname = nickname.trim();
+    member.aliases = aliases.split(',').map(item => item.trim()).filter(Boolean);
+    if (!member.aliases.includes(member.name)) member.aliases.unshift(member.name);
+    saveState(); render(); toast('회원 정보를 수정했습니다.');
+  }
+
+  function addMember() {
+    const name = prompt('새 회원 실명');
+    if (!name?.trim()) return;
+    const nickname = prompt('별명 (없으면 빈칸)', '') ?? '';
+    state.members.push({ id: `member-${Date.now()}`, name: name.trim(), nickname: nickname.trim(), aliases: [name.trim()] });
+    saveState(); render(); toast('회원을 추가했습니다.');
+  }
+
+  function resetData() {
+    if (!confirm('현재 저장한 수정·추가 내용을 모두 지우고, 이미지와 신한은행 파일에서 처음 복원한 상태로 되돌릴까요?')) return;
+    state = createSeedState();
+    selectedYear = 2026;
+    saveState('초기 데이터 복원됨'); render(); switchTab('dashboard'); toast('최초 복원 상태로 되돌렸습니다.');
+  }
+
+  function handleAction(action) {
+    if (sharedMode && ['open-import', 'backup', 'add-income', 'add-transaction', 'add-expense', 'save-settings', 'export-csv', 'reset-data', 'add-member', 'open-quick', 'share'].includes(action)) {
+      toast('공유용 화면에서는 기록을 수정하거나 파일을 저장할 수 없습니다.');
+      return;
+    }
+    if (action === 'open-import') switchTab('import');
+    if (action === 'backup') backup();
+    if (action === 'add-income' || action === 'add-transaction') openTransactionModal('in');
+    if (action === 'add-expense') openTransactionModal('out');
+    if (action === 'close-modal') closeModal();
+    if (action === 'save-settings') saveSettings();
+    if (action === 'export-csv') exportCsv();
+    if (action === 'reset-data') resetData();
+    if (action === 'add-member') addMember();
+    if (action === 'open-quick') openQuickModal();
+    if (action === 'open-settings') switchTab('settings');
+    if (action === 'home') {
+      const today = new Date();
+      selectedYear = Math.max(2026, today.getFullYear());
+      selectedMonth = today.getMonth() + 1;
+      listPeriods.income = { year: selectedYear, month: selectedMonth };
+      listPeriods.expense = { year: selectedYear, month: selectedMonth };
+      listExpanded.income = false;
+      listExpanded.expense = false;
+      duesView = 'summary';
+      switchTab('dashboard');
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    if (action === 'close-quick') closeQuickModal();
+    if (action === 'share') shareApp();
+    if (action === 'show-detail-dues') { duesView = 'detail'; renderDuesTable(); document.querySelector('.dues-scroll')?.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+
+  function bindEvents() {
+    document.addEventListener('click', event => {
+      const action = event.target.closest('[data-action]')?.dataset.action;
+      if (action) handleAction(action);
+      const tab = event.target.closest('[data-tab]')?.dataset.tab;
+      if (tab) switchTab(tab);
+      const editId = event.target.closest('[data-edit-id]')?.dataset.editId;
+      if (editId) openTransactionModal('in', editId);
+      const memberId = event.target.closest('[data-member-id]')?.dataset.memberId;
+      if (memberId) editMember(memberId);
+      const periodStep = event.target.closest('[data-list-period-step]');
+      if (periodStep) moveListPeriodUnit(periodStep.dataset.listPeriodStep, periodStep.dataset.periodUnit, periodStep.dataset.direction);
+      const listMore = event.target.closest('[data-list-more]')?.dataset.listMore;
+      if (listMore) toggleListMore(listMore);
+      const listSortButton = event.target.closest('[data-list-sort]');
+      if (listSortButton) toggleListSort(listSortButton.dataset.listSortMode || 'date');
+      const transactionPageDirection = event.target.closest('[data-transaction-page]')?.dataset.transactionPage;
+      if (transactionPageDirection) { transactionsPage += Number(transactionPageDirection); renderTransactions(); }
+      const listYear = event.target.closest('[data-list-year]')?.dataset.listYear;
+      if (listYear) setListPeriodMode(listYear, 'year');
+      const listMonth = event.target.closest('[data-list-month]')?.dataset.listMonth;
+      if (listMonth) setListPeriodMode(listMonth, 'month');
+    });
+    $('#transactionSearch').addEventListener('input', () => { transactionsPage = 1; renderTransactions(); });
+    $('#transactionTypeFilter').addEventListener('change', () => { transactionsPage = 1; renderTransactions(); });
+    $('#transactionForm').addEventListener('submit', saveTransaction);
+    $('#quickEntryForm').addEventListener('submit', saveQuickEntry);
+    $$('.quick-mode').forEach(button => button.addEventListener('click', () => { $('#quickMode').value = button.dataset.quickMode; updateQuickEntryMode(); }));
+    $('#summaryDuesBtn').addEventListener('click', () => { duesView = 'summary'; renderDuesTable(); });
+    $('#detailDuesBtn').addEventListener('click', () => { duesView = 'detail'; renderDuesTable(); });
+    $('#deleteTransaction').addEventListener('click', deleteTransaction);
+    $('#bankFile').addEventListener('change', event => event.target.files[0] && readBankFile(event.target.files[0]));
+    $('#confirmImport').addEventListener('click', confirmImport);
+    $('#restoreFile').addEventListener('change', event => event.target.files[0] && restore(event.target.files[0]));
+    $('#modal').addEventListener('click', event => { if (event.target === $('#modal')) closeModal(); });
+    $('#quickModal').addEventListener('click', event => { if (event.target === $('#quickModal')) closeQuickModal(); });
+    document.addEventListener('keydown', event => { if (event.key === 'Escape') { closeModal(); closeQuickModal(); } });
+    const drop = $('#dropZone');
+    ['dragenter','dragover'].forEach(name => drop.addEventListener(name, event => { event.preventDefault(); drop.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(name => drop.addEventListener(name, event => { event.preventDefault(); drop.classList.remove('dragover'); }));
+    drop.addEventListener('drop', event => event.dataTransfer.files[0] && readBankFile(event.dataTransfer.files[0]));
+  }
+
+  state = loadState();
+  selectedYear = allYears().includes(2026) ? 2026 : allYears()[0];
+  if (sharedMode) $('#saveState').textContent = `공유본 · ${new Date().toISOString().slice(0, 10)}`;
+  bindEvents();
+  render();
+  if (!localStorage.getItem(STORAGE_KEY)) saveState('복원 데이터 저장됨');
+})();
+</script>
+  <!-- 공유본을 단일 index.html로 만들기 위한 내장 소스입니다. -->
+  
+  
+
+
+</body></html>
